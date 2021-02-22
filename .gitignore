@@ -1,0 +1,11 @@
+
+db.sqlite3
+causes/__pycache__/models.cpython-38.pyc
+causes/__pycache__/admin.cpython-38.pyc
+about/__pycache__/models.cpython-38.pyc
+*.xml
+*.xml
+*.xml
+*.pyc
+*.pyc
+*.dylib

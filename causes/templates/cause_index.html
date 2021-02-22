@@ -6,7 +6,7 @@
 {% for cause in causes %}
     <div class="col-md-4">
         <div class="card mb-2">
-            <img class="card-img-top" src="{% static cause.image %}">
+            <img class="card-img-top" src="{{ cause.image.url }}">
             <div class="card-body">
                 <h5 class="card-title">{{ cause.title }}</h5>
                 <p class="card-text">{{ cause.description }}</p>
