@@ -3,6 +3,7 @@ from django.contrib import messages
 from causes.models import Cause
 from .forms import DonationForm
 from causes.models import Donation
+from django.http import HttpResponseRedirect
 import datetime
 
 # Create your views here.
@@ -30,9 +31,8 @@ def cause_detail(request, pk):
                 cause= cause
             )
             donation.save()
+            #return HttpResponseRedirect()
             messages.success(request, "Thank You! Your Donation was Received")
-            #data_up = form.instance()
-
             context = {'cause' : cause, 'form': form}
     else:
         form = DonationForm()

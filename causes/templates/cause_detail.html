@@ -10,32 +10,47 @@
     <div class="col-md-4">
         <h5>Information about the project:</h5>
         <p>{{ cause.description }}</p>
-        <br>
         <h5>Required data:</h5>
         <p>{{ cause.data }}</p>
         <h5>Status:</h5>
         {% if cause.active %}
             <p>Open for donations</p>
-            <h5>Donate your data:</h5>
-            <form action="/causes/{{ cause.pk }}/", method="post", enctype="multipart/form-data">
-                {% csrf_token %}
+            {% else %}
+            <p>Closed: not receiving donations</p>
+        {% endif %}
+    </div>
+</div>
+<div class="row", style="padding-top: 50px;">
+<div class="col-md-8">
+    {% if cause.active %}
+        <h1>Donate</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ex diam, tempor eu luctus et, finibus ac tellus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec blandit congue lorem ac tristique. Phasellus quis iaculis quam. Phasellus placerat congue neque, eu auctor est commodo et.</p>
+        <br>
+        <form action="/causes/{{ cause.pk }}/", method="post", enctype="multipart/form-data">
+            {% csrf_token %}
             <div class="form-group">
                 <label>Insert your name:</label>
                 {{ form.name }}
+                <small class="form-text text-muted">This field is optional. We won't share your name without your permission.</small>
             </div>
             <div class="form-group">
                 <label>Insert your email:</label>
                 {{ form.email }}
+                <small class="form-text text-muted">This field is optional. We won't share your email without your permission.</small>
             </div>
             <div class="form-group">
-                <label>Upload your data:</label>
+                <label>Upload your data*:</label>
                 {{ form.data }}
+                <small class="form-text text-muted">*This field is required. Your data will only be used and stored for this project.</small>
             </div>
             <div class="form-group">
+                <label>I would like to receive updates</label>
                 {{ form.available }}
+                <small class="form-text text-muted">This field is optional. You can choose to receive updates from the project and learn how your data is being used.</small>
             </div>
-                <button type="submit" class="btn btn-primary"> Donate </button>
-            </form>
+            <br>
+                <button type="submit" class="btn btn-primary" style="background-color:#87CBAC; border-color:#87CBAC;"> Donate </button>
+        </form>
             {% if messages %}
                 <ul class="messages">
                 {% for message in messages %}
@@ -43,9 +58,7 @@
                 {% endfor %}
                 </ul>
             {% endif %}
-            {% else %}
-            <p>Closed: not receiving donations</p>
-        {% endif %}
-    </div>
+    {% endif %}
+</div>
 </div>
 {% endblock %}
