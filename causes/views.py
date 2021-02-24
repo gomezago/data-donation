@@ -34,10 +34,15 @@ def cause_detail(request, pk):
             #return HttpResponseRedirect()
             messages.success(request, "Thank You! Your Donation was Received")
             context = {'cause' : cause, 'form': form}
+            return render(request, "cause_thanks.html", context)
     else:
         form = DonationForm()
         context = {'cause': cause, 'form': form}
+        return render(request, "cause_detail.html", context)
 
-    return render(request, "cause_detail.html", context)
+def cause_thanks(request, pk):
+    cause = Cause.objects.get(pk=pk)
+    context = {'cause' : cause}
+    render(request, "cause_thanks.html", context)
 
 

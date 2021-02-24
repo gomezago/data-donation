@@ -6,4 +6,5 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("", views.cause_index, name="cause_index"),
     path("<int:pk>/", views.cause_detail, name="cause_detail"), # Dynamically generate URLs
+    path("<int:pk>/", views.cause_detail, name="cause_thanks"),
 ]

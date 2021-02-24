@@ -23,7 +23,7 @@ urlpatterns = [
     path('', include('pages.urls')),
     path('admin/', admin.site.urls),
     path("causes/", include("causes.urls")), # Includes all the URLs in the causes app
-    path("about/", include("about.urls")),
+    path("news/", include("about.urls")),
 ]
 
 if settings.DEBUG:

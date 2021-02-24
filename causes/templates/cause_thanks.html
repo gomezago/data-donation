@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+    <h1> Thank you for donating to "{{ cause.title }}" project! </h1>
+
+    <a href="{% url 'cause_index' %}"
+                   class="btn btn-primary"
+                   style="background-color:#87CBAC; border-color:#87CBAC;">See other projects
+                </a>
+{% endblock %}
