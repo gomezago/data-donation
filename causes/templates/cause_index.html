@@ -9,7 +9,7 @@
             <img class="card-img-top" src="{{ cause.image.url }}">
             <div class="card-body">
                 <h5 class="card-title">{{ cause.title }}</h5>
-                <p class="card-text">{{ cause.description }}</p>
+                <p class="card-text">{{ cause.description_tweet }}</p>
                 <a href="{% url 'cause_detail' cause.pk %}"
                    class="btn btn-primary"
                    style="background-color:#87CBAC; border-color:#87CBAC;">

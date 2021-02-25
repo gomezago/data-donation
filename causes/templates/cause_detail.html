@@ -2,30 +2,32 @@
 {% load static %}
 
 {% block page_content %}
+<div style="padding-top: 35px">
 <h1>{{ cause.title }}</h1>
+    <p><b>Main Researcher:</b> {{ cause.contact_name }}<br>
+        <b>Duration:</b> {{ cause.start}} to {{ cause.end }}</p>
+</div>
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-5">
         <img src="{{ cause.image.url }}" alt="" width="100%">
-    </div>
-    <div class="col-md-4">
-        <h5>Information about the project:</h5>
-        <p>{{ cause.description }}</p>
-        <h5>Required data:</h5>
-        <p>{{ cause.data }}</p>
-        <h5>Status:</h5>
-        {% if cause.active %}
-            <p>Open for donations</p>
+            {% if cause.active %}
+            <p style="color:#254441">STATUS: Open</p>
             {% else %}
-            <p>Closed: not receiving donations</p>
+            <p style="color:#9E2B25">STATUS: Closed</p>
         {% endif %}
     </div>
+    <div class="col-md-7">
+        <h5>Project Information</h5>
+        <p>{{ cause.description }}</p>
+        <h5>Which data is required?</h5>
+        <p>{{ cause.data }}</p>
+    </div>
 </div>
-<div class="row", style="padding-top: 50px;">
-<div class="col-md-8">
+<div class="row", style="padding-top: 15px;">
+<div class="col" style="padding-bottom: 35px">
     {% if cause.active %}
         <h1>Donate</h1>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ex diam, tempor eu luctus et, finibus ac tellus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec blandit congue lorem ac tristique. Phasellus quis iaculis quam. Phasellus placerat congue neque, eu auctor est commodo et.</p>
-        <br>
         <form action="/causes/{{ cause.pk }}/", method="post", enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-group">
@@ -34,9 +36,9 @@
                 <small class="form-text text-muted">This field is optional. We won't share your name without your permission.</small>
             </div>
             <div class="form-group">
-                <label>Insert your email:</label>
+                <label>Insert your email*:</label>
                 {{ form.email }}
-                <small class="form-text text-muted">This field is optional. We won't share your email without your permission.</small>
+                <small class="form-text text-muted">*This field is required. We won't share your email without your permission.</small>
             </div>
             <div class="form-group">
                 <label>Upload your data*:</label>

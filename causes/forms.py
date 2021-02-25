@@ -1,4 +1,6 @@
 from django import forms
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 class DonationForm(forms.Form):
     name = forms.CharField(
@@ -11,8 +13,9 @@ class DonationForm(forms.Form):
         })
     )
     email = forms.EmailField(max_length=255,
-            required=False,
-            label="Insert Your Email",
+            required=True,
+            label="Insert Your Email*",
+            validators=[validate_email],
             widget=forms.TextInput(attrs={
                 "class" : "form-control",
                 "placeholder": "Your Email"
