@@ -12,16 +12,16 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
+            <li class="nav-item {% if request.resolver_match.url_name == 'pages_index' %}active{% endif %}">
               <a class="nav-link" href="{% url 'pages_index' %}">Home</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item {% if request.resolver_match.url_name == 'cause_index' or request.resolver_match.url_name == 'cause_detail' %}active{% endif %}">
               <a class="nav-link" href="{% url 'cause_index' %}">Projects</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item {% if request.resolver_match.url_name == 'about_index' or request.resolver_match.url_name == 'about_detail' or request.resolver_match.url_name == 'about_category'%}active{% endif %}">
               <a class="nav-link" href="{% url 'about_index' %}">News</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item {% if request.resolver_match.url_name == 'pages_about' %}active{% endif %}">
               <a class="nav-link" href="{% url 'pages_about' %}">About</a>
             </li>
           </ul>
