@@ -9,7 +9,7 @@
         <h1><b>THANK YOU!</b></h1>
         <p>With your data, you have contributed to the <b>{{ cause.title }}</b> project.<br>
         If you have any questions you can get in touch with <b>{{ cause.contact_name }}</b>
-            at <b>{{ cause.contact_email }}</b> </p>
+            at <b><a href="mailto:{{ cause.contact_email }}">{{ cause.contact_email }}</a></b> </p>
         <a href="{% url 'cause_index' %}" class="btn btn-primary" style="background-color:#87CBAC;
           border-color:#87CBAC;">See Other Projects</a>
     </div>

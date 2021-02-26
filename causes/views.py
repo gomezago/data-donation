@@ -25,9 +25,11 @@ def cause_detail(request, pk):
         if form.is_valid():
             donation = Donation(
                 name=form.cleaned_data["name"],
-                email=form.cleaned_data["email"],
                 data=form.cleaned_data["data"],
+                email=form.cleaned_data["email"],
                 available=form.cleaned_data["available"],
+                updates=form.cleaned_data["updates"],
+                authorize=form.cleaned_data["permission"],
                 cause= cause
             )
             donation.save()
@@ -35,8 +37,12 @@ def cause_detail(request, pk):
             messages.success(request, "Thank You! Your Donation was Received")
             context = {'cause' : cause, 'form': form}
             return render(request, "cause_thanks.html", context)
+        else:
+            # Redirect to same page if data is invalid
+            context = {'cause': cause, 'form': form}
+            return render(request, "cause_detail.html", context)
     else:
-        form = DonationForm()
+        form = DonationForm() # Empty form
         context = {'cause': cause, 'form': form}
         return render(request, "cause_detail.html", context)
 

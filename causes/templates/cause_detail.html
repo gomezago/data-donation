@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
+
 {% block page_content %}
 <div style="padding-top: 20px">
 <h1>{{ cause.title }}</h1>
@@ -33,41 +34,42 @@
         <p>Send an email to <a href="mailto:{{ cause.contact_email }}">{{ cause.contact_email }}</a></p>
         <form action="/causes/{{ cause.pk }}/", method="post", enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="form-group">
-                <label>Insert your name:</label>
-                {{ form.name }}
-                <small class="form-text text-muted">This field is optional. We won't share your name without your permission.</small>
+            <div class="form-row">
+                <div class="col">
+                    <div class="form-group">
+                    <label>Insert your name:</label>
+                    {{ form.name }}
+                    <small class="form-text text-muted">This field is optional. We won't share your name without your permission.</small>
+                     </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                    <label>Insert your email*:</label>
+                    {{ form.email }}
+                    <small class="form-text text-muted">*This field is required. We won't share your email without your permission.</small>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Insert your email*:</label>
-                {{ form.email }}
-                <small class="form-text text-muted">*This field is required. We won't share your email without your permission.</small>
+            <div class="form-row">
+               <div class="form-group">
+                    {{ form.available }} <label>I would like to be considered to participate in later stages of this project</label><br>
+                    {{ form.updates }} <label>I would like to receive updates about the project and how my data is used</label>
+                    <small class="form-text text-muted">Tis field is optional. You can change your preferences over time</small>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Upload your data*:</label>
-                {{ form.data }}
-                <small class="form-text text-muted">*This field is required. Your data will only be used and stored for this project.</small>
-            </div>
-            <div class="form-group">
-                <p>We might want to hear from you, if you agree to be contacted, we will get in touch at a later stage of our project</p>
-                <label>I would like to stay in touch</label>
-                {{ form.available }}
-                <small class="form-text text-muted">This field is optional. You can choose to be contacted.</small>
-            </div>
-            <div class="form-group">
-                <p>We will send periodic updates on the status of our project, you can choose to receive them</p>
-                <label>I would like to receive updates</label>
-                {{ form.updates }}
-                <small class="form-text text-muted">This field is optional. You can choose to receive updates from the project and learn how your data is being used.</small>
-            </div>
-             <div class="form-group">
-                <p>We will use your data as described above, you can choose to opt-out at any time</p>
-                <label>I authorize the use of my data for this project</label>
-                {{ form.permission }}
-                <small class="form-text text-muted">This field is required. You can request information about how your data is being used and opt-out at any time.</small>
-            </div>
-            <br>
+                <div class="form-group">
+                    <label>Upload your data*:</label>
+                    {{ form.data }}
+                    <small class="form-text text-muted">*This field is required. Your data will only be used and stored for this project.</small>
+                </div>
+                <div class="form-group">
+                    {{ form.permission }} <label>I authorize the use of my data for this project*</label>
+                    <small class="form-text text-muted">*This field is required. We will use your data as described above, you can request information and choose to opt-out at any time.</small>
+                </div>
+
+            <div class="form-row">
                 <button type="submit" class="btn btn-primary" style="background-color:#87CBAC; border-color:#87CBAC;"> Donate </button>
+            </div>
         </form>
 
     {% endif %}

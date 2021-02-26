@@ -1,5 +1,6 @@
 from django import forms
 from django.core.validators import validate_email
+from django.core.validators import validate_image_file_extension
 from django.core.exceptions import ValidationError
 
 class DonationForm(forms.Form):
@@ -16,7 +17,7 @@ class DonationForm(forms.Form):
             required=True,
             label="Insert Your Email*",
             validators=[validate_email],
-            widget=forms.TextInput(attrs={
+            widget=forms.EmailInput(attrs={
                 "class" : "form-control",
                 "placeholder": "Your Email"
             })
@@ -29,18 +30,18 @@ class DonationForm(forms.Form):
 
     available = forms.BooleanField(
         required=False,
-        label="We might want to hear from you, if you agree to be contacted, we will get in touch at a later stage of our project",
-        widget=forms.CheckboxInput()
+        initial=False,
+        widget=forms.CheckboxInput(attrs={"class": "checkbox"})
     )
 
     updates = forms.BooleanField(
         required=False,
-        label="We will send periodic updates on the status of our project, you can choose to receive them",
-        widget=forms.CheckboxInput()
+        initial=False,
+        widget=forms.CheckboxInput(attrs={"class": "checkbox"})
     )
 
     permission = forms.BooleanField(
         required=True,
-        label="We will use your data as described above, you can choose to opt-out at any time",
-        widget=forms.CheckboxInput()
+        initial=False,
+        widget=forms.CheckboxInput(attrs={"class": "checkbox"})
     )
