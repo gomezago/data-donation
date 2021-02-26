@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block page_content %}
+<section style="padding-top: 20px">
 <h1>Projects</h1>
 <div class="row">
 {% for cause in causes %}
@@ -20,4 +21,5 @@
     </div>
     {% endfor %}
 </div>
+</section>
 {% endblock %}
