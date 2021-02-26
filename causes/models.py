@@ -12,6 +12,7 @@ class Cause(models.Model):
     end = models.DateField(blank=False, null=True) # End of project
     contact_name = models.CharField(max_length=100, blank=False, null=True) #Name of Researcher
     contact_email = models.EmailField(blank=False, null=True) # Email of person in charge.
+    data_info = models.TextField(blank=False, null=True)
 
     def __str__(self):
         return self.title
