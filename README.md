@@ -1,2 +1,2 @@
 # data-donation
-Data Donation Platform
+First prototype of a Data Donation Platform
