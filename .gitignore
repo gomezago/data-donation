@@ -17,3 +17,10 @@ local_settings.py
 .venv
 venv/
 ENV/
+
+#
+.DS_Store
+
+# IPython
+profile_default/
+ipython_config.py
