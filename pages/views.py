@@ -6,3 +6,6 @@ def pages_index(request):
 
 def pages_about(request):
     return render(request, 'pages_about.html')
+
+def pages_questions(request):
+    return render(request, 'pages_questions.html')

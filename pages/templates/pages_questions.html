@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+
+    <!-- Starting section-->
+    <section style="padding-top: 20px">
+    <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+        <h1>Who are we?</h1>
+        <p>This project is built and maintained by a group of people within the <a href="https://datacentricdesign.org/">Data-Centric Design Lab</a>.
+            We are part of the Knowledge and Intelligence Design (KInD) section within the faculty of Industrial Design Engineering.<br>
+            We see data donation as a way of supporting responsible data collection practices for data-centric design projects.
+            If you want to collaborate with us, or you have a project that could gain value from data donation do not hesitate to contact us.
+        </p>
+        <div class="row text-center" style="padding-bottom: 10px">
+            <div class="col-sm-4">
+                <div class="bg-white rounded shadow-sm py-5 px-4">
+                    <img class="img-fluid rounded-circle mb-3" src="{% static 'images/alejandra_gomez.jpg' %}">
+                    <h5 class="mb-0">Alejandra Gomez</h5>
+                    <span class="smal text text-muted">PhD Candidate</span>
+                    <span><a href="mailto:a.gomezortega@tudelft.nl">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383l-4.758 2.855L15 11.114v-5.73zm-.034 6.878L9.271 8.82 8 9.583 6.728 8.82l-5.694 3.44A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.739zM1 11.114l4.758-2.876L1 5.383v5.73z"/>
+                        </svg>
+                    </a></span>
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="bg-white rounded shadow-sm py-5 px-4">
+                    <img class="img-fluid rounded-circle mb-3" src="{% static 'images/jacky_bourgeois.jpg' %}">
+                    <h5 class="mb-0">Jacky Bourgeois</h5>
+                    <span class="smal text text-muted">Assistant Professor</span>
+                    <span><a href="mailto:a.gomezortega@tudelft.nl">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383l-4.758 2.855L15 11.114v-5.73zm-.034 6.878L9.271 8.82 8 9.583 6.728 8.82l-5.694 3.44A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.739zM1 11.114l4.758-2.876L1 5.383v5.73z"/>
+                        </svg>
+                    </a></span>
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="bg-white rounded shadow-sm py-5 px-4">
+                    <img class="img-fluid rounded-circle mb-3" src="{% static 'images/gerd_kortuem.jpg' %}">
+                    <h5 class="mb-0">Gerd Kortuem</h5>
+                    <span class="smal text text-muted">Full Professor</span>
+                    <span><a href="mailto:a.gomezortega@tudelft.nl">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383l-4.758 2.855L15 11.114v-5.73zm-.034 6.878L9.271 8.82 8 9.583 6.728 8.82l-5.694 3.44A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.739zM1 11.114l4.758-2.876L1 5.383v5.73z"/>
+                    </svg>
+                    </a></span>
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+
+{% endblock %}
