@@ -30,8 +30,6 @@
     {% if cause.active %}
         <h1>Donate</h1>
         <p>{{ cause.data_info }}</p>
-        <h5>Questions?</h5>
-        <p>Send an email to <a href="mailto:{{ cause.contact_email }}">{{ cause.contact_email }}</a></p>
         <form action="/causes/{{ cause.pk }}/", method="post", enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-row">
