@@ -35,20 +35,18 @@
         <form action="/causes/{{ cause.pk }}/", method="post", enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-row">
-                <div class="col">
                     <div class="form-group">
-                    <label>Insert your name:</label>
+                    <label>Name:</label>
                     {{ form.name }}
                     <small class="form-text text-muted">This field is optional. We won't share your name without your permission.</small>
                      </div>
-                </div>
-                <div class="col">
+            </div>
+            <div class="form-row">
                     <div class="form-group">
-                    <label>Insert your email*:</label>
+                    <label>Email*:</label>
                     {{ form.email }}
                     <small class="form-text text-muted">*This field is required. We won't share your email without your permission.</small>
                     </div>
-                </div>
             </div>
             <div class="form-row">
                <div class="form-group">
@@ -58,7 +56,7 @@
                 </div>
             </div>
                 <div class="form-group">
-                    <label>Upload your data*:</label>
+                    <label>Upload data*:</label>
                     {{ form.data }}
                     <small class="form-text text-muted">*This field is required. Your data will only be used and stored for this project.</small>
                 </div>
