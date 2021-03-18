@@ -23,13 +23,14 @@
         <p>{{ cause.description }}</p>
         <h5>Which data is required?</h5>
         <p>{{ cause.data }}</p>
+        <h5>How will the data be used?</h5>
+        <p>{{ cause.data_info }}</p>
     </div>
 </div>
 <div class="row", style="padding-top: 5px;">
 <div class="col" style="padding-bottom: 40px">
     {% if cause.active %}
         <h1>Donate</h1>
-        <p>{{ cause.data_info }}</p>
         <form action="/causes/{{ cause.pk }}/", method="post", enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-row">
