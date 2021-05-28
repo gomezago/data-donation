@@ -18,8 +18,14 @@ local_settings.py
 venv/
 ENV/
 
+# Environments
+.env
+.env/
+env/
+
 #
 .DS_Store
+
 
 # IPython
 profile_default/

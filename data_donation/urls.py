@@ -22,7 +22,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', include('pages.urls')),
     path('admin/', admin.site.urls),
-    path("causes/", include("causes.urls")), # Includes all the URLs in the causes app
+    path('causes/', include("causes.urls")), # Includes all the URLs in the causes app
+    path('oauth2_test/', include('oauth2_test.urls')),
     #path("news/", include("about.urls")),
 ]
 
