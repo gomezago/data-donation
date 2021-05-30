@@ -21,12 +21,13 @@ def home(request):
 
 
 def login(request):
-    redirect_uri = request.build_absolute_uri(reverse('auth'))
+    redirect_uri = request.build_absolute_uri(reverse('autho'))
     return oauth.google.authorize_redirect(request, redirect_uri)
 
 
 def auth(request):
     token = oauth.google.authorize_access_token(request)
+    print(token)
     user = oauth.google.parse_id_token(request, token)
     request.session['user'] = user
     return redirect('/oauth2_test/')

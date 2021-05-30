@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'pages',
     'oauth2_test',
     'environ',
+    'bucket',
 ]
 
 MIDDLEWARE = [
@@ -137,5 +138,9 @@ AUTHLIB_OAUTH_CLIENTS = {
     'google': {
         'client_id': env('GOOGLE_CLIENT_ID'),
         'client_secret': env('GOOGLE_CLIENT_SECRET'),
+    },
+    'bucket': {
+        'client_id': env('DATA_DONATION_CLIENT_ID'),
+        'client_secret': None,
     }
 }

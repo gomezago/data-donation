@@ -30,3 +30,5 @@ env/
 # IPython
 profile_default/
 ipython_config.py
+data_donation/.env
+data_donation/.env
