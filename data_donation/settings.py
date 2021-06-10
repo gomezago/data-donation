@@ -144,8 +144,3 @@ AUTHLIB_OAUTH_CLIENTS = {
         'client_secret': None,
     }
 }
-
-# Authentication Backends, list of all the backends that we have to use.
-AUTHENTICATION_BACKENDS = [
-    'bucket.auth.BucketAuthenticationBackend'
-]

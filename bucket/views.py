@@ -1,9 +1,6 @@
 import json
 from django.urls import reverse
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
 from authlib.integrations.django_client import OAuth
 
 
@@ -40,11 +37,7 @@ def home(request):
         user = json.dumps(user)
     return render(request, 'bucket.html', context={'user': user})
 
-#@login_required(login_url="/bucket")
-#def get_authenticated_user(request):
-#    return JsonResponse({"msg" : "Authenticated"})
-
-def bucket_login(request):
+def login(request):
     bucket = oauth.create_client('bucket')
     redirect_uri = 'http://localhost:8000/bucket/auth'
     return bucket.authorize_redirect(request, redirect_uri)
@@ -57,15 +50,6 @@ def auth(request):
     resp.raise_for_status()
     profile = resp.json()
     request.session['user'] = profile
-
-    # Bucket Authenticate method (from auth.py)
-    bucket_user = authenticate(request, user=profile)
-    bucket_user = list(bucket_user).pop()
-    print(bucket_user)
-
-    #login(request, bucket_user)
-    # Do something with the token and profile.. For example: Store in db, mark user as logged in and etc!
-
     #print(profile)
     return redirect('/bucket/')
 
