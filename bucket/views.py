@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from authlib.integrations.django_client import OAuth
 from django.contrib.auth import authenticate, login, logout
+from .models import OAuth2Token
 
 from django.contrib.auth.decorators import login_required
 

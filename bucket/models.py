@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 # Create your models here.
@@ -43,7 +44,7 @@ class BucketUserManager(BaseUserManager):
 class BucketUser(AbstractBaseUser):
     email               = models.EmailField(verbose_name="email", max_length=60, unique=True)
     username            = models.CharField(max_length=30, unique=True)
-    user_id             = models.CharField(max_length=60, unique=True, default=None)
+    user_id             = models.CharField(max_length=60, unique=True, default=None, primary_key=True)
     date_joined         = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
     last_login          = models.DateTimeField(verbose_name="last login", auto_now=True)
 
@@ -69,3 +70,17 @@ class BucketUser(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
 
+class OAuth2Token(models.Model):
+    token_type      = models.CharField(max_length=40)
+    access_token    = models.CharField(max_length=200)
+    refresh_token   = models.CharField(max_length=200)
+    expires_at      = models.PositiveIntegerField()
+    user            = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def to_token(self):
+        return dict(
+            access_token = self.access_token,
+            token_type = self.token_type,
+            refresh_token = self.refresh_token,
+            expires_at = self.expires_at,
+        )
