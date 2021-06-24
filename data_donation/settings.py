@@ -145,4 +145,11 @@ AUTHLIB_OAUTH_CLIENTS = {
     }
 }
 
-DEFAULT_AUTO_FIELD='django.db.models.AutoField' 
+AUTH_USER_MODEL = "bucket.BucketUser" # Default model for authentication
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.AllowAllUsersModelBackend',
+    'bucket.auth.BucketAuthenticationBackend',
+)
+
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'

@@ -1,7 +1,11 @@
 import json
 from django.urls import reverse
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from authlib.integrations.django_client import OAuth
+from django.contrib.auth import authenticate, login, logout
+
+from django.contrib.auth.decorators import login_required
 
 
 oauth = OAuth()
@@ -37,7 +41,7 @@ def home(request):
         user = json.dumps(user)
     return render(request, 'bucket.html', context={'user': user})
 
-def login(request):
+def bucket_login(request):
     bucket = oauth.create_client('bucket')
     redirect_uri = 'http://localhost:8000/bucket/auth'
     return bucket.authorize_redirect(request, redirect_uri)
@@ -50,9 +54,16 @@ def auth(request):
     resp.raise_for_status()
     profile = resp.json()
     request.session['user'] = profile
+
+    bucket_user = authenticate(request, user=profile) #Returns QuerySet
+    bucket_user = list(bucket_user).pop()
+
+    login(request, bucket_user, backend="bucket.auth.BucketAuthenticationBackend")
+
     #print(profile)
     return redirect('/bucket/')
 
-def logout(request):
+def bucket_logout(request):
+    logout(request)
     request.session.pop('user', None)
     return redirect('/bucket/')
