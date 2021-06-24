@@ -144,3 +144,5 @@ AUTHLIB_OAUTH_CLIENTS = {
         'client_secret': None,
     }
 }
+
+DEFAULT_AUTO_FIELD='django.db.models.AutoField' 
