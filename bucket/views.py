@@ -1,4 +1,5 @@
 import json
+import requests
 from django.urls import reverse
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -49,8 +50,6 @@ def bucket_login(request):
 
 def auth(request):
     token = oauth.bucket.authorize_access_token(request)
-    #print(token)
-
     resp = oauth.bucket.get('https://dwd.tudelft.nl/userinfo', token=token)
     resp.raise_for_status()
     profile = resp.json()
@@ -61,8 +60,31 @@ def auth(request):
 
     login(request, bucket_user, backend="bucket.auth.BucketAuthenticationBackend")
 
-    #print(profile)
     return redirect('/bucket/')
+
+def create_thing(request, token):
+
+    hed = {'Authorization': 'bearer ' + token['access_token']}
+    url = 'https://dwd.tudelft.nl:443/bucket/api/things'
+
+    my_thing = {
+        "name": "Thing B",
+        "description": "Trying something.",
+        "type": "Test",
+        "pem": None
+                }
+
+    response = requests.post(
+        url, json=my_thing, headers=hed
+    )
+    return response
+
+def list_thing(request, token):
+    hed = {'Authorization': 'bearer ' + token['access_token']}
+
+    response = requests.get('https://dwd.tudelft.nl/bucket/api/things',
+                     headers=hed)
+    return response
 
 def bucket_logout(request):
     logout(request)
