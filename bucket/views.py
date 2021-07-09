@@ -15,6 +15,25 @@ OAUTH2_REDIRECT_URL='http://localhost:8000/bucket/auth'
 THING_URL = "https://dwd.tudelft.nl/bucket/api/things"
 
 oauth = OAuth()
+
+def fetch_bucket_token(request):
+    token = OAuth2Token.find(user = request.user)
+    return token.to_token()
+
+def update_bucket_token(token, refresh_token=None, access_token=None):
+    if refresh_token:
+        item = OAuth2Token.find(refresh_token=refresh_token)
+    elif access_token:
+        item = OAuth2Token.find(access_token=access_token)
+
+    # Update Token
+    item.access_token = token['access_token']
+    item.refresh_token = token.get('refresh_token')
+    item.expires_at = token['expires_at']
+    item.save()
+
+oauth = OAuth(update_token=update_bucket_token)
+
 #Register remote application on OAuth registry
 oauth.register(
     name='bucket',
@@ -26,6 +45,8 @@ oauth.register(
     authorize_params=None,
 
     userinfo_endpoint=OAUTH2_PROFILE_URL,
+
+    fetch_token = fetch_bucket_token,
 
     client_kwargs={
         'scope':'openid profile email offline dcd:things',
@@ -62,6 +83,8 @@ def auth(request):
     bucket_user = list(bucket_user).pop()
 
     login(request, bucket_user, backend="bucket.auth.BucketAuthenticationBackend")
+    save_token(request, token)
+
     return redirect('/bucket/')
 
 def create_thing(request, token):
@@ -72,7 +95,7 @@ def create_thing(request, token):
         "description": "Test thing.",
         "type": "Type can't be empty",
         "pem": None
-                }
+            }
 
     response = requests.post(THING_URL, json=my_thing, headers=hed)
     return response
@@ -82,6 +105,27 @@ def list_thing(request, token):
 
     response = requests.get(THING_URL, headers=hed)
     return response
+
+def save_token(request, token):
+    print(request.user)
+    if OAuth2Token.objects.filter(user=request.user.user_id).exists():
+
+        OAuth2Token.objects.filter(user=request.user.user_id).update(
+            token_type=token['token_type'],
+            access_token=token['access_token'],
+            refresh_token=token['refresh_token'],
+            expires_at=token['expires_at'],
+        )
+
+    else:
+        oauth2_token = OAuth2Token(
+                token_type=token['token_type'],
+                access_token=token['access_token'],
+                refresh_token=token['refresh_token'],
+                expires_at=token['expires_at'],
+                user=request.user,
+            )
+        oauth2_token.save()
 
 def bucket_logout(request):
     logout(request)
