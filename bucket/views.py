@@ -85,7 +85,7 @@ def auth(request):
     login(request, bucket_user, backend="bucket.auth.BucketAuthenticationBackend")
     save_token(request, token)
 
-    return redirect('/bucket/')
+    return redirect('/projects/')
 
 def create_thing(request, token):
     hed = {'Authorization': 'bearer ' + token['access_token']}

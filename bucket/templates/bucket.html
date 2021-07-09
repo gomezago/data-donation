@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+{% block title %}Login{% endblock %}
+
 {% block page_content %}
     {% if user %}
-    {{ user }}
+        <h1>Hello</h1>
     <hr>
-    <a href="/bucket/logout/">Logout</a>
     {% else %}
-    <a href="/bucket/login/">Login with Bucket</a>
+    <h1>Bye!</h1>
     {% endif %}
 {% endblock %}
