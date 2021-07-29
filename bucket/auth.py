@@ -7,9 +7,8 @@ class BucketAuthenticationBackend(BaseBackend):
         if len(find_user) == 0:
             print("User was not found. Saving...")
             new_user = BucketUser.objects.create_user(user['email'], user['username'], user['id'])
-            print(new_user)
             return new_user
-        return find_user
+        return list(find_user).pop(0)
 
     def get_user(self, user_id):
         try:

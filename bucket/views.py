@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from authlib.integrations.django_client import OAuth
 from django.contrib.auth import authenticate, login, logout
 from .models import OAuth2Token
+from bucket_view.views import new_thing, create_thing
 
 OAUTH2_INTROSPECT_URL='https://dwd.tudelft.nl/oauth2/introspect'
 OAUTH2_TOKEN_URL='https://dwd.tudelft.nl/oauth2/token'
@@ -77,34 +78,15 @@ def auth(request):
     resp = oauth.bucket.get(OAUTH2_PROFILE_URL, token=token)
     resp.raise_for_status()
     profile = resp.json()
-    request.session['user'] = profile
+    #request.session['user'] = profile
 
-    bucket_user = authenticate(request, user=profile) #Returns QuerySet
-    bucket_user = list(bucket_user).pop()
-
+    bucket_user = authenticate(request, user=profile) #Returns Bucket User
     login(request, bucket_user, backend="bucket.auth.BucketAuthenticationBackend")
-    save_token(request, token)
+    request.session['token'] = token
+    #save_token(request, token)
 
-    return redirect('/projects/')
+    return redirect('/hello/')
 
-def create_thing(request, token):
-    hed = {'Authorization': 'bearer ' + token['access_token']}
-
-    my_thing = {
-        "name": "Random Thingy",
-        "description": "Test thing.",
-        "type": "Type can't be empty",
-        "pem": None
-            }
-
-    response = requests.post(THING_URL, json=my_thing, headers=hed)
-    return response
-
-def list_thing(request, token):
-    hed = {'Authorization': 'bearer ' + token['access_token']}
-
-    response = requests.get(THING_URL, headers=hed)
-    return response
 
 def save_token(request, token):
     print(request.user)

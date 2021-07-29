@@ -46,7 +46,7 @@ class BucketUser(AbstractBaseUser):
     username            = models.CharField(max_length=30, unique=True)
     user_id             = models.CharField(max_length=60, unique=True, default=None, primary_key=True)
     date_joined         = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
-    last_login          = models.DateTimeField(verbose_name="last login", auto_now=True)
+    last_login          = models.DateTimeField(verbose_name="last login", auto_now=True) #TODO: ThingId
 
     is_admin            = models.BooleanField(default=False)
     is_active           = models.BooleanField(default=True)

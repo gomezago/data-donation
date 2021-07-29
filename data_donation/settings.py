@@ -44,12 +44,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'causes',
+    #'causes',
     'about',
     'pages',
-    'oauth2_test',
     'environ',
     'bucket',
+    'bucket_view',
 ]
 
 MIDDLEWARE = [

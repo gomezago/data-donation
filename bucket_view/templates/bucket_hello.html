@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block page_content %}
+<h1>Welcome {{ user.username }}</h1>
+<ul>
+    <li>Your Active Projects:
+    {% if not project.exists %}
+        No one has created one, be the first
+    {% endif %}
+    {% for p in project %}
+        {% if p.user == user and p.active %}
+             {{ p.title }}
+        {% endif %}
+    {% endfor %}
+
+    </li>
+    <li><a href="/new_project/">Create New Project</a></li>
+    <li>Your Donations:</li>
+    <li>Featured Projects:
+    {% if not project.exists %}
+        No one has created one, be the first
+    {% endif %}
+    {% for p in project %}
+        {% if p.user != user and p.active%}
+            <a href="{% url 'project_view' p.pk %}">{{ p.title }}</a>
+        {% endif %}
+    {% endfor %}</li>
+</ul>
+
+{% endblock %}

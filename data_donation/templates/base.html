@@ -9,8 +9,8 @@
             <li class="nav-item {% if request.resolver_match.url_name == 'pages_index' %}active{% endif %}">
                 <a class="nav-link" id="home" href="{% url 'pages_index' %}"><span class="small text-uppercase">Home</span></a>
             </li>
-            <li class="nav-item {% if request.resolver_match.url_name == 'cause_index' or request.resolver_match.url_name == 'cause_detail' %}active{% endif %}">
-              <a class="nav-link" id="projects" href="{% url 'cause_index' %}"><span class="small text-uppercase">Projects</span></a>
+            <li class="nav-item {% if request.resolver_match.url_name == 'project_list' or request.resolver_match.url_name == 'project_view' %}active{% endif %}">
+              <a class="nav-link" id="projects" href="{% url 'project_list' %}"><span class="small text-uppercase">Projects</span></a>
             </li>
             <li class="nav-item {% if request.resolver_match.url_name == 'pages_about' %}active{% endif %}">
                 <a class="nav-link" id="about" href="{% url 'pages_about' %}"><span class="small text-uppercase">About Data Donation</span></a>
@@ -26,7 +26,7 @@
                 <div class="dropdown">
                     <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownUserButton" data-toggle="dropdown"><span class="small text-uppercase">{{ user.username }}</span></button>
                     <div class="dropdown-menu" aria-labelledby="dropdownUserButton">
-                        <a class="dropdown-item" href="#"><span class="small text-uppercase">Dashboard</span></a>
+                        <a class="dropdown-item" href="/hello/"><span class="small text-uppercase">Dashboard</span></a>
                         <a class="dropdown-item" href="#"><span class="small text-uppercase">Settings</span></a>
                         <a class="dropdown-item" href="/bucket/logout/"><span class="small text-uppercase">Log Out</span></a>
                     </div>
