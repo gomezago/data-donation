@@ -1,11 +1,12 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from utils.bucket_functions import create_thing, new_thing
 
 # Create your models here.
 class BucketUserManager(BaseUserManager):
 
-    def create_user(self, email, username, user_id, password=None):
+    def create_user(self, email, username, user_id, token, password=None):
         print("Inside Bucket User Manager")
         if not email:
             raise ValueError("Email address is required.")
@@ -16,10 +17,21 @@ class BucketUserManager(BaseUserManager):
         if not user_id:
             raise ValueError("User ID is required.")
 
+        if not token:
+            raise ValueError("Token is required.")
+
+
+        thing = create_thing(new_thing('DDD Thing', 'Thing to Manage Donations', 'DDD Data'), token)
+        if thing.ok:
+            thingId = thing.json()['id']
+        else:
+            raise ValueError("Something went wrong.")
+
         user = self.model(
             email = self.normalize_email(email),
             username = username,
             user_id = user_id,
+            thing_id= thingId
         )
 
         user.set_password(password)
@@ -27,17 +39,17 @@ class BucketUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, username, user_id, password):
-        user = self.create_user(
+        user = self.model(
             email=self.normalize_email(email),
             username=username,
             user_id = user_id,
-            password = password,
         )
 
         user.is_admin = True
         user.is_staff = True
         user.is_superuser = True
 
+        user.set_password(password)
         user.save(using=self._db)
         return user
 
@@ -46,7 +58,8 @@ class BucketUser(AbstractBaseUser):
     username            = models.CharField(max_length=30, unique=True)
     user_id             = models.CharField(max_length=60, unique=True, default=None, primary_key=True)
     date_joined         = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
-    last_login          = models.DateTimeField(verbose_name="last login", auto_now=True) #TODO: ThingId
+    last_login          = models.DateTimeField(verbose_name="last login", auto_now=True)
+    thing_id            = models.CharField(max_length=200, unique=True, default=None, null=True)
 
     is_admin            = models.BooleanField(default=False)
     is_active           = models.BooleanField(default=True)

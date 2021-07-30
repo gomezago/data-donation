@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from authlib.integrations.django_client import OAuth
 from django.contrib.auth import authenticate, login, logout
 from .models import OAuth2Token
-from bucket_view.views import new_thing, create_thing
+
 
 OAUTH2_INTROSPECT_URL='https://dwd.tudelft.nl/oauth2/introspect'
 OAUTH2_TOKEN_URL='https://dwd.tudelft.nl/oauth2/token'
@@ -75,6 +75,8 @@ def bucket_login(request):
 
 def auth(request):
     token = oauth.bucket.authorize_access_token(request)
+    request.session['token'] = token
+
     resp = oauth.bucket.get(OAUTH2_PROFILE_URL, token=token)
     resp.raise_for_status()
     profile = resp.json()
@@ -82,7 +84,7 @@ def auth(request):
 
     bucket_user = authenticate(request, user=profile) #Returns Bucket User
     login(request, bucket_user, backend="bucket.auth.BucketAuthenticationBackend")
-    request.session['token'] = token
+
     #save_token(request, token)
 
     return redirect('/hello/')

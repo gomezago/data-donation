@@ -16,7 +16,7 @@ class Project(models.Model):
     start                   = models.DateField(blank=False)  # Start of project
     end                     = models.DateField(blank=False)  # End of project
     data_info               = models.TextField(blank=False, null=True) #TODO: ChoiceField?
-    #TODO: ThingId or GroupId
+    groupId                 = models.CharField(max_length=200, unique=True, default=None)
 
     def active(self):
         now = datetime.date.today()
@@ -27,5 +27,6 @@ class Project(models.Model):
 class Donation(models.Model):
     user                   = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     project                = models.ForeignKey('Project', on_delete=models.CASCADE)
+    propertyId             = models.CharField(max_length=200, unique=True, default=None)
     updates                = models.BooleanField(default=False)
     timestamp              = models.DateTimeField(auto_now_add=True)
