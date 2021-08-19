@@ -1,65 +1,83 @@
 {% load static %}
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<nav class="navbar navbar-expand-md navbar-light bg-light justify-content-center">
-    <div class="container">
-        <a class="navbar-brand" href="{% url 'pages_index' %}"><img src="{% static 'images/TULogo.png' %}" height="40"/></a>
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Designerly Data Donation</title>
+        <link rel="icon" type="image/x-icon" href="/static/images/DDD.svg">
+        <!-- Boostrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <!-- Font Awesome Icons -->
+        <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google Fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora|Roboto:400,700" rel="stylesheet">
+        <!-- CSS File -->
+        <link href="/static/css/base.css" rel="stylesheet">
 
-          <ul class="navbar-nav w-100 justify-content-center">
-            <li class="nav-item {% if request.resolver_match.url_name == 'pages_index' %}active{% endif %}">
-                <a class="nav-link" id="home" href="{% url 'pages_index' %}"><span class="small text-uppercase">Home</span></a>
-            </li>
-            <li class="nav-item {% if request.resolver_match.url_name == 'project_list' or request.resolver_match.url_name == 'project_view' %}active{% endif %}">
-              <a class="nav-link" id="projects" href="{% url 'project_list' %}"><span class="small text-uppercase">Projects</span></a>
-            </li>
-            <li class="nav-item {% if request.resolver_match.url_name == 'pages_about' %}active{% endif %}">
-                <a class="nav-link" id="about" href="{% url 'pages_about' %}"><span class="small text-uppercase">About Data Donation</span></a>
-            </li>
-            <li class="nav-item {% if request.resolver_match.url_name == 'pages_questions' %}active{% endif %}">
-                <a class="nav-link" id="team" href="{% url 'pages_questions' %}"><span class="small text-uppercase">Our Team</span></a>
-            </li>
-          </ul>
+    </head>
+
+    <body>
+        <!-- Navigation Bar -->
+        <nav class="navbar fixed-top navbar-light bg-light navbar-expand-md justify-content-center">
+            <a class="navbar-brand" href="{% url 'pages_index' %}"><img src="{% static 'images/DDDLogo.svg' %}" height="95px"/></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav w-100 justify-content-center">
+                  <li class="nav-item {% if request.resolver_match.url_name == 'pages_index' %}active{% endif %}">
+                    <a class="nav-link" id="home" href="{% url 'pages_index' %}"><span class="small text-uppercase">Home</span></a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'project_list' or request.resolver_match.url_name == 'project_view' %}active{% endif %}">
+                    <a class="nav-link" id="projects" href="{% url 'project_list' %}"><span class="small text-uppercase">Projects</span></a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'pages_about' %}active{% endif %}">
+                    <a class="nav-link" id="about" href="{% url 'pages_about' %}"><span class="small text-uppercase">About</span></a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'pages_questions' %}active{% endif %}">
+                    <a class="nav-link" id="team" href="{% url 'pages_questions' %}"><span class="small text-uppercase">People</span></a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'pages_publications' %}active{% endif %}">
+                    <a class="nav-link" id="team" href="{% url 'pages_publications' %}"><span class="small text-uppercase">Publications</span></a>
+                </li>
+              </ul>
 
 
-        {% if user.is_authenticated %}
-            <ul class="navbar-nav ml-auto w-100 justify-content-end">
-                <div class="dropdown">
-                    <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownUserButton" data-toggle="dropdown"><span class="small text-uppercase">{{ user.username }}</span></button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownUserButton">
-                        <a class="dropdown-item" href="/hello/"><span class="small text-uppercase">Dashboard</span></a>
-                        <a class="dropdown-item" href="#"><span class="small text-uppercase">Settings</span></a>
-                        <a class="dropdown-item" href="/bucket/logout/"><span class="small text-uppercase">Log Out</span></a>
+            {% if user.is_authenticated %}
+                <ul class="navbar-nav ml-auto w-100 justify-content-end">
+                    <div class="dropdown">
+                        <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownUserButton" data-toggle="dropdown"><span class="small text-uppercase">{{ user.username }}</span></button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownUserButton">
+                            <a class="dropdown-item" href="/hello/"><span class="small text-uppercase">Dashboard</span></a>
+                            <a class="dropdown-item" href="#"><span class="small text-uppercase">Settings</span></a>
+                            <a class="dropdown-item" href="/bucket/logout/"><span class="small text-uppercase">Log Out</span></a>
+                        </div>
                     </div>
-                </div>
-             </ul>
-        {% else %}
-             <ul class="navbar-nav ml-auto w-100 justify-content-end">
-                <a class="btn btn-dark navbar-btn" role="button"  href="/bucket/login/"><span class="small text-uppercase">Log in / Sign Up</span></a>
-            </ul>
-        {% endif %}
-    </div>
-</nav>
+                 </ul>
+            {% else %}
+                 <ul class="navbar-nav ml-auto w-100 justify-content-end">
+                    <a class="btn btn-dark navbar-btn" role="button"  href="/bucket/login/"><span class="small text-uppercase">Log in / Sign Up</span></a>
+                </ul>
+            {% endif %}
+            </div>
+        </nav>
 
 
-<div class="container">
-    {% block page_content %}{% endblock %}
-</div>
+        <main role="main">
+            {% block page_content %}{% endblock %}
+        </main>
 
-<div class="container-fluid px-0">
-<div class="row no-gutters">
-    {% block landing_page_content %}{% endblock %}
-</div>
-</div>
 
-<!---
-<footer>
-    <div class="text-left p-3" style="background-color: rgba(135, 203, 172, 0.1);">
-    Data-Centric Design Lab
-  </div>
-</footer>
--->
+        <footer class="footer">
+            <div class="container">
+                <span class="text-muted small text-uppercase">&copy; {% now 'Y' %} Designerly Data Donation</span>
+            </div>
+        </footer>
 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-
+        <!-- Boostrap core JavaScript -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    </body>
+</html>

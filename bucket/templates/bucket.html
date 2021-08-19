@@ -2,10 +2,14 @@
 {% block title %}Login{% endblock %}
 
 {% block page_content %}
-    {% if user %}
-        <h1>Hello</h1>
-    <hr>
-    {% else %}
-    <h1>Bye!</h1>
-    {% endif %}
+<section style="padding-top: 50px; padding-bottom: 50px">
+    <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+        {% if user %}
+            <h1>Hello</h1>
+        <hr>
+        {% else %}
+        <h1>Bye!</h1>
+        {% endif %}
+    </div>
+</section>
 {% endblock %}

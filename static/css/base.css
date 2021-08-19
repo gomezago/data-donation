@@ -1,0 +1,79 @@
+:root {
+
+}
+
+p {
+    font-family: 'Lora', Sans-Serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Roboto', Serif;
+}
+
+html{
+    position: relative;
+    min-height: 100%;
+}
+
+body{
+    margin-bottom: 60px; /* Margin bottom by footer height */
+    margin-top: 95px; /*NavBar */
+}
+
+.footer{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+    background-color: #f5f5f5;
+}
+
+.masthead{
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-height: 35rem;
+    padding: 15rem 0;
+}
+
+/* Featurettes */
+.featurette-divider {
+    margin: 5rem 0;
+}
+.featurette-heading{
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -.05rem;
+}
+
+/* Custom Button */
+.btn-primary{
+    color: #ffffff;
+    background-color: #499ed8;
+    border-color: #499ed8;
+}
+.btn-primary:focus,
+.btn-primary:hover{
+    color: #fff;
+    background-color: #277fb9;
+    border-color: #277fb9;
+}
+
+/* Custom Links */
+a{
+    color: #499ed8;
+}
+
+/* Custom Jumbotron */
+.jumbotron{
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    background-color: white;
+    height: 100%;
+}
+
+.container{
+    max-width: 960px;
+}

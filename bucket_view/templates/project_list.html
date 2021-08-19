@@ -1,26 +1,28 @@
 {% extends "base.html" %}
 {% load static %}
 {% block page_content %}
-<section style="padding-top: 20px">
-<h1>Active Projects</h1>
-<div class="row">
-{% for p in project %}
-        {% if p.active %}
-            <div class="col-md-4">
-                <div class="card mb-2">
-                    <!--<img class="card-img-top" src="">-->
-                    <div class="card-body">
-                        <h5 class="card-title">{{ p.title }}</h5>
-                        <p class="card-text">{{ p.description_tweet }}</p>
-                        <a href="{% url 'project_view' p.pk %}"
-                           class="btn btn-primary">
-                            Read More
-                        </a>
+<section style="padding-top: 50px; padding-bottom: 50px">
+    <div class="container">
+        <h1>Active Projects</h1>
+        <div class="row">
+        {% for p in project %}
+                {% if p.active %}
+                    <div class="col-md-4">
+                        <div class="card mb-2">
+                            <!--<img class="card-img-top" src="">-->
+                            <div class="card-body">
+                                <h5 class="card-title">{{ p.title }}</h5>
+                                <p class="card-text">{{ p.description_tweet }}</p>
+                                <a href="{% url 'project_view' p.pk %}"
+                                   class="btn btn-primary">
+                                    Read More
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        {% endif %}
-    {% endfor %}
-</div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
 </section>
 {% endblock %}

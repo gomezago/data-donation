@@ -1,15 +1,57 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block landing_page_content %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/landing.css' %}">
-<section class="landing-section landing-main">
-<div class="landing-overlay">
-    <div class="landing-description">
-        <h1><b>DATA DONATION</b></h1>
-        <p>Direct your <b>data</b> to the causes that matter to <b>you</b></p>
-        <a href="{% url 'project_list' %}" class="btn btn-primary">Get Started</a>
-    </div>
-</div>
-</section>
+{% block page_content %}
+    <!-- Cover -->
+    <section id="main">
+        <div class="jumbotron">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                            <h1 class="featurette-heading">Direct your data <span class="text-muted">where it matters.</span></h1>
+                            <a href="{% url 'project_list' %}" class="btn btn-primary">Get Started</a>
+                    </div>
+                     <div class="col-md-8">
+                            <img class="featurette-image img-fluid center-block mx-auto" src="{% static 'images/Intro_DDD.png' %}" alt="Data trace">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Explanation -->
+    <section>
+        <hr class="featurette-divider">
+            <div class="container">
+                <div class="row featurette align-items-center">
+                    <div class="col-md-7 order-md-2">
+                        <h1 class="featurette-heading">Data about you. <span class="text-muted">With you.</span></h1>
+                        <p>
+                            As we navigate the physical and digital world we leave behind an immense trail of data about us, describing what we do and how we do it.
+                            This trail of data is highly valuable for designers and researchers everywhere. However, it is often limited as it lacks details that only we can provide.<br>
+                            Through <b>Designerly Data Donation</b> we invite you to contribute to design and research projects addressing complex societal challenges by donating and enriching your personal data.
+                        </p>
+                    </div>
+                    <div class="col-md-5 order-md-1">
+                        <img class="featurette-image img-fluid mx-auto" src="{% static 'images/DataTrace.png' %}" alt="Data trace">
+                    </div>
+                </div>
+            </div>
+    </section>
+    <!-- About DDD -->
+    <section>
+        <hr class="featurette-divider">
+            <div class="container">
+                <div class="row featurette align-items-center">
+                    <div class="col-md-7">
+                        <h1 class="featurette-heading">What is <span class="text-muted">Designerly Data Donation?</span></h1>
+                        <p>Designerly Data Donation is intended to act as a bridge between designers and researchers (experts in their field), and people (experts in their experiences).<br>
+                            Designers and researchers, working on projects addressing complex societal challenges, become data receivers inviting you to contribute with your data and unique expertise.
+                            While you become a data donor, by directing your data towards projects and providing valuable complementary insights.</p>
+                    </div>
+                    <div class="col-md-5">
+                        <img class="featurette-image img-fluid mx-auto" src="{% static 'images/DescriptionDDD.png' %}" alt="Data trace">
+                    </div>
+                </div>
+            </div>
+    </section>
 {% endblock %}

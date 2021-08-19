@@ -9,3 +9,6 @@ def pages_about(request):
 
 def pages_questions(request):
     return render(request, 'pages_questions.html')
+
+def pages_publications(request):
+    return render(request, 'pages_publications.html')
