@@ -1,7 +1,16 @@
 from django import forms
 from django.core.validators import validate_image_file_extension
+from utils.bucket_functions import list_property_types
 
 class ProjectForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        data_choices = kwargs.pop("choices")
+        super(ProjectForm, self).__init__(*args, **kwargs)
+
+        self.fields['data'].choices = data_choices
+
+
     title = forms.CharField(
         required=True,
         label="Project Title",
@@ -45,14 +54,12 @@ class ProjectForm(forms.Form):
             }
         )
     )
-    data = forms.CharField(
+    data = forms.MultipleChoiceField(
+        choices=(),
         required=True,
-        label="Data",
-        max_length=400,
-        widget=forms.TextInput(
+        widget=forms.CheckboxSelectMultiple(
             attrs={
-                'class': 'form-control',
-                'placeholder': 'What data you aim to collect',
+                'class': 'checkbox',
             }
         )
     )
@@ -84,6 +91,8 @@ class ProjectForm(forms.Form):
         widget=forms.FileInput(
         )
     )
+
+
 
 class DonateForm(forms.Form):
     updates = forms.BooleanField(

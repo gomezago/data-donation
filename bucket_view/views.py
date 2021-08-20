@@ -2,7 +2,7 @@ from django.shortcuts import render
 import requests
 from .forms import ProjectForm, DonateForm
 from .models import Project, Donation
-from utils.bucket_functions import new_group, new_consent, new_property, create_group, create_property, grant_consent, list_consent
+from utils.bucket_functions import new_group, new_consent, new_property, create_group, create_property, grant_consent, list_consent, list_property_types
 
 def bucket_hello(request):
     project = Project.objects.all()
@@ -13,8 +13,11 @@ def bucket_hello(request):
 
 def bucket_new(request):
     if request.method == 'POST':
-        form = ProjectForm(request.POST, request.FILES)
+        property_types = get_property_types(request.session['token'])
+        form = ProjectForm(request.POST, request.FILES, choices = property_types)
         if form.is_valid():
+            print('Form is Valid')
+            print(form.cleaned_data['data'])
             print(request.user.user_id)
             group = new_group(form.cleaned_data['title'].replace(" ", ""),[request.user.user_id])
             group = create_group(group, request.session['token'])
@@ -33,14 +36,19 @@ def bucket_new(request):
                         groupId='dcd:groups:'+form.cleaned_data['title'].replace(" ", ""),
                     )
                 project.save()
-                form = ProjectForm()
+
+                property_types = get_property_types(request.session['token'])
+                form = ProjectForm(choices=property_types)
+                #form = ProjectForm()
                 return render(request, 'bucket_new.html', {'form': form})
             else:
                 print("Something went wrong with the Group...") #TODO: Deal with this
         else:
             print("Something went wrong with the Form...")  # TODO: Display message
     else:
-        form = ProjectForm()
+        property_types = get_property_types(request.session['token'])
+        form = ProjectForm(choices=property_types)
+        #form = ProjectForm()
     return render(request, 'bucket_new.html',  {'form' : form})
 
 def project_list(request):
@@ -91,3 +99,15 @@ def project_view(request, pk):
         form = DonateForm()
     return render(request, 'project_view.html', {'project': project, 'form': form})
 
+def get_property_types(token):
+    property_types = list_property_types(token)
+
+    if property_types.ok:
+        property_types = property_types.json()
+        property_types_list = []
+
+        for property in property_types:
+            property_types_list.append((property['id'], property['name']), )
+        #print(property_types_list)
+
+    return property_types_list

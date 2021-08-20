@@ -85,3 +85,12 @@ def get_groups(token):
 
     response = requests.get(CREATE_GROUP_URL, headers=hed)
     return response
+
+def list_property_types(token):
+
+    LIST_PROPERTY_TYPE_URL = "https://dwd.tudelft.nl/bucket/api/types/"
+
+    hed = {'Authorization': 'bearer ' + token['access_token']}
+
+    response = requests.get(LIST_PROPERTY_TYPE_URL, headers=hed)
+    return response
