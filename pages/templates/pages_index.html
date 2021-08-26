@@ -9,7 +9,7 @@
                 <div class="row align-items-center">
                     <div class="col-md-4">
                             <h1 class="featurette-heading">Direct your data <span class="text-muted">where it matters.</span></h1>
-                            <a href="{% url 'project_list' %}" class="btn btn-primary">Get Started</a>
+                            <a href="{% url 'project_list' %}" class="btn btn-primary">Donate</a>
                     </div>
                      <div class="col-md-8">
                             <img class="featurette-image img-fluid center-block mx-auto" src="{% static 'images/Intro_DDD.png' %}" alt="Data trace">
@@ -49,7 +49,29 @@
                             While you become a data donor, by directing your data towards projects and providing valuable complementary insights.</p>
                     </div>
                     <div class="col-md-5">
-                        <img class="featurette-image img-fluid mx-auto" src="{% static 'images/DescriptionDDD.png' %}" alt="Data trace">
+                        <img class="featurette-image img-fluid mx-auto" src="{% static 'images/DDD_Overview.png' %}" alt="Data trace">
+                    </div>
+                </div>
+            </div>
+    </section>
+    <!-- Get Started -->
+    <section>
+        <hr class="featurette-divider">
+            <div class="container">
+                <div class="row featurette align-items-center">
+                    <div class="col-md-7 order-md-2">
+                        <h1 class="featurette-heading">Getting <span class="text-muted">Started</span></h1>
+                        <p>
+                            To get started, you first should <a href="/bucket/login/">log in</a> or <a href="/bucket/login/">create a Data Centric Design Lab account</a>.
+                            <br>
+                            This step is necessary for you to <b>donate and control your data</b>, as well as <b>manage your donations</b> and <b>keep track of your contributions</b> across multiple projects over time.
+                        </p>
+                        <div class="row align-items-center justify-content-center">
+                            <a href="/bucket/login/" class="btn btn-primary">Log In / Sign Up</a>
+                        </div>
+                    </div>
+                    <div class="col-md-5 order-md-1">
+                        <img class="featurette-image img-fluid mx-auto" src="{% static 'images/login-h.png' %}" alt="Data trace">
                     </div>
                 </div>
             </div>

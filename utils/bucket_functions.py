@@ -16,7 +16,7 @@ def new_property(name, description, type):
         'name' : name,
         'description' : description,
         'type' : type,
-        'typeId' : None,
+        'typeId' : type,
     }
     return property
 
@@ -47,6 +47,16 @@ def create_property(thingId, property, token,):
     par = {'thingId': thingId}
     response = requests.post(CREATE_PROPERTY_URL, json=property, headers=hed, params=par)
     return response
+
+def update_property(thingId, propertyId, values, token):
+    UPDATE_PROPERTY_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}/properties/{propertyId}'
+
+    hed = {'Authorization': 'bearer ' + token['access_token']}
+    par = {'thingId': thingId, 'propertyId': propertyId}
+
+    response = requests.put(UPDATE_PROPERTY_URL, json=values, headers=hed, params=par)
+    return response
+
 
 def grant_consent(thingId, propertyId, consent, token):
 

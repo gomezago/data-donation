@@ -5,27 +5,38 @@
     <!-- Starting section-->
     <section style="padding-top: 50px; padding-bottom: 50px">
         <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
-            <h1>What is data donation?</h1>
-            <p> Have you ever wondered how you can contribute to <b>causes</b> that matter to you?
-                Well, you can do it through <b>data donation</b>.
-                By becoming a <b>data donor</b>, you give your <b>data</b> (e.g., pictures, audio recordings, sensor data, location logs) to <b>designers and researchers</b> working on data-centric design projects ranging from designing a new product or service to understanding the needs of people like you.
-                But that is not all, you can also opt for greater involvement in these projects by participating in later stages and receiving updates.
-            </p>
-            <br>
-            <h1>How can I become a data donor?</h1>
+            <h1>About Designerly Data Donation</h1>
+            <hr>
             <p>
-                To become a <b>data donor</b> you can <a href="{% url 'project_list' %}">select a project</a> that interests you and <b>submit your data</b>. You can choose to donate the same data to one or more projects.
-                Your data will be of great help for these projects, but you can help even more by giving more information about you and your context, that will result in more detailed insights, and agreeing to participate in additional activities such as workshops, co-creation sessions and interviews.
-                You can also choose to follow along the development of the project and receive information about the project’s outputs.
+               Designerly Data Donation allows designers and researchers, working on projects addressing complex societal challenges, to collaborate with diverse people willing to contribute throughout their personal data and experience.
             </p>
-            <br>
-            <h1>What happens to the data I donate?</h1>
+
+            <h3>Actors</h3>
             <p>
-                The data you donate will be stored in TU Delft servers and will be used to drive <b>design or research projects</b>, thus it might be used for scientific publications, news items, and blog posts.
-                It will be used by <b>designers or researchers</b> who are <u>committed to keeping you up to date</u> on how it is being used and what they are learning from it (if you are interested).<br>
+                Those who participate in Designerly Data Donation, this includes <b>Data Donors</b> and <b>Data Receivers</b>.
+                <ul id="account">
+                    <li><b>Data Donor:</b> Any person willing to contribute with their personal data to a specific project or context.</li>
+                    <li><b>Data Receiver:</b> Any person, group of people, or institution, running a design or research project who could benefit from having access to data and insights from potential contributors.</li>
+            </ul>
             </p>
+            <h3>Principles of Designerly Data Donation</h3>
+            <ul id="account">
+                <li><b>Open Information Flow:</b> When donating your data through our platform you are always going to find information about the Data Receivers, the duration of the project, the type of data being requested and how the data is going to be used.
+                    Besides, if you wish so, Data Receivers will keep you up to date on how your data is being used, what they are learning from it, and how it is contributing to their project.</li>
+                <li><b>Data Donors in Control:</b> As a Data Donor, you are always in control of your personal data. This means you decide which project to contribute to, in what way, and for how long, but also that you can reassess your decisions over time.
+                    You can always manage your donations, and delete any data you no longer wish to share. </li>
+                <li><b>Value Lies in Collaboration:</b>Data is great and everything. But it is limited without the unique experiences and expertise of those represented by the data.</li>
+            </ul>
+            <h3>Infrastructure</h3>
+            <p>
+                This platform is built upon existing tools of the <a href="https://datacentricdesign.org/">Data-Centric Design Lab</a>. Particularly <a href="https://dwd.tudelft.nl/bucket/about">Bucket</a>, a cloud application that facilitates the ingestion and distribution of data from various languages and platforms.<br>
+                <img class="featurette-image img-fluid mx-auto" src="{% static 'images/infrastructure.png' %}" alt="Data Infrastructure">
+                There are two ways in which you can donate your data. First, by manually uploading it to our platform. Second, by giving us permission to access data from a third party application. In both cases your data is processed by our platform, and then stored in Bucket. When you donate your data to a specific project, the Data Receivers of that project immediately have access to it until the project finishes, you revoke their access, or you delete the data.
+            </p>
+            If you are interested, you can <a href="https://dwd.tudelft.nl/bucket/about">read more about Bucket</a>, or <a href="https://github.com/datacentricdesign/bucket"> see the code in the GitHub Repository</a>.
         </div>
     </section>
+
 
 
 {% endblock %}

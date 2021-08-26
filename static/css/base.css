@@ -59,7 +59,12 @@ body{
     background-color: #277fb9;
     border-color: #277fb9;
 }
-
+.btn-primary:disabled,
+button[disabled]{
+    color: #fff;
+    background-color: #277fb9;
+    border-color: #277fb9;
+}
 /* Custom Links */
 a{
     color: #499ed8;
@@ -76,4 +81,28 @@ a{
 
 .container{
     max-width: 960px;
+}
+
+#publications  li {
+    font-family: 'Lora', Sans-Serif;
+}
+
+#publications  ul {
+    font-family: 'Lora', Sans-Serif;
+}
+
+#account  li {
+    font-family: 'Lora', Sans-Serif;
+}
+
+#account  ul {
+    font-family: 'Lora', Sans-Serif;
+}
+
+#principles  li {
+    font-family: 'Lora', Sans-Serif;
+}
+
+#principles  ol {
+    font-family: 'Lora', Sans-Serif;
 }

@@ -1,7 +1,6 @@
 from django import forms
-from django.core.validators import validate_image_file_extension
 from utils.bucket_functions import list_property_types
-
+from django.core.validators import FileExtensionValidator
 class ProjectForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
@@ -22,6 +21,19 @@ class ProjectForm(forms.Form):
             }
         )
     )
+
+    id = forms.CharField(
+        required=True,
+        label="Project ID",
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'The ID of your project',
+            }
+        )
+    )
+
     description_tweet = forms.CharField(
         required=True,
         label="Project Title",
@@ -87,14 +99,37 @@ class ProjectForm(forms.Form):
 
     image = forms.ImageField(
         required=False,
-        label="Upload Your Data:",
+        label="Upload Your Image:",
         widget=forms.FileInput(
+            attrs={
+                'class' : 'form-control',
+                'multiple' : False,
+                'accept': 'image/*',
+            }
         )
     )
 
 
 
 class DonateForm(forms.Form):
+    consent = forms.BooleanField(
+        initial=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class': 'checkbox',
+            }
+        )
+    )
+
+    adult = forms.BooleanField(
+        initial=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class': 'checkbox',
+            }
+        )
+    )
+
     updates = forms.BooleanField(
         initial=False,
         widget=forms.CheckboxInput(
@@ -105,9 +140,15 @@ class DonateForm(forms.Form):
     )
 
     data = forms.FileField(
-        required=False,
+        required=True,
         label="Upload Your Data:",
         widget=forms.FileInput(
+            attrs={
+                'multiple' : 'False', #TODO: At some point, allow for multiple uploads
+                'accept' : '.cluedata, .json, application/JSON,',
+                'class' : 'form-control',
+                #'style': 'display: none',
+            }
         )
     )
 

@@ -11,6 +11,10 @@
         <!-- Font Awesome Icons -->
         <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
         <!-- Google Fonts-->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+        <!--<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">-->
         <link href="https://fonts.googleapis.com/css?family=Lora|Roboto:400,700" rel="stylesheet">
         <!-- CSS File -->
         <link href="/static/css/base.css" rel="stylesheet">
@@ -25,7 +29,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
-                <ul class="navbar-nav w-100 justify-content-center">
+                <ul class="navbar-nav w-100 justify-content-center" id="navigation">
                   <li class="nav-item {% if request.resolver_match.url_name == 'pages_index' %}active{% endif %}">
                     <a class="nav-link" id="home" href="{% url 'pages_index' %}"><span class="small text-uppercase">Home</span></a>
                 </li>
@@ -45,7 +49,7 @@
 
 
             {% if user.is_authenticated %}
-                <ul class="navbar-nav ml-auto w-100 justify-content-end">
+                <ul class="navbar-nav ml-auto w-100 justify-content-end" id="navigation_login">
                     <div class="dropdown">
                         <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownUserButton" data-toggle="dropdown"><span class="small text-uppercase">{{ user.username }}</span></button>
                         <div class="dropdown-menu" aria-labelledby="dropdownUserButton">

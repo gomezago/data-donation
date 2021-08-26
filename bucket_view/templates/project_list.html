@@ -13,7 +13,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{ p.title }}</h5>
                                 <p class="card-text">{{ p.description_tweet }}</p>
-                                <a href="{% url 'project_view' p.pk %}"
+                                <a href="{% url 'project_view' pk=p.pk %}"
                                    class="btn btn-primary">
                                     Read More
                                 </a>
