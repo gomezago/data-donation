@@ -15,6 +15,13 @@ def bucket_hello(request):
 
 def donation_view(request, pk):
     donation = Donation.objects.get(pk=pk)
+    if request.method == 'POST':
+        # Delete Thing and Properties.
+        delete_request = delete_thing(donation.thingId, request.session['token'])
+        # Delete Donation from DB
+        Donation.objects.get(pk=pk).delete()
+        print(delete_request)
+        return render(request, 'bucket_hello.html', {})
     return render(request, 'donation_view.html', {'donation': donation})
 
 def bucket_new(request):

@@ -49,11 +49,15 @@ function createChart(){
 {% block page_content %}
     <section style="padding-top: 50px; padding-bottom: 50px">
         <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
-            <h1>Thank you for your donation to {{ donation.project.title }}</h1>
+            <h1>Your donation to {{ donation.project.title }}</h1>
             <hr>
             <div class="col-md-8 offset-md-2">
             <canvas id="myChart" width="250" height="250"></canvas>
             </div>
+            <form action="/donation/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
+            {% csrf_token %}
+            <button type="submit", class="btn btn-primary btn-xs" style="float: right">Delete Data</button>
+            </form>
         </div>
     </section>
 {% endblock %}

@@ -40,6 +40,15 @@ def create_thing(thing, token):
     response = requests.post(THING_URL, json=thing, headers=hed)
     return response
 
+def delete_thing(thingId, token):
+
+    DELETE_THING_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}'
+
+    hed = {'Authorization': 'bearer ' + token['access_token']}
+    par = {'thingId': thingId}
+    response = requests.delete(DELETE_THING_URL,headers=hed, params=par)
+    return response
+
 def create_property(thingId, property, token,):
 
     CREATE_PROPERTY_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}/properties'
