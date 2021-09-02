@@ -21,7 +21,9 @@ def donation_view(request, pk):
         # Delete Donation from DB
         Donation.objects.get(pk=pk).delete()
         print(delete_request)
-        return render(request, 'bucket_hello.html', {})
+        project = Project.objects.all()
+        #TODO: Try again if error
+        return render(request, 'bucket_hello.html', {'project':project}) #TODO: Show your data has been deleted message
     return render(request, 'donation_view.html', {'donation': donation})
 
 def bucket_new(request):
