@@ -50,7 +50,7 @@ oauth.register(
     fetch_token = fetch_bucket_token,
 
     client_kwargs={
-        'scope':'openid profile email offline dcd:things',
+        'scope':'openid profile email offline dcd:public dcd:things dcd:properties dcd:types dcd:consents',
     },
     kwargs={
         'token_endpoint_auth_methods_supported': None,

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+<script>
+{% block jquery %}
+var endpoint = '/data_count/{{ donation.pk }}'
+var count = []
+var labels
+$.ajax({
+    method: "GET",
+    url : endpoint,
+    success: function (data){
+        count = data.count
+        labels = data.name
+
+        createChart()
+
+        console.log(data)
+    },
+    error: function (error_data){
+        console.log("error")
+        console.log(error_data)
+    }
+    })
+
+function createChart(){
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Number of Entries',
+                    data: count,
+                     backgroundColor: [
+                        'rgba(165, 134, 181, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(165, 134, 181, 1)',
+                    ],
+                    borderWidth: 1,
+                }]
+            }
+        })
+}
+
+{% endblock %}
+</script>
+
+{% block page_content %}
+    <section style="padding-top: 50px; padding-bottom: 50px">
+        <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+            <h1>Thank you for your donation to {{ donation.project.title }}</h1>
+            <hr>
+            <div class="col-md-8 offset-md-2">
+            <canvas id="myChart" width="250" height="250"></canvas>
+            </div>
+        </div>
+    </section>
+{% endblock %}

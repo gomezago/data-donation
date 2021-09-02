@@ -6,4 +6,7 @@ urlpatterns = [
     path("new_project/", views.bucket_new, name="new"),
     path("project/", views.project_list, name="project_list"),
     path("project/<str:pk>/", views.project_view, name="project_view"),
+    path("donation/<str:pk>/", views.donation_view, name="donation_view"),
+    path("data_count/<str:pk>", views.get_data_count, name="data_count"),
+    path("data_time/", views.get_data, name="data_time"),
 ]

@@ -1,4 +1,5 @@
 import requests
+import time
 
 THING_URL = "https://dwd.tudelft.nl/bucket/api/things"
 
@@ -48,6 +49,15 @@ def create_property(thingId, property, token,):
     response = requests.post(CREATE_PROPERTY_URL, json=property, headers=hed, params=par)
     return response
 
+def delete_property(thingId, propertyId, token):
+
+    DELETE_PROPERTY_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}/properties/{propertyId}'
+
+    hed = {'Authorization': 'bearer ' + token['access_token']}
+    par = {'thingId': thingId, 'propertyId': propertyId}
+    response = requests.delete(DELETE_PROPERTY_URL, json=property, headers=hed, params=par)
+    return response
+
 def update_property(thingId, propertyId, values, token):
     UPDATE_PROPERTY_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}/properties/{propertyId}'
 
@@ -67,6 +77,7 @@ def grant_consent(thingId, propertyId, consent, token):
 
     response = requests.post(GRANT_CONSENT_URL, json=consent, headers=hed, params=par)
     return response
+
 
 def list_consent(thingId, propertyId, token):
 
@@ -103,4 +114,26 @@ def list_property_types(token):
     hed = {'Authorization': 'bearer ' + token['access_token']}
 
     response = requests.get(LIST_PROPERTY_TYPE_URL, headers=hed)
+    return response
+
+def read_property_data(thingId, propertyId, token):
+
+    READ_PROPERTY_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}/properties/{propertyId}'
+
+    hed = {'Authorization': 'bearer ' + token['access_token']}
+    par = {'thingId': thingId, 'propertyId': propertyId, 'from' : 0, 'to': round(time.time()*1000)} # Start and End Timestamps
+    response = requests.get(READ_PROPERTY_URL, headers=hed, params=par)
+
+    return response
+
+    #from=0&to={{$timestamp}}000
+
+def get_property_count(thingId, propertyId, token):
+
+    COUNT_PROPERTY_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}/properties/{propertyId}/count/'
+
+    hed = {'Authorization': 'bearer ' + token['access_token']}
+    par = {'thingId': thingId, 'propertyId': propertyId, 'from' : 0} # From the start...
+    response = requests.get(COUNT_PROPERTY_URL, headers=hed, params=par)
+
     return response

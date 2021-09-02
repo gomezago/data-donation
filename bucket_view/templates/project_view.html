@@ -5,6 +5,7 @@
     <div class="container">
         <div style="padding-top: 20px">
         <h1>{{ project.title }}</h1>
+              <hr>
             <p><b>Main Researcher:</b> {{ project.user }}<br>
                 <b>Contact Email: </b><a href="mailto:{{ project.user.email }}">{{ project.user.email }}</a><br>
                 <b>Duration:</b> {{project.start}} to {{ project.end }}</p>
