@@ -23,10 +23,10 @@ mult_values_dict = {
     'mood': ['happy', 'sensitive', 'sad', 'pms'],
     'sex' : ['protected', 'unprotected', 'high_sex_drive', 'withdrawal'],
     'energy' : ['energized', 'high_energy', 'low_energy', 'exhausted'],
-    'cravings' : ['sweet_craving', 'salty_craving', 'chocolate_craving', 'carbs_craving'],
+    'craving' : ['sweet_craving', 'salty_craving', 'chocolate_craving', 'carbs_craving'],
     'hair' : ['good_hair', 'bad_hair', 'oily_hair', 'dry_hair'],
     'digestion' : ['great_digestion', 'bloated', 'nauseated', 'gassy'],
-    'poop' : ['great_poop', 'diarrhea', 'normal_poop', 'constipation'],
+    'poop' : ['great_poop', 'diarrhea', 'normal_poop', 'constipated'],
     'skin' : ['good_skin', 'oily_skin', 'acne_skin', 'dry_skin'],
     'mental' : ['focused', 'distracted', 'calm', 'stressed'],
     'motivation' : ['motivated', 'unmotivated', 'productive', 'unproductive'],
@@ -44,9 +44,9 @@ sing_vales_dict = {
     'period' : ['heavy', 'medium', 'light', 'spotting'],
     'sleep' : ['0_to_3_hours', '3_to_6_hours', '6_to_9_hours', '9_or_more_hours'],
     'fluid' : ['creamy', 'egg_white', 'sticky', 'atypical'],
-    'ring' : ['retired', 'retired_late', 'replaced', 'replaced_late'],
-    'patch': ['retired', 'retired_late', 'replaced', 'replaced_late'],
-    'pill' : ['missed', 'unprotected', 'high_sex_drive', 'withdrawal'],
+    'ring' : ['removed', 'removed_late', 'replaced', 'replaced_late'],
+    'patch': ['removed', 'removed_late', 'replaced', 'replaced_late'],
+    'pill' : ['taken', 'missed', 'late', 'double'],
 }
 
 clue_bucket_dict = {
@@ -66,7 +66,7 @@ clue_bucket_dict = {
     'mood' : "MOOD",
     'weight' : "WEIGHT",
     'digestion' : "DIGESTION_QUALITY",
-    'craving' : "CRAVINGS_TYPE",
+    'craving' : "CRAVINGS",
     'collection_method' : "MENSTRUATION_COLLECTION_METHOD",
     'ring' : "CONTRACEPTIVE_RING_EVENT",
     'bbt' : "TEMPERATURE",
@@ -105,6 +105,8 @@ def read_clue_file(clue_file):
 
 def transform_clue_dict(clue_dict): #TODO: Birth Control?
     for k, v in clue_dict.items():
+        print(k)
+        print(v)
         if k in mult_values_dict:
             values = []
             for item in v:
@@ -146,15 +148,21 @@ def transform_clue_dict(clue_dict): #TODO: Birth Control?
                 values.append([item[0], item[1].get('duration_in_minutes')])
             clue_dict[k] = values
         elif k == 'injection':
-            clue_dict[k] = [APPLIED if x == 'administered' else x for group in v for x in group]
+            values = []
+            for item in v:
+                values.append([1 if x == "administered" else x for x in item])
+            clue_dict[k] = values
         elif k == 'iud':
-            clue_dict[k] = [INSERTED if x == 'inserted' else CHECKED if x == 'iud_checked'
-            else IUD_RETIRED if x == 'retired' else x for group in v for x in group]
+            values = []
+            for item in v:
+                values.append([0 if x == "inserted" else 1 if x == "thread_checked"
+                else 2 if x == "removed" else x for x in item])
+            clue_dict[k] = values
     return clue_dict
 
 def send_clue_data(thingId, data_dict, property_dict, token):
     for k, v in data_dict.items():
-        values = {'values': v}
         if k in clue_bucket_dict and clue_bucket_dict[k] in property_dict:
-            update = update_property(thingId, property_dict[clue_bucket_dict[k]], values, token)
-            print(update)
+            if v:
+                update = update_property(thingId, property_dict[clue_bucket_dict[k]], {'values': v}, token)
+                print(update)

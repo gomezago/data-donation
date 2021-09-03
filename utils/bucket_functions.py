@@ -40,6 +40,14 @@ def create_thing(thing, token):
     response = requests.post(THING_URL, json=thing, headers=hed)
     return response
 
+def get_thing_count(token):
+    COUNT_THING_URL = f'https://dwd.tudelft.nl/bucket/api/things/count/'
+
+    hed = {'Authorization': 'bearer ' + token['access_token']}
+    par = {'from' : 0, 'to': round(time.time()*1000)}
+    response = requests.get(COUNT_THING_URL,headers=hed, params=par)
+    return response
+
 def delete_thing(thingId, token):
 
     DELETE_THING_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}'

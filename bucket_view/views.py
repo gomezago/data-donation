@@ -1,6 +1,7 @@
 from django.shortcuts import render
 import json
 from .forms import ProjectForm, DonateForm
+from django.forms import model_to_dict
 from .models import Project, Donation
 from utils.bucket_functions import *
 from .clue_functions import read_clue_file, transform_clue_dict, send_clue_data
@@ -153,49 +154,63 @@ def initialize_donation(project, token):
                 #TODO: LOG
     return thingId, initialized_property_dict
 
-def get_data_count(request, pk):
+def get_data_count(request): #For Single Properties
 
-    donation = Donation.objects.get(pk=pk)
+    data_dict = {'data': []}
+
+    data_array = []
+
+    donations = Donation.objects.filter(user = request.user)
+    print(donations) #Queryset
+
+    for donation in donations:
+        donation_thing = donation.thingId
+        donation_properties = donation.propertyId
+
+        for k, v in donation_properties.items():
+            response = read_property_data(donation_thing, v, request.session['token'])
+
+            data_array.append({
+                    'name' : response.json()['name'],
+                    'group' : donation.project.title,
+                    'values' : len(response.json()['values']),
+               })
+
+    return JsonResponse(data_array, safe=False)
+
+def get_donations_count(request): #For Donation Dashboard
+
+    response = get_thing_count(request.session['token'])
+    #Transform into something nicer... :)
+
+    return JsonResponse(response.json(), safe=False)
+
+def get_data(request, pk):
+
+    donation = Donation.objects.get(pk = pk)
     donation_thing = donation.thingId
     donation_properties = donation.propertyId
 
-    names = []
-    count = []
-
+    data_dict = {'data': []}
     for k, v in donation_properties.items():
-        response = read_property_data(donation_thing, v, request.session['token'])
-
-        names.append(response.json()['name'])
-        count.append(len(response.json()['values']))
-
-    data= {
-        'name' : names,
-        'count' : count,
-    }
-    return JsonResponse(data, safe=False)
-
-def get_data(request):
-
-    donation = Donation.objects.get(user = request.user)
-    donation_thing = donation.thingId
-    donation_properties = donation.propertyId
-
-    dict_dat = {}
-
-    for k, v in donation_properties.items():
-        timestamp = []
-        values = []
-
         if k != 'TEXT':
             response = read_property_data(donation_thing, v, request.session['token'])
-            name = response.json()['name']
 
             for value in response.json()['values']:
                 if len(value) < 2:
-                    timestamp.append(value[0])
-                    values.append(value[1])
+                    #values.append([value[0], value[1]])
+                    #timestamp.append(value[0])
+                    values = value[1]
                 else:
-                    timestamp.append(value[0])
-                    values.append(sum(value[1:]))
+                    #values.append([value[0], sum(value[1:])])
+                    values = sum(value[1:])
+
+                data_dict['data'].append({
+                    'name' : response.json()['name'],
+                    'group' : response.json()['name'],
+                    'values' : values,
+                #'dimensions' : response.json()['type']['dimensions'],
+                })
+
             
-    return JsonResponse(dict_dat, safe=False)
+    return JsonResponse(data_dict, safe=False)
