@@ -8,6 +8,8 @@ import datetime
 class Project(models.Model):
     id                      = models.CharField(max_length=100, blank=False, unique=True, primary_key=True)
     user                    = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    researcher_name         = models.CharField(max_length=200, unique=False, default=None, null=True)
+    researcher_affiliation  = models.CharField(max_length=200, unique=False, default=None, null=True)
     title                   = models.CharField(max_length=100, blank=False) # Short string field to hold project name
     description_tweet       = models.CharField(max_length=280, blank=False)  # Tweet-Like description of project
     description             = models.TextField(blank=False)  # Large string frield to hold a piece of text

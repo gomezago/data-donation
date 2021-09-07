@@ -17,7 +17,31 @@ class ProjectForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 'class' : 'form-control',
-                'placeholder' : 'The amazing title of your project',
+                'placeholder' : 'Amazing title of your project',
+            }
+        )
+    )
+
+    researcher_name = forms.CharField(
+        required=True,
+        label="Researcher(s) Name(s)",
+        max_length=200,
+        widget=forms.TextInput(
+            attrs={
+                'class' : 'form-control',
+                'placeholder' : 'Name of the researcher(s)',
+            }
+        )
+    )
+
+    researcher_affiliation  = forms.CharField(
+        required=True,
+        label="Researcher(s) Affiliation(S)",
+        max_length=200,
+        widget=forms.TextInput(
+            attrs={
+                'class' : 'form-control',
+                'placeholder' : 'Affiliation of the researcher(s)',
             }
         )
     )
@@ -29,7 +53,7 @@ class ProjectForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'The ID of your project',
+                'placeholder': 'Short ID of your project',
             }
         )
     )
@@ -41,7 +65,7 @@ class ProjectForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 'class' : 'form-control',
-                'placeholder' : 'Tweet-like description',
+                'placeholder' : 'Describe your project in a tweet',
             }
         )
     )
@@ -49,10 +73,10 @@ class ProjectForm(forms.Form):
         required=True,
         label="Project Title",
         max_length=1000,
-        widget=forms.TextInput(
+        widget=forms.Textarea(
             attrs={
                 'class' : 'form-control',
-                'placeholder' : 'Extended description',
+                'placeholder' : 'Extended description of your project',
             }
         )
     )
@@ -79,10 +103,10 @@ class ProjectForm(forms.Form):
         required=True,
         label="Data",
         max_length=400,
-        widget=forms.TextInput(
+        widget=forms.Textarea(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'How you are using the data',
+                'placeholder': 'Describe how you are using the data',
             }
         )
     )
@@ -102,7 +126,8 @@ class ProjectForm(forms.Form):
         label="Upload Your Image:",
         widget=forms.FileInput(
             attrs={
-                'class' : 'form-control',
+                'class' : 'form-control-file',
+                'type' : 'file',
                 'multiple' : False,
                 'accept': 'image/*',
             }
@@ -144,9 +169,9 @@ class DonateForm(forms.Form):
         label="Upload Your Data:",
         widget=forms.FileInput(
             attrs={
+                'class' : 'form-control-file',
                 'multiple' : 'False', #TODO: At some point, allow for multiple uploads
                 'accept' : '.cluedata, .json, application/JSON,',
-                'class' : 'form-control',
                 #'style': 'display: none',
             }
         )

@@ -154,9 +154,7 @@ def initialize_donation(project, token):
                 #TODO: LOG
     return thingId, initialized_property_dict
 
-def get_data_count(request): #For Single Properties
-
-    data_dict = {'data': []}
+def get_data_count(request): #For User Dashboard
 
     data_array = []
 
@@ -178,39 +176,29 @@ def get_data_count(request): #For Single Properties
 
     return JsonResponse(data_array, safe=False)
 
-def get_donations_count(request): #For Donation Dashboard
-
-    response = get_thing_count(request.session['token'])
-    #Transform into something nicer... :)
-
-    return JsonResponse(response.json(), safe=False)
-
-def get_data(request, pk):
+def get_data(request, pk): #For Single Donation
 
     donation = Donation.objects.get(pk = pk)
     donation_thing = donation.thingId
     donation_properties = donation.propertyId
 
-    data_dict = {'data': []}
+    data_array = []
     for k, v in donation_properties.items():
-        if k != 'TEXT':
-            response = read_property_data(donation_thing, v, request.session['token'])
 
-            for value in response.json()['values']:
-                if len(value) < 2:
-                    #values.append([value[0], value[1]])
-                    #timestamp.append(value[0])
-                    values = value[1]
+        response = read_property_data(donation_thing, v, request.session['token'])
+        for value in response.json()['values']:
+            if len(value) < 2:
+                values = value[1]
+            else:
+                if k == 'TEXT':
+                    values = 1
                 else:
-                    #values.append([value[0], sum(value[1:])])
                     values = sum(value[1:])
 
-                data_dict['data'].append({
-                    'name' : response.json()['name'],
-                    'group' : response.json()['name'],
-                    'values' : values,
-                #'dimensions' : response.json()['type']['dimensions'],
+            data_array.append({
+                'name' : response.json()['name'],
+                'timestamp' : value[0],
+                'values' : values
                 })
 
-            
-    return JsonResponse(data_dict, safe=False)
+    return JsonResponse(data_array, safe=False)

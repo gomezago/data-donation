@@ -7,33 +7,48 @@
         <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
             <h1>About Designerly Data Donation</h1>
             <hr>
-            <p>
-               Designerly Data Donation allows designers and researchers, working on projects addressing complex societal challenges, to collaborate with diverse people willing to contribute throughout their personal data and experience.
+            <p>DDD is a platform where individuals donate data - and information about that data - to designers and researchers working on specific projects.
+               This platform allows designers and researchers, working on projects addressing complex societal challenges, to collaborate with people willing to contribute throughout their personal data and experience.
             </p>
 
             <h3>Actors</h3>
             <p>
-                Those who participate in Designerly Data Donation, this includes <b>Data Donors</b> and <b>Data Receivers</b>.
                 <ul id="account">
-                    <li><b>Data Donor:</b> Any person willing to contribute with their personal data to a specific project or context.</li>
-                    <li><b>Data Receiver:</b> Any person, group of people, or institution, running a design or research project who could benefit from having access to data and insights from potential contributors.</li>
+                    <li><b>Data Donors:</b> Any person willing to contribute with their personal data to a specific project or context.</li>
+                    <li><b>Data Receivers:</b> Any person, group of people, or institution, running a design or research project who could benefit from having access to data and insights from potential contributors.</li>
             </ul>
             </p>
             <h3>Principles of Designerly Data Donation</h3>
-            <ul id="account">
-                <li><b>Open Information Flow:</b> When donating your data through our platform you are always going to find information about the Data Receivers, the duration of the project, the type of data being requested and how the data is going to be used.
-                    Besides, if you wish so, Data Receivers will keep you up to date on how your data is being used, what they are learning from it, and how it is contributing to their project.</li>
-                <li><b>Data Donors in Control:</b> As a Data Donor, you are always in control of your personal data. This means you decide which project to contribute to, in what way, and for how long, but also that you can reassess your decisions over time.
-                    You can always manage your donations, and delete any data you no longer wish to share. </li>
-                <li><b>Value Lies in Collaboration:</b>Data is great and everything. But it is limited without the unique experiences and expertise of those represented by the data.</li>
-            </ul>
+            <ol id="steps">
+                <li><b>Valuable Collaboration:</b> Data is an incredible resource. However, it is limited without the unique experiences and expertise of those represented by the data. Through Designerly Data Donation we aim to develop trusted and valuable collaborations that start with data, but go way further.</li>
+                <li><b>Actionable Control:</b> Our main objective is to enable collaborations through data. For this, it is key that people not only have control of their personal data but also the mechanisms to exercise this control. Through Designerly Data Donation we give the first step in this direction.</li>
+                <li><b>Accessible Information:</b> Information flow is at the core of any successful collaboration. Through Designerly Data Donation, we aim to ensure that information flows openly and is accessible to both Data donors and Data Receivers.</li>
+            </ol>
+            <h3>Process</h3>
+            <p>Here is a step-by-step illustration of how DDD works:</p>
+             <div class="text-center" style="padding-bottom: 30px">
+            <img class="center featurette-image img-fluid mx-auto" src="{% static 'images/DDDProcess.png' %}" alt="Our Infrastructure." width="400">
+            </div>
+            <ol id="steps">
+                <li><b>Data Receiver(s)</b> working on a design or research project create a data donation call where they inform potential Data Donors about their project and extend an invitation to contribute through their data.</li>
+                <li><b>Data Donor(s)</b> interested in contributing to a project donate their data, and consent to their data being accessible to Data Receivers for the duration of the project. Here it is important to note that <b>any donated data will be associated with the identity of the Data Donor and will not be anonymized.</b><br>
+                    There are two ways in which <b>Data Donor(s)</b> can donate their data:
+                <ol id="steps">
+                    <li>Manually uploading it to our platform.</li>
+                    <li>Giving the DDD platform permission to access data from a third party application.</li>
+                    </ol>
+                This process depends on the entity controlling the data you want to donate and the facilities they offer to transfer data.</li>
+                <li><b>Data Donor(s) and Data Receivers(s)</b> collaborate to further the project and meet the project goals.</li>
+            </ol>
             <h3>Infrastructure</h3>
             <p>
-                This platform is built upon existing tools of the <a href="https://datacentricdesign.org/">Data-Centric Design Lab</a>. Particularly <a href="https://dwd.tudelft.nl/bucket/about">Bucket</a>, a cloud application that facilitates the ingestion and distribution of data from various languages and platforms.<br>
-                <img class="featurette-image img-fluid mx-auto" src="{% static 'images/infrastructure.png' %}" alt="Data Infrastructure">
-                There are two ways in which you can donate your data. First, by manually uploading it to our platform. Second, by giving us permission to access data from a third party application. In both cases your data is processed by our platform, and then stored in Bucket. When you donate your data to a specific project, the Data Receivers of that project immediately have access to it until the project finishes, you revoke their access, or you delete the data.
+                This platform is built upon the open-source tools of the <a href="https://datacentricdesign.org/">Data-Centric Design Lab</a>. Particularly <a href="https://datacentricdesign.org/tools/bucket">Bucket</a>, a cloud application that facilitates the ingestion and distribution of data from various languages and platforms. Our tools are hosted in <b>Delft, The Netherlands</b> by the <a href="https://www.tudelft.nl/en/">Technical University of Delft (TU Delft)</a>.<br>
+                If you are interested, you can see the code of <a href="#">Designerly Data Donation</a> and <a href="https://github.com/datacentricdesign/bucket">Bucket</a> in the GitHub Repository.
             </p>
-            If you are interested, you can <a href="https://dwd.tudelft.nl/bucket/about">read more about Bucket</a>, or <a href="https://github.com/datacentricdesign/bucket"> see the code in the GitHub Repository</a>.
+            <div class="text-center" style="padding-bottom: 30px">
+            <img class="center featurette-image img-fluid mx-auto" src="{% static 'images/Infrastructure_all.png' %}" alt="Our Infrastructure." width="600">
+            </div>
+
         </div>
     </section>
 

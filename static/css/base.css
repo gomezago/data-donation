@@ -83,6 +83,19 @@ a{
     max-width: 960px;
 }
 
+.custom-counter {
+  margin: 0;
+  padding: 0;
+}
+
+#steps li {
+    font-family: 'Lora', Sans-Serif;
+}
+
+#steps  ol {
+    font-family: 'Lora', Sans-Serif;
+}
+
 #publications  li {
     font-family: 'Lora', Sans-Serif;
 }

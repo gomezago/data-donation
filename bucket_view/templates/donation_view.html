@@ -1,58 +1,131 @@
 {% extends "base.html" %}
 
-<script>
-{% block jquery %}
-var endpoint = '/data_time/{{ donation.pk }}'
-var count = []
-var labels
-$.ajax({
-    method: "GET",
-    url : endpoint,
-    success: function (data){
-        count = data.count
-        labels = data.name
-
-        createChart()
-
-        console.log(data)
-    },
-    error: function (error_data){
-        console.log("error")
-        console.log(error_data)
-    }
-    })
-
-function createChart(){
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Number of Entries',
-                    data: count,
-                     backgroundColor: [
-                        'rgba(165, 134, 181, 0.2)',
-                    ],
-                    borderColor: [
-                        'rgba(165, 134, 181, 1)',
-                    ],
-                    borderWidth: 1,
-                }]
-            }
-        })
-}
-
-{% endblock %}
-</script>
-
 {% block page_content %}
     <section style="padding-top: 50px; padding-bottom: 50px">
         <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
             <h1>Your donation to {{ donation.project.title }}</h1>
             <hr>
-            <div class="col-md-8 offset-md-2">
-            <canvas id="myChart" width="250" height="250"></canvas>
+            <div class="col-md-8 offset-md-2" id="my_dataviz">
+            <script>
+                // set the dimensions and margins of the graph
+                const margin = {top: 80, right: 25, bottom: 30, left: 40},
+                  width = 550 - margin.left - margin.right,
+                  height = 550 - margin.top - margin.bottom;
+
+                // append the svg object to the body of the page
+                const svg = d3.select("#my_dataviz")
+                .append("svg")
+                  .attr("width", width + margin.left + margin.right)
+                  .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                  .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+                // Read data
+                d3.json("{% url 'data_time' donation.pk %}").then(function(data) {
+                  // Labels of row and columns
+                  const myGroups = Array.from(new Set(data.map(d => new Date(d.timestamp))))
+                  const myVars = Array.from(new Set(data.map(d => d.name)))
+
+                  // Build X scales and axis:
+                  const x = d3.scaleBand()
+                    .range([ 0, width ])
+                    .domain(myGroups)
+                    .padding(0.05);
+                  svg.append("g")
+                    .style("font-size", 10)
+                    .attr("transform", `translate(0, ${height})`)
+                    .call(d3.axisBottom(x).tickSize(0))
+                    .select(".domain").remove()
+
+                  // Build Y scales and axis:
+                  const y = d3.scaleBand()
+                    .range([ height, 0 ])
+                    .domain(myVars)
+                    .padding(0.05);
+                  svg.append("g")
+                    .style("font-size", 10)
+                    .call(d3.axisLeft(y).tickSize(0))
+                    .select(".domain").remove()
+
+                  // Build color scale
+                  const myColor = d3.scaleSequential()
+                    .interpolator(d3.interpolateInferno)
+                    .domain([
+                            0,
+                            d3.max(data, function (d){return d.values})
+                    ])
+
+                  // create a tooltip
+                  const tooltip = d3.select("#my_dataviz")
+                    .append("div")
+                    .style("opacity", 0)
+                    .attr("class", "tooltip")
+                    .style("background-color", "white")
+                    .style("border", "solid")
+                    .style("border-width", "2px")
+                    .style("border-radius", "5px")
+                    .style("padding", "5px")
+
+                  // Three function that change the tooltip when user hover / move / leave a cell
+                  const mouseover = function(event,d) {
+                    tooltip
+                      .style("opacity", 1)
+                    d3.select(this)
+                      .style("stroke", "black")
+                      .style("opacity", 1)
+                  }
+                  const mousemove = function(event,d) {
+                    tooltip
+                      .html("Entries: " + d.values)
+                      .style("left", (event.x)/2 + "px")
+                      .style("top", (event.y)/2 + "px")
+                  }
+                  const mouseleave = function(event,d) {
+                    tooltip
+                      .style("opacity", 0)
+                    d3.select(this)
+                      .style("stroke", "none")
+                      .style("opacity", 0.8)
+                  }
+
+                  // add the squares
+                  svg.selectAll()
+                    .data(data, function(d) {return d.timestamp+':'+d.name;})
+                    .join("rect")
+                      .attr("x", function(d) { return x(d.timestamp) })
+                      .attr("y", function(d) { return y(d.name) })
+                      .attr("rx", 4)
+                      .attr("ry", 4)
+                      .attr("width", x.bandwidth() )
+                      .attr("height", y.bandwidth() )
+                      .style("fill", function(d) { return myColor(d.values)} )
+                      .style("stroke-width", 4)
+                      .style("stroke", "none")
+                      .style("opacity", 0.8)
+                    .on("mouseover", mouseover)
+                    .on("mousemove", mousemove)
+                    .on("mouseleave", mouseleave)
+                })
+
+                // Add title to graph
+                svg.append("text")
+                        .attr("x", 0)
+                        .attr("y", -50)
+                        .attr("text-anchor", "left")
+                        .style("font-size", "22px")
+                        .text("Your Data Over Time");
+
+                // Add subtitle to graph
+                svg.append("text")
+                        .attr("x", 0)
+                        .attr("y", -20)
+                        .attr("text-anchor", "left")
+                        .style("font-size", "14px")
+                        .style("fill", "grey")
+                        .style("max-width", 400)
+                        .text("The donated data in the past three months...");
+
+            </script>
             </div>
             <form action="/donation/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
             {% csrf_token %}

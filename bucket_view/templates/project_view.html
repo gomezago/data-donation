@@ -6,8 +6,9 @@
         <div style="padding-top: 20px">
         <h1>{{ project.title }}</h1>
               <hr>
-            <p><b>Main Researcher:</b> {{ project.user }}<br>
+            <p><b>Main Researcher:</b> {{ project.researcher_name }}<br>
                 <b>Contact Email: </b><a href="mailto:{{ project.user.email }}">{{ project.user.email }}</a><br>
+                <b>Affiliation:</b> {{ project.researcher_affiliation }}<br>
                 <b>Duration:</b> {{project.start}} to {{ project.end }}</p>
         </div>
         <div class="row">
@@ -20,10 +21,13 @@
                 {% endif %}
             </div>
             <div class="col-md-7">
-                <h5>Project Information</h5>
+                <h5>Project Description</h5>
                 <p>{{ project.description }}</p>
                 <h5>Which data is required?</h5>
-                <p>{{ project.data }}</p>
+                <p>
+                    {% for key, value in project.data.items %}
+                        {{ value.0 }},
+                    {% endfor %}.</p>
                 <h5>How will the data be used?</h5>
                 <p>{{ project.data_info }}</p>
             </div>

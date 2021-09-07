@@ -114,4 +114,4 @@ def save_token(request, token):
 def bucket_logout(request):
     logout(request)
     request.session.pop('user', None)
-    return redirect('/bucket/')
+    return redirect('/')

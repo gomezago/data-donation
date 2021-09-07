@@ -12,3 +12,6 @@ def pages_questions(request):
 
 def pages_publications(request):
     return render(request, 'pages_publications.html')
+
+def pages_privacy(request):
+    return render(request, 'pages_privacy.html')
