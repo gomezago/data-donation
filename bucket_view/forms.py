@@ -81,6 +81,18 @@ class ProjectForm(forms.Form):
         )
     )
 
+    instructions = forms.CharField(
+        required=True,
+        label="Instructions",
+        max_length=1000,
+        widget=forms.Textarea(
+            attrs={
+                'class' : 'form-control',
+                'placeholder' : 'Describe the steps to follow in order to donate data to your project',
+            }
+        )
+    )
+
     hrec = forms.BooleanField(
         required=True,
         initial=False,

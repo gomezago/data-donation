@@ -3,9 +3,10 @@
 {% block page_content %}
     <section style="padding-top: 50px; padding-bottom: 50px">
         <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
-            <h1>Your donation to {{ donation.project.title }}</h1>
+            <h1>Donation to {{ donation.project.title }}</h1>
             <hr>
-            <div class="col-md-8 offset-md-2" id="my_dataviz">
+        </div>
+        <div class="col-md-8 offset-md-2" id="my_dataviz">
             <script>
                 // set the dimensions and margins of the graph
                 const margin = {top: 80, right: 25, bottom: 30, left: 40},
@@ -113,7 +114,7 @@
                         .attr("y", -50)
                         .attr("text-anchor", "left")
                         .style("font-size", "22px")
-                        .text("Your Data Over Time");
+                        .text("This is what your donation looks like");
 
                 // Add subtitle to graph
                 svg.append("text")
@@ -126,11 +127,21 @@
                         .text("The donated data in the past three months...");
 
             </script>
-            </div>
-            <form action="/donation/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
-            {% csrf_token %}
-            <button type="submit", class="btn btn-primary btn-xs" style="float: right">Delete Data</button>
-            </form>
         </div>
+            <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+                <h3>What Happens Next?</h3>
+                <p>If you agreed to further collaborate to this project, you will be soon contacted by the designers or researchers in charge.</p>
+                <h3>Manage Your Donation</h3>
+                <p>If you wish so, you can delete the data you have donated to <b>{{ donation.project.title }}</b>. This means that the designers or researchers in charge of this project will no longer have access to your data, and your data will no longer be stored in our DDD platform. This action is permanent.</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <form action="/donation/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <button type="submit", class="btn btn-danger btn-xs" style="float: right">Delete Data</button>
+                    </form>
+                </div>
+                <h3>Contact Information</h3>
+                <p>If you have questions or you would like to receive updates you can always contact {{ donation.project.researcher_name }}, the main researcher of this project by sending an email to: <a href="mailto:{{ donation.project.user.email }}">{{ donation.project.user.email }}</a>.</p>
+            </div>
+
     </section>
 {% endblock %}

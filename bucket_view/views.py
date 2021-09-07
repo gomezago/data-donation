@@ -54,6 +54,9 @@ def bucket_new(request):
                         end=form.cleaned_data['end'],
                         data_info=form.cleaned_data['data_info'],
                         groupId='dcd:groups:'+project_id,
+                        instructions=form.cleaned_data['instructions'],
+                        researcher_name=form.cleaned_data['researcher_name'],
+                        researcher_affiliation=form.cleaned_data['researcher_affiliation'],
                     )
                 project.save()
 
