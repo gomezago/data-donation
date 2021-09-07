@@ -1,12 +1,13 @@
 from django.shortcuts import render
 import json
 from .forms import ProjectForm, DonateForm
-from django.forms import model_to_dict
+from django.contrib.auth.decorators import login_required
 from .models import Project, Donation
 from utils.bucket_functions import *
 from .clue_functions import read_clue_file, transform_clue_dict, send_clue_data
 from django.http import HttpResponseRedirect, JsonResponse
 
+@login_required()
 def bucket_hello(request):
     project = Project.objects.all()
     context = {
@@ -14,6 +15,7 @@ def bucket_hello(request):
     }
     return render(request, 'bucket_hello.html', context)
 
+@login_required()
 def donation_view(request, pk):
     donation = Donation.objects.get(pk=pk)
     if request.method == 'POST':
@@ -27,6 +29,7 @@ def donation_view(request, pk):
         return render(request, 'bucket_hello.html', {'project':project}) #TODO: Show your data has been deleted message
     return render(request, 'donation_view.html', {'donation': donation})
 
+@login_required()
 def bucket_new(request):
     if request.method == 'POST':
         property_types = get_property_types(request.session['token'])
@@ -107,6 +110,7 @@ def project_view(request, pk):
         form = DonateForm()
     return render(request, 'project_view.html', {'project': project, 'form': form})
 
+
 def get_property_types(token):
     property_types = list_property_types(token)
 
@@ -154,6 +158,7 @@ def initialize_donation(project, token):
                 #TODO: LOG
     return thingId, initialized_property_dict
 
+@login_required()
 def get_data_count(request): #For User Dashboard
 
     data_array = []
@@ -176,6 +181,7 @@ def get_data_count(request): #For User Dashboard
 
     return JsonResponse(data_array, safe=False)
 
+@login_required()
 def get_data(request, pk): #For Single Donation
 
     donation = Donation.objects.get(pk = pk)
