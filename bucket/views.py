@@ -1,20 +1,12 @@
 import json
-import requests
+import environ
 from django.shortcuts import render, redirect
 from authlib.integrations.django_client import OAuth
 from django.contrib.auth import authenticate, login, logout
 from .models import OAuth2Token
 
-
-OAUTH2_INTROSPECT_URL='https://dwd.tudelft.nl/oauth2/introspect'
-OAUTH2_TOKEN_URL='https://dwd.tudelft.nl/oauth2/token'
-OAUTH2_REVOKE_URL='https://dwd.tudelft.nl/oauth2/revoke'
-OAUTH2_AUTH_URL='https://dwd.tudelft.nl/oauth2/auth'
-OAUTH2_PROFILE_URL='https://dwd.tudelft.nl/userinfo'
-OAUTH2_REDIRECT_URL='http://localhost:8000/bucket/auth'
-
-THING_URL = "https://dwd.tudelft.nl/bucket/api/things"
-
+env = environ.Env()
+environ.Env.read_env()
 oauth = OAuth()
 
 def fetch_bucket_token(request):
@@ -39,26 +31,26 @@ oauth = OAuth(update_token=update_bucket_token)
 oauth.register(
     name='bucket',
 
-    access_token_url=OAUTH2_TOKEN_URL,
+    access_token_url=env('OAUTH2_TOKEN_URL'),
     access_token_params=None,
 
-    authorize_url=OAUTH2_AUTH_URL,
+    authorize_url=env('OAUTH2_AUTH_URL'),
     authorize_params=None,
 
-    userinfo_endpoint=OAUTH2_PROFILE_URL,
+    userinfo_endpoint=env('OAUTH2_PROFILE_URL'),
 
     fetch_token = fetch_bucket_token,
 
     client_kwargs={
-        'scope':'openid profile email offline dcd:public dcd:things dcd:properties dcd:types dcd:consents',
+        'scope':env('DATA_DONATION_SCOPE')
     },
     kwargs={
         'token_endpoint_auth_methods_supported': None,
         'grant_types_supported': ["refresh_token", "authorization_code"],
         'response_types_supported': ["id_token", "token", "code"],
-        'introspection_endpoint' : OAUTH2_INTROSPECT_URL,
-        'revocation_endpoint' : OAUTH2_REVOKE_URL,
-        'authorization_endpoint' : OAUTH2_AUTH_URL,
+        'introspection_endpoint' : env('OAUTH2_INTROSPECT_URL'),
+        'revocation_endpoint' : env('OAUTH2_REVOKE_URL'),
+        'authorization_endpoint' : env('OAUTH2_AUTH_URL'),
     }
 )
 
@@ -70,14 +62,14 @@ def home(request):
 
 def bucket_login(request):
     bucket = oauth.create_client('bucket')
-    redirect_uri = OAUTH2_REDIRECT_URL
+    redirect_uri = env('OAUTH2_REDIRECT_URL')
     return bucket.authorize_redirect(request, redirect_uri)
 
 def auth(request):
     token = oauth.bucket.authorize_access_token(request)
     request.session['token'] = token
 
-    resp = oauth.bucket.get(OAUTH2_PROFILE_URL, token=token)
+    resp = oauth.bucket.get(env('OAUTH2_PROFILE_URL'), token=token)
     resp.raise_for_status()
     profile = resp.json()
     #request.session['user'] = profile
