@@ -125,12 +125,18 @@ class ProjectForm(forms.Form):
 
     start = forms.DateField(
         required=True,
-        widget=forms.SelectDateWidget()
+        widget=forms.SelectDateWidget(
+            attrs={
+            }
+        )
     )
 
     end = forms.DateField(
         required=True,
-        widget=forms.SelectDateWidget()
+        widget=forms.SelectDateWidget(
+            attrs={
+            }
+        )
     )
 
     image = forms.ImageField(
@@ -189,6 +195,28 @@ class DonateForm(forms.Form):
         )
     )
 
+
+class DemographicsForm(forms.Form):
+    SEX_CHOICES = (
+        (0, "---"),
+        (1, "Female"),
+        (2, "Male"),
+        (3, "Intersex"),
+    )
+
+    sex = forms.ChoiceField(
+        required=False,
+        label = "Your Sex: ",
+        choices=SEX_CHOICES,
+        widget=forms.Select(attrs={
+        })
+    )
+
+    date_of_birth = forms.DateField(
+        required = False,
+        widget = forms.SelectDateWidget(attrs={
+        })
+    )
 
 
 

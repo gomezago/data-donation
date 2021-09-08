@@ -1,6 +1,6 @@
 from django.shortcuts import render
 import json
-from .forms import ProjectForm, DonateForm
+from .forms import ProjectForm, DonateForm, DemographicsForm
 from django.contrib.auth.decorators import login_required
 from .models import Project, Donation
 from utils.bucket_functions import *
@@ -9,11 +9,39 @@ from django.http import HttpResponseRedirect, JsonResponse
 
 @login_required()
 def bucket_hello(request):
-    project = Project.objects.all()
-    context = {
-        'project': project
-    }
-    return render(request, 'bucket_hello.html', context)
+    if request.method == 'POST':
+        form = DemographicsForm(request.POST, request.FILES)
+        if form.is_valid():
+            timestamp = round(time.time()*1000)
+            sex = form.cleaned_data['sex']
+            date = form.cleaned_data['date_of_birth']
+            sex_data = {'values': [[timestamp, int(sex[0])]]}
+            print(sex_data)
+            date_data = {'values':[[timestamp, date.day, date.month, date.year]]}
+            print(date_data)
+            # Initialize Thing and Properties in Bucket
+            thingId, initialized_property_dict = initialize_demographics_donation(request.session['token'], sex_data, date_data)
+            # Save Donation
+            donation = Donation(
+                user=request.user,
+                data={'SEX': ['Sex', 'Sex'], 'DATE': ['Date', 'Date']},
+                project=Project.objects.get(id = 'ddd_demo'),
+                updates=False,
+                adult=True,
+                consent=True,
+                thingId=thingId,
+                propertyId=initialized_property_dict)
+            donation.save()
+            return render(request, 'bucket_hello.html', {})
+        else:
+            print("Something went wrong with the Form...") #TODO: Raise Message
+    else:
+        form = DemographicsForm()
+        donations = Donation.objects.filter(user=request.user)
+        if not donations:
+            return render(request, 'first_hello.html', {'form': form})
+        else:
+            return render(request, 'bucket_hello.html', {})
 
 @login_required()
 def donation_view(request, pk):
@@ -138,6 +166,28 @@ def get_property_description(token, selection):
                     break
     return selected_properties
 
+def initialize_demographics_donation(token, sex, age):
+    thing = new_thing('DDD Demographics', 'Demographic Data for DDD', 'We collect Demographic Data about the users of the DDD platform')
+    thing = create_thing(thing, token)
+
+    if thing.ok:
+        thingId = thing.json()['id']
+        sex_property = new_property(type='SEX', description='Sex', name='Sex')
+        sex_property = create_property(thingId, sex_property, token)
+
+        #Create Age Property:
+        age_property = new_property(type='DATE', description='Date of Birth', name='Date of Birth')
+        age_property = create_property(thingId, age_property, token)
+
+        if sex_property.ok:
+            sex_propertyId = sex_property.json()['id']
+            update_sex = update_property(thingId, sex_propertyId, sex, token)
+        if age_property.ok:
+            age_propertyId = age_property.json()['id']
+            update_age = update_property(thingId, age_propertyId, age, token)
+
+    return thingId, {'SEX' : sex_propertyId, 'DATE': age_propertyId}
+
 def initialize_donation(project, token):
     thing = new_thing(project.title, project.description, project.description)
     thing = create_thing(thing, token)
@@ -193,17 +243,9 @@ def get_data(request, pk): #For Single Donation
 
     data_array = []
     for k, v in donation_properties.items():
-
         response = read_property_data(donation_thing, v, request.session['token'])
         for value in response.json()['values']:
-            if len(value) < 2:
-                values = value[1]
-            else:
-                if k == 'TEXT':
-                    values = 1
-                else:
-                    values = sum(value[1:])
-
+            values = len(value[1:])
             data_array.append({
                 'name' : response.json()['name'],
                 'timestamp' : value[0],

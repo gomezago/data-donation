@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+{% block page_content %}
+<section style="padding-top: 50px; padding-bottom: 50px">
+    <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+        <h1>Your Donations</h1>
+        <hr>
+    </div>
+    <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+        <div class="row">
+            <div class="col-sm-4">
+                <img class="featurette-image img-fluid mx-auto" src="{% static 'images/Welcome.png' %}" alt="Welcome Celebration" width="100%">
+            </div>
+            <div class="col-sm-8">
+                <h3>Get Started</h3>
+                <p>Hey <b>{{ user }}</b>, we are excited to have you here!
+                    To get started you can donate your demographic data below. This will make the data you donate more useful to designers and researchers on our platform.
+                    You can also <a href="{% url 'project_list' %}">explore the projects you can contribute to.</a>
+                </p>
+                 <form class="row g-3" action="/hello/", method="post", enctype="multipart/form-data">
+                     {% csrf_token %}
+                      <div class="col-md">
+                        <label class="form-label">Sex</label>
+                        <div>{{ form.sex }}</div>
+                      </div>
+                      <div class="col-md-7">
+                        <label class="form-label">Date of Birth</label>
+                          <div>{{ form.date_of_birth }}</div>
+                      </div>
+                      <div class="col-12" style="padding-top: 10px">
+                        <button type="submit" class="btn btn-primary">Donate Demographics</button>
+                      </div>
+                 </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 50px">
+    <h3>What Happens When You Donate?</h3>
+        <p>Something happens when you donate.</p>
+    </div>
+    <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+    <h3>Create your Own Project</h3>
+        <p>If you want to start a project that could benefit from collaborations impulsed by data and you think <b>Designerly Data Donation</b> can help you meet your goals feel free to contact us by sending an email to: <a href="mailto:datadonation-ide@tudelft.nl">datadonation-ide@tudelft.nl</a>.</p>
+    </div>
+</section>
+{% endblock %}
