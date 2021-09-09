@@ -7,12 +7,17 @@
       <hr>
         <div class="row">
         {% for p in project %}
-                {% if p.active and p.id != 'ddd_demo' %}
+                {% if p.id != 'ddd_demo' %}
                     <div class="col-md-4">
                         <div class="card mb-2">
-                            <!--<img class="card-img-top" src="">-->
+                            <img class="card-img-top" src="{{ p.image.url }}">
                             <div class="card-body">
                                 <h5 class="card-title">{{ p.title }}</h5>
+                                {% if p.active %}
+                                    <h6><span class="small text-uppercase" style="color:#019875">STATUS: Open</span></h6>
+                                {% else %}
+                                <h6><span class="small text-uppercase" style="color:#B8293D">STATUS: Closed</span></h6>
+                            {% endif %}
                                 <p class="card-text">{{ p.description_tweet }}</p>
                                 <a href="{% url 'project_view' pk=p.pk %}"
                                    class="btn btn-primary">

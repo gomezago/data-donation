@@ -102,7 +102,7 @@ def bucket_new(request):
     return render(request, 'bucket_new.html',  {'form' : form})
 
 def project_list(request):
-    project = Project.objects.all()
+    project = Project.objects.all().order_by('-start')
     context = {
         'project': project
     }
