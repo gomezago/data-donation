@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block page_content %}
     <section style="padding-top: 50px; padding-bottom: 50px">
@@ -10,6 +11,7 @@
             <h3>Overview</h3>
             <p>This graph shows the number of entries you have donated for each data type over time.<br>
             <b>Last Updated:</b> {{ donation.timestamp.date }} </p>
+            <div id="loader" style="align-content: center; text-align: center"><img src="{% static 'images/spinner.gif' %}"></div>
             <script>
                 // set the dimensions and margins of the graph
                 var size = d3.select('#heatmap').node().getBoundingClientRect();
@@ -32,6 +34,7 @@
 
                 // Read data
                 d3.json("{% url 'data_time' donation.pk %}").then(function(data) {
+                    $("#loader").hide()
                   // Labels of row and columns
                   const myGroups = Array.from(new Set(data.map(d => new Date(d.timestamp))))
                   const myVars = Array.from(new Set(data.map(d => d.name)))
