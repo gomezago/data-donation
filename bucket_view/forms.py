@@ -214,7 +214,8 @@ class DemographicsForm(forms.Form):
 
     date_of_birth = forms.DateField(
         required = False,
-        widget = forms.SelectDateWidget(attrs={
+        widget = forms.SelectDateWidget(years = range(1955, 2025),attrs={
+
         })
     )
 
