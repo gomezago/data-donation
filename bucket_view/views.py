@@ -32,7 +32,9 @@ def bucket_hello(request):
                 thingId=thingId,
                 propertyId=initialized_property_dict)
             donation.save()
-            return render(request, 'bucket_hello.html', {})
+
+            donations = Donation.objects.filter(user=request.user)
+            return render(request, 'bucket_hello.html', {'donations': donations})
         else:
             print("Something went wrong with the Form...") #TODO: Raise Message
     else:
@@ -41,7 +43,7 @@ def bucket_hello(request):
         if not donations:
             return render(request, 'first_hello.html', {'form': form})
         else:
-            return render(request, 'bucket_hello.html', {})
+            return render(request, 'bucket_hello.html', {'donations': donations})
 
 @login_required()
 def donation_view(request, pk):

@@ -3,21 +3,30 @@
 {% block page_content %}
     <section style="padding-top: 50px; padding-bottom: 50px">
         <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
-            <h1>Donation to {{ donation.project.title }}</h1>
+            <h1>Your Donation to {{ donation.project.title }}</h1>
             <hr>
         </div>
-        <div class="col-md-8 offset-md-2" id="my_dataviz">
+        <div class="col-md-8 offset-md-2" id="heatmap">
+            <h3>Overview</h3>
+            <p>This graph shows the number of entries you have donated for each data type over time.<br>
+            <b>Last Updated:</b> {{ donation.timestamp.date }} </p>
             <script>
                 // set the dimensions and margins of the graph
-                const margin = {top: 80, right: 25, bottom: 30, left: 40},
-                  width = 550 - margin.left - margin.right,
-                  height = 550 - margin.top - margin.bottom;
+                var size = d3.select('#heatmap').node().getBoundingClientRect();
+                //var width_size = d3.select('#heatmap').node().getBoundingClientRect().width;
+                //var height_size = width_size/2;
+
+                const margin = {top: 0, right: 0, bottom: 0, left: 150},
+                  width = 700 - margin.left - margin.right,
+                  height = 500 - margin.top - margin.bottom;
 
                 // append the svg object to the body of the page
-                const svg = d3.select("#my_dataviz")
+                const svg = d3.select("#heatmap")
                 .append("svg")
-                  .attr("width", width + margin.left + margin.right)
-                  .attr("height", height + margin.top + margin.bottom)
+                   //.attr("width", width + margin.left + margin.right)
+                   //.attr("height", height + margin.top + margin.bottom)
+                    .attr('viewBox', '0 0 800 600')
+                    .attr('preserveAspectRatio', 'xMinYMin')
                 .append("g")
                   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
@@ -35,7 +44,12 @@
                   svg.append("g")
                     .style("font-size", 10)
                     .attr("transform", `translate(0, ${height})`)
-                    .call(d3.axisBottom(x).tickSize(0))
+                    .call(d3.axisBottom(x).tickSize(0).tickFormat(d3.timeFormat("%Y-%m-%d")))
+                    .selectAll("text")
+                        .style("text-anchor", "end")
+                        .attr("dx", "-.8em")
+                        .attr("dy", ".15em")
+                        .attr("transform", "rotate(-65)")
                     .select(".domain").remove()
 
                   // Build Y scales and axis:
@@ -50,14 +64,14 @@
 
                   // Build color scale
                   const myColor = d3.scaleSequential()
-                    .interpolator(d3.interpolateInferno)
+                    .interpolator(d3.interpolateCool)
                     .domain([
                             0,
                             d3.max(data, function (d){return d.values})
                     ])
 
                   // create a tooltip
-                  const tooltip = d3.select("#my_dataviz")
+                  const tooltip = d3.select("#heatmap")
                     .append("div")
                     .style("opacity", 0)
                     .attr("class", "tooltip")
@@ -77,7 +91,7 @@
                   }
                   const mousemove = function(event,d) {
                     tooltip
-                      .html("Entries: " + d.values)
+                      .html("<b>Entries:</b> " + d.values)
                       .style("left", (event.x)/2 + "px")
                       .style("top", (event.y)/2 + "px")
                   }
@@ -109,7 +123,7 @@
                 })
 
                 // Add title to graph
-                svg.append("text")
+                /*svg.append("text")
                         .attr("x", 0)
                         .attr("y", -50)
                         .attr("text-anchor", "left")
@@ -124,13 +138,15 @@
                         .style("font-size", "14px")
                         .style("fill", "grey")
                         .style("max-width", 400)
-                        .text("The donated data in the past three months...");
+                        .text("The donated data in the past three months...");*/
 
             </script>
         </div>
-            <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+            <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover;">
                 <h3>What Happens Next?</h3>
                 <p>If you agreed to further collaborate to this project, you will be soon contacted by the designers or researchers in charge.</p>
+                <h3>Contact Information</h3>
+                <p>If you have questions or you would like to receive updates you can always contact {{ donation.project.researcher_name }}, the main researcher of this project by sending an email to: <a href="mailto:{{ donation.project.user.email }}">{{ donation.project.user.email }}</a>.</p>
                 <h3>Manage Your Donation</h3>
                 <p>If you wish so, you can delete the data you have donated to <b>{{ donation.project.title }}</b>. This means that the designers or researchers in charge of this project will no longer have access to your data, and your data will no longer be stored in our DDD platform. This action is permanent.</p>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -139,8 +155,6 @@
                         <button type="submit", class="btn btn-danger btn-xs" style="float: right">Delete Data</button>
                     </form>
                 </div>
-                <h3>Contact Information</h3>
-                <p>If you have questions or you would like to receive updates you can always contact {{ donation.project.researcher_name }}, the main researcher of this project by sending an email to: <a href="mailto:{{ donation.project.user.email }}">{{ donation.project.user.email }}</a>.</p>
             </div>
 
     </section>
