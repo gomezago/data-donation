@@ -32,31 +32,45 @@
                     {% endfor %}.</p>
                 <h5>How will the data be used?</h5>
                 <p>{{ project.data_info }}</p>
-
+                <h5>How to donate?</h5>
+            <p>{{ project.instructions }}</p>
         </div>
         <section>
         <div class="container">
-        <h5>Donate Your Data</h5>
+        <h3>Donate Your Data</h3>
+        {% if not user.is_authenticated %}
+        <p>Remember that you first must <a href="/bucket/login/">log in</a> or <a href="/bucket/login/">create a user</a> to donate your data.</p>
+        {% endif %}
         {% if project.active %}
              <form action="/project/{{ project.pk }}/", method="post", enctype="multipart/form-data">
                 {% csrf_token %}
-                 <div class="form-group row" style="margin-bottom: .75%">
-                    <label class="col-sm-2 col-form-label col-form-label-sm">Your Data:</label>
-                    <div class="col-sm-10">{{ form.data }}</div>
+                 <div class="form-group">
+                    <label>Upload your data</label>
+                         {{ form.data }}
+                    <small class="form-tex text-muted">Upload the data you wish to donate. Note that {{ project.title }} only accepts .clue files. </small>
+                 </div>
+                 <div>
+                     <label>Are you over the age of 18?</label>
+                     <div class="form-group" style="padding-top: 0">
+                            {{ form.adult }}
+                            <small class="form-tex text-muted">By checking this box I confirm that I am 18 years or older.</small>
+                     </div>
                 </div>
-                 <div class="form-group row" style="margin-bottom: .75%">
-                    <label class="col-sm-2 col-form-label col-form-label-sm">18+:</label>
-                    <div class="col-sm-10">{{ form.adult }}</div>
+                <div>
+                     <label>Do you consent to donating your data to <b>{{ project.title }}</b>?</label>
+                     <div class="form-group" style="padding-top: 0">
+                           {{ form.consent }}
+                           <small class="form-tex text-muted">By checking this box I consent to donating my data to <b>{{ project.title }}</b>. I understand that this means that my data will be used by the Data Receiver(s) of the project as described on this page. </small>
+                     </div>
                 </div>
-                <div class="form-group row" style="margin-bottom: .75%">
-                    <label class="col-sm-2 col-form-label col-form-label-sm">Consent:</label>
-                    <div class="col-sm-10">{{ form.consent }}</div>
+                 <div>
+                     <label>Do you wish to receive updates from <b>{{ project.title }}</b>?</label>
+                     <div class="form-group" style="padding-top: 0">
+                        {{ form.updates}}
+                         <small class="form-tex text-muted">By checking this box, I agree to receive updates from this project.</small>
+                     </div>
                 </div>
-                <div class="form-group row" style="margin-bottom: .75%">
-                    <label class="col-sm-2 col-form-label col-form-label-sm">Updates:</label>
-                    <div class="col-sm-10">{{ form.updates }}</div>
-                </div>
-                <div class="form-row" style="margin-bottom: .75%">
+                <div class="form-row">
                     {% if user.is_authenticated %}
                         <button type="submit", class="btn btn-primary btn-xs" style="float: right">Donate</button>
                     {% else %}
@@ -64,6 +78,8 @@
                     {% endif %}
                 </div>
              </form>
+        {% else %}
+            <p>This project is closed. At this time you cannot donate your data. We invite you to <a href="{% url 'project_list' %}">explore other projects</a>.</p>
         {% endif %}
         </div>
       </section>
