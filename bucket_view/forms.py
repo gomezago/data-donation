@@ -105,9 +105,9 @@ class ProjectForm(forms.Form):
     data = forms.MultipleChoiceField(
         choices=(),
         required=True,
-        widget=forms.CheckboxSelectMultiple(
+        widget=forms.SelectMultiple(
             attrs={
-                'class': 'checkbox',
+                'class': 'form-control',
             }
         )
     )
@@ -127,6 +127,8 @@ class ProjectForm(forms.Form):
         required=True,
         widget=forms.SelectDateWidget(
             attrs={
+                'data-date-format' : 'dd/mm/yyy',
+                'class' : 'form-control snps-inline-select',
             }
         )
     )
@@ -135,6 +137,8 @@ class ProjectForm(forms.Form):
         required=True,
         widget=forms.SelectDateWidget(
             attrs={
+                'data-date-format': 'dd/mm/yyy',
+                'class': 'form-control snps-inline-select',
             }
         )
     )
@@ -155,8 +159,27 @@ class ProjectForm(forms.Form):
 
 
 class DonateForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        data_choices = kwargs.pop("choices")
+        super(DonateForm, self).__init__(*args, **kwargs)
+
+        self.fields['data_selection'].choices = data_choices
+
+    data_selection = forms.MultipleChoiceField(
+        choices=(),
+        required=True,
+        widget=forms.SelectMultiple(
+            attrs={
+                'class': 'form-control', #form-select in Boostrap 5
+            }
+        )
+    )
+
+
     consent = forms.BooleanField(
         initial=False,
+        required=True,
         widget=forms.CheckboxInput(
             attrs={
                 'class': 'checkbox',
@@ -166,6 +189,7 @@ class DonateForm(forms.Form):
 
     adult = forms.BooleanField(
         initial=False,
+        required=False,
         widget=forms.CheckboxInput(
             attrs={
                 'class': 'checkbox',
@@ -175,6 +199,7 @@ class DonateForm(forms.Form):
 
     updates = forms.BooleanField(
         initial=False,
+        required=False,
         widget=forms.CheckboxInput(
             attrs={
                 'class': 'checkbox',
@@ -209,13 +234,15 @@ class DemographicsForm(forms.Form):
         label = "Your Sex: ",
         choices=SEX_CHOICES,
         widget=forms.Select(attrs={
+            'class' : 'form-control',
         })
     )
 
     date_of_birth = forms.DateField(
         required = False,
         widget = forms.SelectDateWidget(years = range(1955, 2025),attrs={
-
+            'data-date-format': 'dd/mm/yyy',
+            'class': 'form-control snps-inline-select menu-scroll',
         })
     )
 

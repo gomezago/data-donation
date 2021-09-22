@@ -88,6 +88,22 @@ a{
   padding: 0;
 }
 
+.snps-inline-select {
+    width: auto;
+    display: inline-block;
+}
+
+.form-group.required .control-label:after {
+  content:"*";
+  color:red;
+}
+
+.menu-scroll {
+    overflow-y: scroll;
+    max-height: 100px;
+}
+
+
 #steps li {
     font-family: 'Lora', Sans-Serif;
 }

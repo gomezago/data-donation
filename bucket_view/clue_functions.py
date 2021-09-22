@@ -49,6 +49,40 @@ sing_vales_dict = {
     'pill' : ['taken', 'missed', 'late', 'double'],
 }
 
+bucket_clue_dict = {
+    "MENSTRUAL_PAIN_TYPE":'pain',
+    "MENSTRUATION_TYPE":'period',
+    "SLEEP_DURATION":'sleep',
+    "PERSONAL_ENERGY_LEVEL":'energy',
+    "HAIR_TYPE":'hair',
+    "SEXUAL_ACTIVITY":'sex',
+    "EXERCISE_TYPE":'exercise',
+    "SKIN_QUALITY":'skin',
+    "MENSTRUAL_FLUID_TYPE":'fluid',
+    "MOTIVATION_TYPE":'motivation',
+    "MENTAL_STATE":'mental',
+    "SOCIAL_MOOD":'social',
+    "POOP_QUALITY":'poop',
+    "MOOD":'mood',
+    "WEIGHT":'weight',
+    "DIGESTION_QUALITY":'digestion',
+    "CRAVINGS":'craving',
+    "MENSTRUATION_COLLECTION_METHOD":'collection_method',
+    "CONTRACEPTIVE_RING_EVENT":'ring',
+    "TEMPERATURE":'bbt',
+    "AILMENT_TYPE":'ailment',
+    "MENSTRUATION_TEST_EVENT":'test',
+    "CONTRACEPTIVE_INJECTION_EVENT":'injection',
+    "MEDITATION":'meditation',
+    "APPOINTMENT_TYPE":'appointment',
+    "SOCIAL_EVENT":'party',
+    "CONTRACEPTIVE_PATCH_EVENT":'patch',
+    "CONTRACEPTIVE_IUD_EVENT":'iud',
+    "TEXT":'tags',
+    "MEDICATION_TYPE":'medication',
+    "CONTRACEPTIVE_PILL_EVENT":'pill',
+}
+
 clue_bucket_dict = {
     'pain' : "MENSTRUAL_PAIN_TYPE",
     'period' : "MENSTRUATION_TYPE",
@@ -83,7 +117,9 @@ clue_bucket_dict = {
     'pill' : "CONTRACEPTIVE_PILL_EVENT",
 }
 
-def read_clue_file(clue_file):
+def read_clue_file(clue_file, choices):
+
+    selected_data = {k: bucket_clue_dict[k] for k in choices}
     new_dict = {}
 
     for dict_data in clue_file:
@@ -92,21 +128,20 @@ def read_clue_file(clue_file):
         timestamp_list = [timestamp_unix]
 
         for k, v in dict_data.items():
-            if v and k != 'day':
-                items = v
-                if type(items) != list:
-                    items = [items]
-                value = timestamp_list + items
-                if k in new_dict:
-                    new_dict[k].append(value)
-                else:
-                    new_dict[k] = [value]
+            if k in selected_data.values():
+                if v and k != 'day':
+                    items = v
+                    if type(items) != list:
+                        items = [items]
+                    value = timestamp_list + items
+                    if k in new_dict:
+                        new_dict[k].append(value)
+                    else:
+                        new_dict[k] = [value]
     return new_dict
 
-def transform_clue_dict(clue_dict): #TODO: Birth Control?
+def transform_clue_dict(clue_dict):
     for k, v in clue_dict.items():
-        print(k)
-        print(v)
         if k in mult_values_dict:
             values = []
             for item in v:

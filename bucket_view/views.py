@@ -7,6 +7,8 @@ from utils.bucket_functions import *
 from .clue_functions import read_clue_file, transform_clue_dict, send_clue_data
 from django.http import HttpResponseRedirect, JsonResponse
 
+
+
 @login_required()
 def bucket_hello(request):
     if request.method == 'POST':
@@ -108,39 +110,47 @@ def project_list(request):
     }
     return render(request, "project_list.html", context)
 
+
 def project_view(request, pk):
     project = Project.objects.get(pk=pk)
+    data_tuple = [(key, value[0]) for key, value in project.data.items()]
 
     if request.method == 'POST':
-        form = DonateForm(request.POST, request.FILES)
+        form = DonateForm(request.POST, request.FILES, choices=data_tuple)
         if form.is_valid():
             # Initialize Thing and Properties in Bucket
             thingId, initialized_property_dict = initialize_donation(project, request.session['token'])
 
+            #Read Data Choices
+            choices = form.cleaned_data['data_selection']
+
             # Read Data File
             data = json.load(form.cleaned_data['data'])
-            data_dict = read_clue_file(data['data'])
+            data_dict = read_clue_file(data['data'], choices)
             bucket_data_dict = transform_clue_dict(data_dict)
+            print(data_dict)
+            print(bucket_data_dict)
 
             send_clue_data(thingId, bucket_data_dict, initialized_property_dict, request.session['token'])
 
             # Save Donation
             donation = Donation(
                     user        = request.user,
-                    data = project.data, #TODO: Allow for choice
+                    data = project.data,
                     project     = project,
                     updates     = form.cleaned_data['updates'],
-                    adult       = form.cleaned_data['adult'],
+                    adult       = form.cleaned_data['adult'], #Participate
                     consent      = form.cleaned_data['consent'],
                     thingId     = thingId,
                     propertyId  = initialized_property_dict,
                 )
             donation.save()
+
             return render(request, "donation_view.html", {'donation': donation})
         else:
             print("Something went wrong with the Form...") #TODO: Raise Message
     else:
-        form = DonateForm()
+        form = DonateForm(choices=data_tuple)
     return render(request, 'project_view.html', {'project': project, 'form': form})
 
 
@@ -194,7 +204,6 @@ def initialize_donation(project, token):
     thing = new_thing(project.title, project.description, project.description)
     thing = create_thing(thing, token)
     if thing.ok:
-        print("Thing created")
         thingId = thing.json()['id']
 
         initialized_property_dict = {}
@@ -202,7 +211,6 @@ def initialize_donation(project, token):
             property = new_property(type=key, description=value[1], name=value[0])
             property = create_property(thingId, property, token)
             if property.ok:
-                print("Property created")
                 propertyId = property.json()['id']
                 initialized_property_dict[key] = propertyId
 
