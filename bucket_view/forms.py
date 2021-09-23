@@ -226,7 +226,7 @@ class DemographicsForm(forms.Form):
         (0, "---"),
         (1, "Female"),
         (2, "Male"),
-        (3, "Intersex"),
+        (3, "Prefer to Self-Describe"),
     )
 
     sex = forms.ChoiceField(
@@ -240,13 +240,14 @@ class DemographicsForm(forms.Form):
 
     date_of_birth = forms.DateField(
         required = False,
-        widget = forms.SelectDateWidget(years = range(1955, 2025),attrs={
-            'data-date-format': 'dd/mm/yyy',
+        widget = forms.SelectDateWidget(
+            years = range(1955, 2025),
+            attrs={
+            #'data-date-format': 'dd/mm/yyy',
             'class': 'form-control snps-inline-select menu-scroll',
+
         })
     )
-
-
 
 
 

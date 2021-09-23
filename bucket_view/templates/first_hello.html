@@ -14,21 +14,25 @@
             <div class="col-sm-8">
                 <h3>Get Started</h3>
                 <p>Hey <b>{{ user }}</b>, we are excited to have you here!
-                    To get started you can donate your demographic data below. This will make the data you donate more useful to designers and researchers on our platform.
-                    You can also <a href="{% url 'project_list' %}">explore the projects you can contribute to.</a>
+                    To get started you can donate your basic demographic data, you can donate neither, either, or both <b>gender</b> and <b>date of birth</b>. This will allow us to learn about the users of our platform and
+                    it will make it easier if you are ever contributing to a project where demographic data is requested.<br>
+                    <small><a href="/project/ddd_demo/">Read More</a></small>
                 </p>
                  <form class="row g-3" action="/hello/", method="post", enctype="multipart/form-data">
                      {% csrf_token %}
+                     {% include 'messages.html' %}
                       <div class="col-md">
-                        <label class="form-label">Sex</label>
+                        <label class="form-label">Gender</label>
                         <div>{{ form.sex }}</div>
                       </div>
                       <div class="col-md-7">
                         <label class="form-label">Date of Birth</label>
-                          <div>{{ form.date_of_birth }}</div>
+                          <div>
+                              {{ form.date_of_birth }}
+                          </div>
                       </div>
-                      <div class="col-12" style="padding-top: 10px">
-                        <button type="submit" class="btn btn-primary">Donate Demographics</button>
+                      <div class="col-md-7 order-2" style="padding-top: 10px">
+                        <button type="submit" class="btn btn-primary" style="float: left">Donate</button>
                       </div>
                  </form>
                 </div>
@@ -37,9 +41,33 @@
     </div>
     <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 50px">
     <h3>What Happens When You Donate?</h3>
-        <p>When you contribute to a project by donating your data you consent to your data being accessible to Data Receivers for the duration of the project. If at any point you want to delete your data or revoke access to your donation(s) you can do this directly from the DDDD Platform. In this case your data will be deleted or Data Receivers will no longer have access to it.</p>
+        <p>By donating your data you consent to your data being accessible to the project's <b>Data Receivers</b> for the entire duration of the project. If at any point you change your mind you can <b>delete</b> your data or <b>revoke access</b> to the Data Receivers. You can do this directly from your <a href="/hello">dashboard</a>.</p>
     </div>
-    <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+    <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 10px">
+    <h3>Browse our Projects</h3>
+        <p>Here is an overview of projects you can contribute to.</p>
+        <div class="row">
+        {% for p in project %}
+                {% if p.id != 'ddd_demo' %}
+                    <div class="col-md-4">
+                        <div class="card mb-2">
+                            <img class="card-img-top" src="{{ p.image.url }}">
+                            <div class="card-body">
+                                <h5 class="card-title"><a href="{% url 'project_view' pk=p.pk %}">{{ p.title }}</a></h5>
+                                <p class="card-text">{{ p.description_tweet }}</p>
+                                {% if p.active %}
+                                    <h6><span class="small text-uppercase" style="color:#019875; text-align: right">STATUS: Open</span></h6>
+                                {% else %}
+                                <h6><span class="small text-uppercase" style="color:#B8293D">STATUS: Closed</span></h6>
+                            {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 10px">
     <h3>Create your Own Project</h3>
         <p>If you want to start a project that could benefit from collaborations impulsed by data and you think <b>Designerly Data Donation</b> can help you meet your goals feel free to contact us by sending an email to: <a href="mailto:datadonation-ide@tudelft.nl">datadonation-ide@tudelft.nl</a>.</p>
     </div>

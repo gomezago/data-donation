@@ -2,6 +2,7 @@ from django.shortcuts import render
 import json
 from .forms import ProjectForm, DonateForm, DemographicsForm
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .models import Project, Donation
 from utils.bucket_functions import *
 from .clue_functions import read_clue_file, transform_clue_dict, send_clue_data
@@ -11,16 +12,22 @@ from django.http import HttpResponseRedirect, JsonResponse
 
 @login_required()
 def bucket_hello(request):
+    project = Project.objects.all().order_by('-start')[:3]
+
     if request.method == 'POST':
         form = DemographicsForm(request.POST, request.FILES)
         if form.is_valid():
             timestamp = round(time.time()*1000)
             sex = form.cleaned_data['sex']
+            if sex:
+                sex_data = {'values': [[timestamp, int(sex[0])]]}
+                print(sex_data)
+            else: sex_data = {}
             date = form.cleaned_data['date_of_birth']
-            sex_data = {'values': [[timestamp, int(sex[0])]]}
-            print(sex_data)
-            date_data = {'values':[[timestamp, date.day, date.month, date.year]]}
-            print(date_data)
+            if date:
+                date_data = {'values':[[timestamp, date.day, date.month, date.year]]}
+                print(date_data)
+            else: date_data = {}
             # Initialize Thing and Properties in Bucket
             thingId, initialized_property_dict = initialize_demographics_donation(request.session['token'], sex_data, date_data)
             # Save Donation
@@ -29,7 +36,7 @@ def bucket_hello(request):
                 data={'SEX': ['Sex', 'Sex'], 'DATE': ['Date', 'Date']},
                 project=Project.objects.get(id = 'ddd_demo'),
                 updates=False,
-                adult=True,
+                participate=True,
                 consent=True,
                 thingId=thingId,
                 propertyId=initialized_property_dict)
@@ -38,12 +45,13 @@ def bucket_hello(request):
             donations = Donation.objects.filter(user=request.user)
             return render(request, 'bucket_hello.html', {'donations': donations})
         else:
-            print("Something went wrong with the Form...") #TODO: Raise Message
+            messages.error(request, "Oops... Something went wrong. Please try again!")
+            return render(request, 'first_hello.html', {'form': form, 'project':project})
     else:
         form = DemographicsForm()
         donations = Donation.objects.filter(user=request.user)
         if not donations:
-            return render(request, 'first_hello.html', {'form': form})
+            return render(request, 'first_hello.html', {'form': form, 'project':project})
         else:
             return render(request, 'bucket_hello.html', {'donations': donations})
 
@@ -97,7 +105,8 @@ def bucket_new(request):
             else:
                 print("Something went wrong with the Group...") #TODO: Deal with this
         else:
-            print("Something went wrong with the Form...")  # TODO: Display message
+            messages.error(request, "Oops... Something went wrong. Please try again!")
+            return render(request, 'bucket_new.html', {'form': form})
     else:
         property_types = get_property_types(request.session['token'])
         form = ProjectForm(choices=property_types)
@@ -148,7 +157,8 @@ def project_view(request, pk):
 
             return render(request, "donation_view.html", {'donation': donation})
         else:
-            print("Something went wrong with the Form...") #TODO: Raise Message
+            messages.error(request, "Oops... Something went wrong. Please try again!")
+            return render(request, 'project_view.html', {'project': project, 'form': form})
     else:
         form = DonateForm(choices=data_tuple)
     return render(request, 'project_view.html', {'project': project, 'form': form})
@@ -191,12 +201,19 @@ def initialize_demographics_donation(token, sex, age):
         age_property = new_property(type='DATE', description='Date of Birth', name='Date of Birth')
         age_property = create_property(thingId, age_property, token)
 
+        #Consent
+        consent = new_consent(['dcd:groups:ddd_demo'], ['dcd:read'])
+
         if sex_property.ok:
             sex_propertyId = sex_property.json()['id']
-            update_sex = update_property(thingId, sex_propertyId, sex, token)
+            if sex:
+                update_sex = update_property(thingId, sex_propertyId, sex, token)
+                consent_sex = grant_consent(thingId, sex_propertyId, consent, token)
         if age_property.ok:
             age_propertyId = age_property.json()['id']
-            update_age = update_property(thingId, age_propertyId, age, token)
+            if age:
+                update_age = update_property(thingId, age_propertyId, age, token)
+                consent_sex = grant_consent(thingId, age_propertyId, consent, token)
 
     return thingId, {'SEX' : sex_propertyId, 'DATE': age_propertyId}
 

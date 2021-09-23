@@ -7,6 +7,7 @@
         <p>Hey <b>{{ user }}</b>, we are excited that you want to create a project on our platform. To get started fill this form with the required fields. Don't hesitate to contact us if you have any question, just send an email to <a href="mailto:datadonation-ide@tudelft.nl">datadonation-ide@tudelft.nl</a>.</p>
         <form action="/new_project/", method="post", enctype="multipart/form-data">
             {% csrf_token %}
+            {% include 'messages.html' %}
             <div class="form-group row required" style="margin-bottom: .75%">
                 <label class="col-sm-3 col-form-label col-form-label-sm control-label">Title</label>
                 <div class="col-sm-7">{{ form.title }}</div>
