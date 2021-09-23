@@ -139,7 +139,7 @@ def project_view(request, pk):
                     data = project.data,
                     project     = project,
                     updates     = form.cleaned_data['updates'],
-                    adult       = form.cleaned_data['adult'], #Participate
+                    participate       = form.cleaned_data['participate'],
                     consent      = form.cleaned_data['consent'],
                     thingId     = thingId,
                     propertyId  = initialized_property_dict,

@@ -187,7 +187,7 @@ class DonateForm(forms.Form):
         )
     )
 
-    adult = forms.BooleanField(
+    participate = forms.BooleanField(
         initial=False,
         required=False,
         widget=forms.CheckboxInput(

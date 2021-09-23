@@ -35,6 +35,6 @@ class Donation(models.Model):
     propertyId             = models.JSONField(blank=False, null=True)
     data                   = models.JSONField(blank=False, null=True) #Data this person wants to share
     consent                = models.BooleanField(default=False) # Consent to donate?
-    adult                  = models.BooleanField(default=False) # Older than 18+
+    participate                  = models.BooleanField(default=False) # Wants to further participate
     updates                = models.BooleanField(default=False) # Wants to receive updates?
     timestamp              = models.DateTimeField(auto_now_add=True)
