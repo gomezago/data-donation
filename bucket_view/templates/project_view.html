@@ -28,8 +28,8 @@
                 <h5>Which data is required?</h5>
                 <p>
                     {% for key, value in project.data.items %}
-                        {{ value.0 }},
-                    {% endfor %}.</p>
+                           {{ value.0 }}{% if forloop.last %}.{% else %}, {%endif%}
+                    {% endfor %}</p>
                 <h5>How will the data be used?</h5>
                 <p>{{ project.data_info }}</p>
                 <h5>How to donate?</h5>
