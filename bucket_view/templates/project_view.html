@@ -35,60 +35,78 @@
                 <h5>How to donate?</h5>
             <p>{{ project.instructions }}</p>
         </div>
-        {% if project.id != 'ddd_demo' %}
-            <section style="padding-top: 2.5%">
-            <div class="container">
+    </div>
+
+    <section style="padding-top: 2.5%">
+        <div class="container">
             <h3>Donate Your Data</h3>
+            {% include 'messages.html' %}
             {% if project.active %}
                 {% if not user.is_authenticated %}
                 <p>You first must <a href="/bucket/login/">log in</a> or <a href="/bucket/login/">create a user</a> to donate your data.</p>
                 {% else %}
-                     <form action="/project/{{ project.pk }}/", method="post", enctype="multipart/form-data">
-                        {% csrf_token %}
-                         {% include 'messages.html' %}
-                          <div class="form-group row required">
-                            <label class="col-sm-3 col-form-label col-form-label-sm control-label">Upload your Data</label>
-                             <div class="col-sm-7">
-                                {{ form.data }}
-                                 <small class="form-tex text-muted">Note that <b>{{ project.title }}</b> only accepts <b>.cluedata</b> files.</small>
+                    {% if project.id != 'ddd_demo' %}
+                         <form action="/project/{{ project.pk }}/", method="post", enctype="multipart/form-data">
+                            {% csrf_token %}
+                              <div class="form-group row required">
+                                <label class="col-sm-3 col-form-label col-form-label-sm control-label">Upload your Data</label>
+                                 <div class="col-sm-7">
+                                    {{ form.data }}
+                                     <small class="form-tex text-muted">Note that <b>{{ project.title }}</b> only accepts <b>.cluedata</b> files.</small>
+                                </div>
+                             </div>
+                             <div class="form-group row required">
+                                <label class="col-sm-3 col-form-label col-form-label-sm control-label">Select the Data</label>
+                                <div class="col-sm-7">
+                                    {{ form.data_selection }}
+                                    <small class="form-tex text-muted">Select the type(s) of data you wish to donate to <b>{{ project.title }}</b>. Hold <b>CTRL</b>, <b>⌘</b> or <b>drag with the mouse</b> to select more than one.</small>
+                                </div>
+                             </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label col-form-label-sm">Indicate your Preferences</label>
+                                <div class="col-sm-7">
+                                    <label>{{ form.updates }} I wish to receive updates from <b>{{ project.title }}</b></label>
+                                    <label>{{ form.participate }} I wish to further participate in <b>{{ project.title }}</b></label>
+                                </div>
                             </div>
-                         </div>
-                         <div class="form-group row required">
-                            <label class="col-sm-3 col-form-label col-form-label-sm control-label">Select the Data</label>
-                            <div class="col-sm-7">
-                                {{ form.data_selection }}
-                                <small class="form-tex text-muted">Select the type(s) of data you wish to donate to <b>{{ project.title }}</b>. Hold <b>CTRL</b>, <b>⌘</b> or <b>drag with the mouse</b> to select more than one.</small>
+                             <div class="form-group row required">
+                                <label class="col-sm-3 col-form-label col-form-label-sm control-label">Confirm your Agreement</label>
+                                <div class="col-sm-7">
+                                    <label class="control-label">{{ form.consent }} I have read and understood this page</label>
+                                    <label class="control-label">{{ form.consent }} I consent voluntarily to donate my data to <b>{{ project.title }}</b></label>
+                                    <label class="control-label">{{ form.consent }} I understand that I can <b>withdraw my donation</b> any time</label>
+                                    <label class="control-label">{{ form.consent }} I confirm that I am <b>18 years old or older</b></label>
+                                </div>
+                             </div>
+                            <div class="form-row">
+                                <div class="col-sm-3"></div>
+                                <div class="col-sm-7">
+                                    <button name="donate" type="submit", class="btn btn-primary btn-xs" style="float: left">Donate</button>
+                                </div>
                             </div>
-                         </div>
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label col-form-label-sm">Indicate your Preferences</label>
-                            <div class="col-sm-7">
-                                <label>{{ form.updates }} I wish to receive updates from <b>{{ project.title }}</b></label>
-                                <label>{{ form.participate }} I wish to further participate in <b>{{ project.title }}</b></label>
-                            </div>
-                         </div>
-                          <div class="form-group row required">
-                            <label class="col-sm-3 col-form-label col-form-label-sm control-label">Confirm your Agreement</label>
-                            <div class="col-sm-7">
-                                <label class="control-label">{{ form.consent }} I have read and understood this page</label>
-                                <label class="control-label">{{ form.consent }} I consent voluntarily to donate my data to <b>{{ project.title }}</b></label>
-                                <label class="control-label">{{ form.consent }} I understand that I can <b>withdraw my donation</b> any time</label>
-                                <label class="control-label">{{ form.consent }} I confirm that I am <b>18 years old or older</b></label>
-                            </div>
-                         </div>
-                        <div class="form-row">
-                            <div class="col-sm-3"></div>
-                            <div class="col-sm-7">
-                                <button type="submit", class="btn btn-primary btn-xs" style="float: left">Donate</button>
-                            </div>
-                        </div>
-                     </form>
+                         </form>
+                    {% else %}
+                        <form class="row g-3" action="/project/{{ project.pk }}/", method="post", enctype="multipart/form-data">
+                                 {% csrf_token %}
+                                  <div class="col-md">
+                                    <label class="form-label">Gender</label>
+                                    <div>{{ form.sex }}</div>
+                                  </div>
+                                  <div class="col-md-7">
+                                    <label class="form-label">Date of Birth</label>
+                                      <div>
+                                          {{ form.date_of_birth }}
+                                      </div>
+                                  </div>
+                                  <div class="col-md-7 order-2" style="padding-top: 10px">
+                                    <button name="demo" type="submit" class="btn btn-primary" style="float: left">Donate</button>
+                                  </div>
+                             </form>
+                    {% endif %}
                 {% endif %}
             {% else %}
                 <p>This project is closed. At this time you cannot donate your data. We invite you to <a href="{% url 'project_list' %}">explore other projects</a>.</p>
             {% endif %}
-            </div>
-          </section>
-        {% endif %}
-</section>
+        </div>
+    </section>
 {% endblock %}

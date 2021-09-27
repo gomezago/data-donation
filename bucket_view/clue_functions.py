@@ -123,7 +123,8 @@ def read_clue_file(clue_file, choices):
     new_dict = {}
 
     for dict_data in clue_file:
-        timestamp_date_time = datetime.strptime(dict_data['day'], '%Y-%m-%dT%H:%M:%SZ')
+        print(dict_data['day'])
+        timestamp_date_time = datetime.datetime.strptime(dict_data['day'], '%Y-%m-%dT%H:%M:%SZ')
         timestamp_unix = int(time.mktime(timestamp_date_time.timetuple())*1000) # Timestamp in ms
         timestamp_list = [timestamp_unix]
 

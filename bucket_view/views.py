@@ -130,45 +130,82 @@ def project_list(request):
 def project_view(request, pk):
     project = Project.objects.get(pk=pk)
     data_tuple = [(key, value[0]) for key, value in project.data.items()]
-
-    if request.method == 'POST':
-        form = DonateForm(request.POST, request.FILES, choices=data_tuple)
-        if form.is_valid():
-            # Initialize Thing and Properties in Bucket
-            thingId, initialized_property_dict = initialize_donation(project, request.session['token'])
-
-            #Read Data Choices
-            choices = form.cleaned_data['data_selection']
-
-            # Read Data File
-            data = json.load(form.cleaned_data['data'])
-            data_dict = read_clue_file(data['data'], choices)
-            bucket_data_dict = transform_clue_dict(data_dict)
-            print(data_dict)
-            print(bucket_data_dict)
-
-            send_clue_data(thingId, bucket_data_dict, initialized_property_dict, request.session['token'])
-
-            # Save Donation
-            donation = Donation(
-                    user        = request.user,
-                    data = project.data,
-                    project     = project,
-                    updates     = form.cleaned_data['updates'],
-                    participate       = form.cleaned_data['participate'],
-                    consent      = form.cleaned_data['consent'],
-                    thingId     = thingId,
-                    propertyId  = initialized_property_dict,
-                )
-            donation.save()
-
-            return render(request, "donation_view.html", {'donation': donation})
+    if pk == 'ddd_demo':
+        if request.method == 'POST' and 'demo' in request.POST:
+            form = DemographicsForm(request.POST, request.FILES)
+            if form.is_valid():
+                timestamp = round(time.time() * 1000)
+                sex = form.cleaned_data['sex']
+                if sex:
+                    sex_data = {'values': [[timestamp, int(sex[0])]]}
+                    print(sex_data)
+                else:
+                    sex_data = {}
+                date = form.cleaned_data['date_of_birth']
+                if date:
+                    date_data = {'values': [[timestamp, date.day, date.month, date.year]]}
+                    print(date_data)
+                else:
+                    date_data = {}
+                # Initialize Thing and Properties in Bucket
+                thingId, initialized_property_dict = initialize_demographics_donation(request.session['token'],
+                                                                                      sex_data, date_data)
+                # Save Donation
+                donation = Donation(
+                    user=request.user,
+                    data={'SEX': ['Sex', 'Sex'], 'DATE': ['Date', 'Date']},
+                    project=Project.objects.get(id='ddd_demo'),
+                    updates=False,
+                    participate=True,
+                    consent=True,
+                    thingId=thingId,
+                    propertyId=initialized_property_dict)
+                donation.save()
+                return render(request, "donation_view.html", {'donation': donation})
+            else:
+                messages.error(request, "Oops... Something went wrong. Please try again!")
+                return render(request, 'project_view.html', {'project': project, 'form': form})
         else:
-            messages.error(request, "Oops... Something went wrong. Please try again!")
+            form = DemographicsForm()
             return render(request, 'project_view.html', {'project': project, 'form': form})
     else:
-        form = DonateForm(choices=data_tuple)
-    return render(request, 'project_view.html', {'project': project, 'form': form})
+        if request.method == 'POST' and 'donate' in request.POST:
+            form = DonateForm(request.POST, request.FILES, choices=data_tuple)
+            if form.is_valid():
+                # Initialize Thing and Properties in Bucket
+                thingId, initialized_property_dict = initialize_donation(project, request.session['token'])
+
+                #Read Data Choices
+                choices = form.cleaned_data['data_selection']
+
+                # Read Data File
+                data = json.load(form.cleaned_data['data'])
+                data_dict = read_clue_file(data['data'], choices)
+                bucket_data_dict = transform_clue_dict(data_dict)
+                print(data_dict)
+                print(bucket_data_dict)
+
+                send_clue_data(thingId, bucket_data_dict, initialized_property_dict, request.session['token'])
+
+                # Save Donation
+                donation = Donation(
+                        user        = request.user,
+                        data = project.data,
+                        project     = project,
+                        updates     = form.cleaned_data['updates'],
+                        participate       = form.cleaned_data['participate'],
+                        consent      = form.cleaned_data['consent'],
+                        thingId     = thingId,
+                        propertyId  = initialized_property_dict,
+                    )
+                donation.save()
+                return render(request, "donation_view.html", {'donation': donation})
+            else:
+                messages.error(request, "Oops... Something went wrong. Please try again!")
+                return render(request, 'project_view.html', {'project': project, 'form': form})
+        else:
+            form = DonateForm(choices=data_tuple)
+            return render(request, 'project_view.html', {'project': project, 'form': form})
 
 
 def get_property_types(token):
