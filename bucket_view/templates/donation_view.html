@@ -142,13 +142,11 @@
                 </div>
                 <div class="col-md-4">
                     <h3>What Next?</h3>
-                    <p>If you agreed to further collaborate to this project, you will be soon contacted by the Data Receivers.</p>
+                    <p>If you agreed to further collaborate on this project, you will be soon contacted. For questions, you can always reach out to <b>{{ donation.project.researcher_name }}</b> by sending an email to: <a href="mailto:{{ donation.project.user.email }}">{{ donation.project.user.email }}</a>.</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover;">
-            <h3>Contact Information</h3>
-            <p>If you have questions or you would like to receive updates you can always contact <b>{{ donation.project.researcher_name }}</b>, the main researcher of this project, by sending an email to: <a href="mailto:{{ donation.project.user.email }}">{{ donation.project.user.email }}</a>.</p>
+        <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; margin-top: 20px">
             <h3>Manage Your Donation</h3>
             <p>If you wish so, you can <b>delete the data</b> you have donated to <b>{{ donation.project.title }}</b>. This means that the Data Receivers of this project will <b>no longer have access to your data</b>, and your data will <b>no longer be stored in our platform.</b></p>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
