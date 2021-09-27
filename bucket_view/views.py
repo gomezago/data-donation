@@ -7,7 +7,7 @@ from .models import Project, Donation
 from utils.bucket_functions import *
 from .clue_functions import read_clue_file, transform_clue_dict, send_clue_data
 from django.http import HttpResponseRedirect, JsonResponse
-
+from operator import itemgetter
 
 
 @login_required()
@@ -277,13 +277,16 @@ def get_data(request, pk): #For Single Donation
 
     data_array = []
     for k, v in donation_properties.items():
-        response = read_property_data(donation_thing, v, request.session['token'])
+        response = read_property_data_month(donation_thing, v, request.session['token'])
         for value in response.json()['values']:
-            values = len(value[1:])
+            if len(value[1:]) > 1:
+                values = len([x for x in value[1:] if x > 0])
+            else:
+                values = len(value[1:])
             data_array.append({
                 'name' : response.json()['name'],
                 'timestamp' : value[0],
                 'values' : values
                 })
-
-    return JsonResponse(data_array, safe=False)
+    sorted_data_array = sorted(data_array, key=itemgetter('timestamp'))
+    return JsonResponse(sorted_data_array, safe=False)

@@ -1,5 +1,6 @@
 import requests
 import time
+import datetime
 
 THING_URL = "https://dwd.tudelft.nl/bucket/api/things"
 
@@ -143,7 +144,18 @@ def read_property_data(thingId, propertyId, token):
 
     return response
 
-    #from=0&to={{$timestamp}}000
+def read_property_data_month(thingId, propertyId, token):
+        READ_PROPERTY_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}/properties/{propertyId}'
+
+        start = int((datetime.datetime.now() - datetime.timedelta(days=30)).timestamp() * 1000)
+        end = int((datetime.datetime.now().timestamp() * 1000))
+
+        hed = {'Authorization': 'bearer ' + token['access_token']}
+        par = {'thingId': thingId, 'propertyId': propertyId, 'from': start,
+               'to': end}  # Start and End Timestamps
+        response = requests.get(READ_PROPERTY_URL, headers=hed, params=par)
+
+        return response
 
 def get_property_count(thingId, propertyId, token):
 
