@@ -144,6 +144,30 @@
             </div>
     </div>
   </div>
+    <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 10px">
+    <h3>Browse our Projects</h3>
+        <p>Here are some projects you can contribute to.</p>
+        <div class="row">
+        {% for p in project %}
+                {% if p.id != 'ddd_demo' %}
+                    <div class="col-md-4">
+                        <div class="card mb-2">
+                            <img class="card-img-top" src="{{ p.image.url }}">
+                            <div class="card-body">
+                                <h5 class="card-title"><a href="{% url 'project_view' pk=p.pk %}">{{ p.title }}</a></h5>
+                                <p class="card-text">{{ p.description_tweet }}</p>
+                                {% if p.active %}
+                                    <h6><span class="small text-uppercase" style="color:#019875; text-align: right">STATUS: Open</span></h6>
+                                {% else %}
+                                <h6><span class="small text-uppercase" style="color:#B8293D">STATUS: Closed</span></h6>
+                            {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
     <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
     <h3>Create your Own Project</h3>
         <p>If you want to start a project that could benefit from collaborations impulsed by data and you think <b>Designerly Data Donation</b> can help you meet your goals feel free to contact us by sending an email to: <a href="mailto:datadonation-ide@tudelft.nl">datadonation-ide@tudelft.nl</a>.</p>

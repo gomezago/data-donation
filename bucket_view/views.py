@@ -43,7 +43,7 @@ def bucket_hello(request):
             donation.save()
 
             donations = Donation.objects.filter(user=request.user)
-            return render(request, 'bucket_hello.html', {'donations': donations})
+            return render(request, 'bucket_hello.html', {'donations': donations, 'project':project})
         else:
             messages.error(request, "Oops... Something went wrong. Please try again!")
             return render(request, 'first_hello.html', {'form': form, 'project':project})
@@ -53,7 +53,7 @@ def bucket_hello(request):
         if not donations:
             return render(request, 'first_hello.html', {'form': form, 'project':project})
         else:
-            return render(request, 'bucket_hello.html', {'donations': donations})
+            return render(request, 'bucket_hello.html', {'donations': donations, 'project':project})
 
 @login_required()
 def donation_view(request, pk):
