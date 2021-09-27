@@ -78,8 +78,8 @@ def donation_view(request, pk):
 
 @login_required()
 def bucket_new(request):
+    property_types = sorted(get_property_types(request.session['token']))
     if request.method == 'POST':
-        property_types = get_property_types(request.session['token'])
         form = ProjectForm(request.POST, request.FILES, choices = property_types)
         if form.is_valid():
             print('Form is Valid')
@@ -115,7 +115,6 @@ def bucket_new(request):
             messages.error(request, "Oops... Something went wrong. Please try again!")
             return render(request, 'bucket_new.html', {'form': form})
     else:
-        property_types = get_property_types(request.session['token'])
         form = ProjectForm(choices=property_types)
     return render(request, 'bucket_new.html',  {'form' : form})
 
@@ -129,7 +128,7 @@ def project_list(request):
 
 def project_view(request, pk):
     project = Project.objects.get(pk=pk)
-    data_tuple = [(key, value[0]) for key, value in project.data.items()]
+    data_tuple = sorted([(key, value[0]) for key, value in project.data.items()])
     if pk == 'ddd_demo':
         if request.method == 'POST' and 'demo' in request.POST:
             form = DemographicsForm(request.POST, request.FILES)

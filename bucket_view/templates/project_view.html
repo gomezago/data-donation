@@ -2,15 +2,13 @@
 {% load static %}
 {% block page_content %}
 <section style="padding-top: 50px; padding-bottom: 50px">
-    <div class="container">
-        <div style="padding-top: 20px">
+    <div class="container" style="padding-top:20px">
         <h1>{{ project.title }}</h1>
               <hr>
             <p><b>Main Researcher:</b> {{ project.researcher_name }}<br>
                 <b>Contact Email: </b><a href="mailto:{{ project.user.email }}">{{ project.user.email }}</a><br>
                 <b>Affiliation:</b> {{ project.researcher_affiliation }}<br>
                 <b>Duration:</b> {{project.start}} to {{ project.end }}</p>
-        </div>
         <div class="row">
             <div class="col-md-5">
                 <img class="card-img-top" src="{{ project.image.url }}" width="100%">
@@ -34,11 +32,7 @@
                 <p>{{ project.data_info }}</p>
                 <h5>How to donate?</h5>
             <p>{{ project.instructions }}</p>
-        </div>
-    </div>
 
-    <section style="padding-top: 2.5%">
-        <div class="container">
             <h3>Donate Your Data</h3>
             {% include 'messages.html' %}
             {% if project.active %}
@@ -108,5 +102,7 @@
                 <p>This project is closed. At this time you cannot donate your data. We invite you to <a href="{% url 'project_list' %}">explore other projects</a>.</p>
             {% endif %}
         </div>
-    </section>
+    </div>
+    </div>
+</section>
 {% endblock %}
