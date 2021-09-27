@@ -26,7 +26,6 @@
                         // Read data
                         d3.json("/data_count/").then(function(data) {
                           $("#loader").hide()
-                          // Filter a bit the data
                           data = data.filter(function(d){ return d.values>0
                           console.log(data)
                           })
@@ -44,10 +43,10 @@
                             ])
                             .range([7,55])  // circle will be between 7 and 55 px wide
 
-                          // create a tooltip
+                            // create a tooltip
                           const Tooltip = d3.select("#bubble_chart")
                             .append("div")
-                            .style("opacity", 1)
+                            .style("opacity", 0)
                             .attr("class", "tooltip")
                             .style("background-color", "white")
                             .style("border", "solid")
