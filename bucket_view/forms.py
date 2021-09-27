@@ -250,7 +250,55 @@ class DemographicsForm(forms.Form):
     )
 
 
+class MotivationForm(forms.Form):
+    significance = forms.BooleanField(
+        initial=False,
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class': 'checkbox',
+            }
+        )
+    )
 
+    curiosity = forms.BooleanField(
+        initial=False,
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class': 'checkbox',
+            }
+        )
+    )
+    researcher  = forms.BooleanField(
+        initial=False,
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class': 'checkbox',
+            }
+        )
+    )
+
+    participate = forms.BooleanField(
+        initial=False,
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class': 'checkbox',
+            }
+        )
+    )
+    other = forms.CharField(
+        required=False,
+        max_length=300,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Other...',
+            }
+        )
+    )
 
 
 

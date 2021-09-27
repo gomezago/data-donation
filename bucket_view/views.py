@@ -1,9 +1,9 @@
 from django.shortcuts import render
 import json
-from .forms import ProjectForm, DonateForm, DemographicsForm
+from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Project, Donation
+from .models import Project, Donation, Motivation
 from utils.bucket_functions import *
 from .clue_functions import read_clue_file, transform_clue_dict, send_clue_data
 from django.http import HttpResponseRedirect, JsonResponse
@@ -58,23 +58,46 @@ def bucket_hello(request):
 @login_required()
 def donation_view(request, pk):
     donation = Donation.objects.get(pk=pk)
-    if request.method == 'POST':
+
+    if request.method == 'POST' and 'delete' in request.POST:
         # Delete Thing and Properties.
         delete_request = delete_thing(donation.thingId, request.session['token'])
         # Delete Donation from DB
         Donation.objects.get(pk=pk).delete()
         print(delete_request) #TODO: Try again if error
-
         project = Project.objects.all()
-        form = DemographicsForm()
+        demo_form = DemographicsForm()
         donations = Donation.objects.filter(user=request.user)
         if not donations:
             messages.success(request, "Your data has been successfully deleted")
-            return render(request, 'first_hello.html', {'form': form, 'project': project})
+            return render(request, 'first_hello.html', {'form': demo_form, 'project': project})
         else:
             messages.success(request, "Your data has been successfully deleted")
-            return render(request, 'bucket_hello.html', {'donations': donations, 'project':project}) #TODO: Show your data has been deleted message
-    return render(request, 'donation_view.html', {'donation': donation})
+            return render(request, 'bucket_hello.html', {'donations': donations, 'project':project})
+
+    elif request.method == 'POST' and 'motivation' in request.POST:
+        moti_form = MotivationForm(request.POST)
+        if moti_form.is_valid():
+            motivation = Motivation(
+                user=request.user,
+                project=donation.project,
+                significance=moti_form.cleaned_data['significance'],
+                curiosity = moti_form.cleaned_data['curiosity'],
+                researcher = moti_form.cleaned_data['researcher'],
+                participate = moti_form.cleaned_data['participate'],
+                other = moti_form.cleaned_data['other'],
+            )
+            motivation.save()
+
+            moti_form = MotivationForm()
+            messages.success(request, "We have noted your answer! Thank you")
+            return render(request, 'donation_view.html', {'donation': donation, 'form': moti_form})
+        else:
+            messages.error(request, "Oops... Something went wrong. Please try again!")
+            return render(request, 'donation_view.html', {'donation': donation, 'form': moti_form})
+    else:
+        moti_form = MotivationForm()
+    return render(request, 'donation_view.html', {'donation': donation, 'form': moti_form})
 
 @login_required()
 def bucket_new(request):

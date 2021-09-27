@@ -141,20 +141,46 @@
                     </script>
                 </div>
                 <div class="col-md-4">
-                    <h3>What Next?</h3>
-                    <p>If you agreed to further collaborate on this project, you will be soon contacted. For questions, you can always reach out to <b>{{ donation.project.researcher_name }}</b> by sending an email to: <a href="mailto:{{ donation.project.user.email }}">{{ donation.project.user.email }}</a>.</p>
+                    <h5>What Next?</h5>
+                    <p>If you agreed to further collaborate on this project, you will be soon contacted. For questions, you can always reach out by sending an email to <a href="mailto:{{ donation.project.user.email }}">{{ donation.project.user.email }}</a>.</p>
+
+                <h5>Manage your Data</h5>
+                    <p>By clicking below, you can delete the data you have donated. This data will <b>no longer be stored on our platform</b> and <b>no one will have access to it</b>.</p>
+                    <form action="/donation/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <button name="delete" type="submit", class="btn btn-danger btn-xs">Delete Data</button>
+                    </form>
                 </div>
             </div>
         </div>
         <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; margin-top: 20px">
-            <h3>Manage Your Donation</h3>
-            <p>If you wish so, you can <b>delete the data</b> you have donated to <b>{{ donation.project.title }}</b>. This means that the Data Receivers of this project will <b>no longer have access to your data</b>, and your data will <b>no longer be stored in our platform.</b></p>
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <form action="/donation/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
+            <h3>Motivation</h3>
+            {% include 'messages.html' %}
+            <p><b>What prompted you to donate your data to this project?</b> We know this may not be an easy question, but your answer is very valuable to us. It will allow us to better understand how to reach people like you in the future. Don't worry, you don't have to answer if you don't want to.
+            </p>
+                 <form action="/donation/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
                     {% csrf_token %}
-                    <button type="submit", class="btn btn-danger btn-xs" style="float: right">Delete Data</button>
+                     <div class="form-group row">
+                        <label class="col-sm-3 col-form-label col-form-label-sm">Your Motivation</label>
+                        <div class="col-sm-7">
+                                <label>{{ form.significance }} I relate to the goals of this project and I want to help achieve them</label>
+                                <label>{{ form.curiosity }} I am curious to follow the progres and see how my data is used</label>
+                                <label>{{ form.researcher }} I have a personal connection to the researcher(s) of this project</label>
+                                <label>{{ form.participate }} I tend to participate in research activities when possible</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox">
+                                    {{ form.other }}
+                                    <small>Not on the list? Write your own.</small>
+                            </div>
+                        </div>
+                     </div>
+                    <div class="form-row">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-7">
+                            <button name="motivation" type="submit", class="btn btn-primary btn-xs">Sumbit</button>
+                        </div>
+                    </div>
                 </form>
-            </div>
         </div>
     </section>
 {% endblock %}

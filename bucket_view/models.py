@@ -38,3 +38,13 @@ class Donation(models.Model):
     participate                  = models.BooleanField(default=False) # Wants to further participate
     updates                = models.BooleanField(default=False) # Wants to receive updates?
     timestamp              = models.DateTimeField(auto_now_add=True)
+
+
+class Motivation(models.Model):
+    user                   = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    project                = models.ForeignKey('Project', on_delete=models.CASCADE, blank=True, null=True)
+    significance           = models.BooleanField(default=False)
+    curiosity              = models.BooleanField(default=False)
+    researcher             = models.BooleanField(default=False)
+    participate            = models.BooleanField(default=False)
+    other                  = models.CharField(max_length=300, blank=True, null=True)
