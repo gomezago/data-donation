@@ -5,6 +5,7 @@
     <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
         <h1>Your Donations</h1>
         <hr>
+         {% include 'messages.html' %}
     </div>
     <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
         <div class="row">
@@ -20,7 +21,6 @@
                 </p>
                  <form class="row g-3" action="/hello/", method="post", enctype="multipart/form-data">
                      {% csrf_token %}
-                     {% include 'messages.html' %}
                       <div class="col-md">
                         <label class="form-label">Gender</label>
                         <div>{{ form.sex }}</div>

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+from django.contrib.messages import constants as messages
 import os
 import environ
 
@@ -158,3 +159,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+
+MESSAGE_TAGS = {
+    messages.ERROR : 'danger'
+}

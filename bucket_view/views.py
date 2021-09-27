@@ -63,10 +63,17 @@ def donation_view(request, pk):
         delete_request = delete_thing(donation.thingId, request.session['token'])
         # Delete Donation from DB
         Donation.objects.get(pk=pk).delete()
-        print(delete_request)
+        print(delete_request) #TODO: Try again if error
+
         project = Project.objects.all()
-        #TODO: Try again if error
-        return render(request, 'bucket_hello.html', {'project':project}) #TODO: Show your data has been deleted message
+        form = DemographicsForm()
+        donations = Donation.objects.filter(user=request.user)
+        if not donations:
+            messages.success(request, "Your data has been successfully deleted")
+            return render(request, 'first_hello.html', {'form': form, 'project': project})
+        else:
+            messages.success(request, "Your data has been successfully deleted")
+            return render(request, 'bucket_hello.html', {'donations': donations, 'project':project}) #TODO: Show your data has been deleted message
     return render(request, 'donation_view.html', {'donation': donation})
 
 @login_required()
