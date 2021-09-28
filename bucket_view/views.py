@@ -186,7 +186,8 @@ def project_view(request, pk):
                     propertyId=initialized_property_dict)
                 donation.save()
                 logger.info("Donation by user {} to project {}".format(request.user.username, "Demographics"))
-                return render(request, "donation_view.html", {'donation': donation})
+                moti_form = MotivationForm()
+                return render(request, "donation_view.html", {'donation': donation, 'form':moti_form})
             else:
                 messages.error(request, "Oops... Something went wrong. Please try again!")
                 return render(request, 'project_view.html', {'project': project, 'form': form})
@@ -197,11 +198,11 @@ def project_view(request, pk):
         if request.method == 'POST' and 'donate' in request.POST:
             form = DonateForm(request.POST, request.FILES, choices=data_tuple)
             if form.is_valid():
-                # Initialize Thing and Properties in Bucket
-                thingId, initialized_property_dict = initialize_donation(project, request.session['token'])
-
                 #Read Data Choices
                 choices = form.cleaned_data['data_selection']
+
+                # Initialize Thing and Properties in Bucket
+                thingId, initialized_property_dict = initialize_donation(project, choices, request.session['token'])
 
                 # Read Data File
                 data = json.load(form.cleaned_data['data'])
@@ -223,7 +224,8 @@ def project_view(request, pk):
                     )
                 donation.save()
                 logger.info("Donation by user {} to project {}".format(request.user.username, project.title))
-                return render(request, "donation_view.html", {'donation': donation})
+                moti_form = MotivationForm()
+                return render(request, "donation_view.html", {'donation': donation, 'form':moti_form})
             else:
                 messages.error(request, "Oops... Something went wrong. Please try again!")
                 return render(request, 'project_view.html', {'project': project, 'form': form})
@@ -275,26 +277,27 @@ def initialize_demographics_donation(token, sex, age):
         if sex_property.ok:
             sex_propertyId = sex_property.json()['id']
             if sex:
-                update_sex = update_property(thingId, sex_propertyId, sex, token)
-                consent_sex = grant_consent(thingId, sex_propertyId, consent, token)
+                update_property(thingId, sex_propertyId, sex, token)
+                grant_consent(thingId, sex_propertyId, consent, token)
         if age_property.ok:
             age_propertyId = age_property.json()['id']
             if age:
-                update_age = update_property(thingId, age_propertyId, age, token)
-                consent_sex = grant_consent(thingId, age_propertyId, consent, token)
+                update_property(thingId, age_propertyId, age, token)
+                grant_consent(thingId, age_propertyId, consent, token)
     else:
         logger.error("Initializing donation to project {}".format("Demographics"))
 
     return thingId, {'SEX' : sex_propertyId, 'DATE': age_propertyId}
 
-def initialize_donation(project, token):
-    thing = new_thing(project.title, project.description, project.description)
+def initialize_donation(project, choices, token):
+    selected_data_dict = {k: project.data[k] for k in choices}
+    thing = new_thing(project.title, project.description_tweet, project.description_tweet)
     thing = create_thing(thing, token)
     if thing.ok:
         thingId = thing.json()['id']
 
         initialized_property_dict = {}
-        for key, value in project.data.items():
+        for key, value in selected_data_dict.items(): #project.data.items():
             property = new_property(type=key, description=value[1], name=value[0])
             property = create_property(thingId, property, token)
             if property.ok:
@@ -302,7 +305,7 @@ def initialize_donation(project, token):
                 initialized_property_dict[key] = propertyId
 
                 consent = new_consent([project.groupId], ['dcd:read'])
-                consent = grant_consent(thingId, propertyId, consent, token)
+                grant_consent(thingId, propertyId, consent, token)
             else:
                 logger.error("Initializing properties in donation to project {}".format(project.title))
     else:
