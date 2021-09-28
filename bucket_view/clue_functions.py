@@ -1,6 +1,9 @@
 from datetime import datetime
 from utils.bucket_functions import *
 import time
+import logging
+
+logger = logging.getLogger('data_donation_logs')
 
 # Clue Constants
 MENSTRUAL_PAIN_TYPE = 'pain'
@@ -123,7 +126,6 @@ def read_clue_file(clue_file, choices):
     new_dict = {}
 
     for dict_data in clue_file:
-        print(dict_data['day'])
         timestamp_date_time = datetime.datetime.strptime(dict_data['day'], '%Y-%m-%dT%H:%M:%SZ')
         timestamp_unix = int(time.mktime(timestamp_date_time.timetuple())*1000) # Timestamp in ms
         timestamp_list = [timestamp_unix]
@@ -200,5 +202,6 @@ def send_clue_data(thingId, data_dict, property_dict, token):
     for k, v in data_dict.items():
         if k in clue_bucket_dict and clue_bucket_dict[k] in property_dict:
             if v:
-                update = update_property(thingId, property_dict[clue_bucket_dict[k]], {'values': v}, token)
-                print(update)
+                update_property(thingId, property_dict[clue_bucket_dict[k]], {'values': v}, token)
+            else:
+                logger.error("Populating donation to project {}".format("Period Bytes"))

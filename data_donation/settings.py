@@ -163,3 +163,46 @@ DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 MESSAGE_TAGS = {
     messages.ERROR : 'danger'
 }
+
+LOGGING = {
+    'version' : 1,
+    'disable_existing_loggers' : False,
+
+    'formatters' : {
+        'timestamp' : {
+            'format' : '{levelname} {asctime} {message}',
+            'style' : '{',
+        },
+    },
+
+    'handlers' : {
+        'console' : {
+            'class' : 'logging.StreamHandler',
+            'level' : 'INFO',
+            'formatter': 'timestamp',
+        },
+        'file' : {
+            'class' : 'logging.FileHandler',
+            'filename' : 'data_donation/logs/log_file.log',
+            'level' : 'INFO',
+            'formatter': 'timestamp',
+        }
+    },
+    'root' : {
+      'handlers' : ['console', 'file'],
+      'level' : 'INFO'
+    },
+
+    'loggers' : {
+        'django' :{
+            'handlers' : ['console', 'file'],
+            'level' : 'ERROR',
+            'propagate' : False,
+        },
+        'data_donation_logs' : {
+            'handlers' : ['console', 'file'],
+            'level' : 'INFO',
+            'propagate': False,
+        }
+    },
+}

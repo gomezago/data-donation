@@ -1,5 +1,6 @@
-from django.shortcuts import render
 import json
+import logging
+from django.shortcuts import render
 from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -9,11 +10,11 @@ from .clue_functions import read_clue_file, transform_clue_dict, send_clue_data
 from django.http import HttpResponseRedirect, JsonResponse
 from operator import itemgetter
 
+logger = logging.getLogger('data_donation_logs')
 
 @login_required()
 def bucket_hello(request):
     project = Project.objects.all().order_by('-start')[:3]
-
     if request.method == 'POST':
         form = DemographicsForm(request.POST, request.FILES)
         if form.is_valid():
@@ -21,12 +22,10 @@ def bucket_hello(request):
             sex = form.cleaned_data['sex']
             if sex:
                 sex_data = {'values': [[timestamp, int(sex[0])]]}
-                print(sex_data)
             else: sex_data = {}
             date = form.cleaned_data['date_of_birth']
             if date:
                 date_data = {'values':[[timestamp, date.day, date.month, date.year]]}
-                print(date_data)
             else: date_data = {}
             # Initialize Thing and Properties in Bucket
             thingId, initialized_property_dict = initialize_demographics_donation(request.session['token'], sex_data, date_data)
@@ -41,7 +40,7 @@ def bucket_hello(request):
                 thingId=thingId,
                 propertyId=initialized_property_dict)
             donation.save()
-
+            logger.info("Donation by user {} to project {}".format(request.user.username, "Demographics"))
             donations = Donation.objects.filter(user=request.user)
             return render(request, 'bucket_hello.html', {'donations': donations, 'project':project})
         else:
@@ -62,9 +61,13 @@ def donation_view(request, pk):
     if request.method == 'POST' and 'delete' in request.POST:
         # Delete Thing and Properties.
         delete_request = delete_thing(donation.thingId, request.session['token'])
-        # Delete Donation from DB
-        Donation.objects.get(pk=pk).delete()
-        print(delete_request) #TODO: Try again if error
+        if delete_request.ok:
+            # Delete Donation from DB
+            Donation.objects.get(pk=pk).delete()
+            logger.info("User {} deleted donation to project {}".format(request.user.username, donation.project.title))
+        else:
+            logger.error("User {} failed to delete donation to project {}".format(request.user.username, donation.project.title))
+
         project = Project.objects.all()
         demo_form = DemographicsForm()
         donations = Donation.objects.filter(user=request.user)
@@ -105,12 +108,11 @@ def bucket_new(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST, request.FILES, choices = property_types)
         if form.is_valid():
-            print('Form is Valid')
             project_id = "ddd_" + form.cleaned_data['id'].lower()
             group = new_group(project_id,[request.user.user_id])
             group = create_group(group, request.session['token'])
             if group.ok:
-                print(get_property_description(request.session['token'],form.cleaned_data['data']))
+                #print(get_property_description(request.session['token'],form.cleaned_data['data']))
                 project = Project(
                         user=request.user,
                         title=form.cleaned_data['title'],
@@ -133,7 +135,9 @@ def bucket_new(request):
                 form = ProjectForm(choices=property_types)
                 return render(request, 'bucket_new.html', {'form': form})
             else:
-                print("Something went wrong with the Group...") #TODO: Deal with this
+                logger.error("User {} failed to create new project {}".format(request.user.username))
+                messages.error(request, "Oops... Something went wrong. Please try again!")
+                return render(request, 'bucket_new.html', {'form': form})
         else:
             messages.error(request, "Oops... Something went wrong. Please try again!")
             return render(request, 'bucket_new.html', {'form': form})
@@ -160,13 +164,11 @@ def project_view(request, pk):
                 sex = form.cleaned_data['sex']
                 if sex:
                     sex_data = {'values': [[timestamp, int(sex[0])]]}
-                    print(sex_data)
                 else:
                     sex_data = {}
                 date = form.cleaned_data['date_of_birth']
                 if date:
                     date_data = {'values': [[timestamp, date.day, date.month, date.year]]}
-                    print(date_data)
                 else:
                     date_data = {}
                 # Initialize Thing and Properties in Bucket
@@ -183,6 +185,7 @@ def project_view(request, pk):
                     thingId=thingId,
                     propertyId=initialized_property_dict)
                 donation.save()
+                logger.info("Donation by user {} to project {}".format(request.user.username, "Demographics"))
                 return render(request, "donation_view.html", {'donation': donation})
             else:
                 messages.error(request, "Oops... Something went wrong. Please try again!")
@@ -204,8 +207,6 @@ def project_view(request, pk):
                 data = json.load(form.cleaned_data['data'])
                 data_dict = read_clue_file(data['data'], choices)
                 bucket_data_dict = transform_clue_dict(data_dict)
-                print(data_dict)
-                print(bucket_data_dict)
 
                 send_clue_data(thingId, bucket_data_dict, initialized_property_dict, request.session['token'])
 
@@ -221,6 +222,7 @@ def project_view(request, pk):
                         propertyId  = initialized_property_dict,
                     )
                 donation.save()
+                logger.info("Donation by user {} to project {}".format(request.user.username, project.title))
                 return render(request, "donation_view.html", {'donation': donation})
             else:
                 messages.error(request, "Oops... Something went wrong. Please try again!")
@@ -280,6 +282,8 @@ def initialize_demographics_donation(token, sex, age):
             if age:
                 update_age = update_property(thingId, age_propertyId, age, token)
                 consent_sex = grant_consent(thingId, age_propertyId, consent, token)
+    else:
+        logger.error("Initializing donation to project {}".format("Demographics"))
 
     return thingId, {'SEX' : sex_propertyId, 'DATE': age_propertyId}
 
@@ -299,9 +303,10 @@ def initialize_donation(project, token):
 
                 consent = new_consent([project.groupId], ['dcd:read'])
                 consent = grant_consent(thingId, propertyId, consent, token)
-                print(consent)
-                #TODO: Store failed data, try again afterwards
-                #TODO: LOG
+            else:
+                logger.error("Initializing properties in donation to project {}".format(project.title))
+    else:
+        logger.error("Initializing thing in donation to project {}".format(project.title))
     return thingId, initialized_property_dict
 
 @login_required()
@@ -310,7 +315,6 @@ def get_data_count(request): #For User Dashboard
     data_array = []
 
     donations = Donation.objects.filter(user = request.user)
-    print(donations) #Queryset
 
     for donation in donations:
         donation_thing = donation.thingId
