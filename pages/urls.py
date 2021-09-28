@@ -8,4 +8,5 @@ urlpatterns = [
     path("publications/", views.pages_publications, name="pages_publications"),
     path("privacy/", views.pages_privacy, name="pages_privacy"),
     path("terms/", views.pages_terms, name="pages_terms"),
+    path("extensions/", views.pages_extensions, name="pages_extensions"),
 ]

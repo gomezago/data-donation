@@ -18,3 +18,6 @@ def pages_privacy(request):
 
 def pages_terms(request):
     return render(request, 'pages_terms.html')
+
+def pages_extensions(request):
+    return render(request, 'pages_extensions.html')

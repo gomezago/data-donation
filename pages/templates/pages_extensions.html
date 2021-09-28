@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+    <!-- Starting section-->
+    <section style="padding-top: 50px; padding-bottom: 50px">
+        <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+            <h1>Exploring your Data</h1>
+            <hr>
+            <p>If you have downloaded a copy of your data and you want to understand its content this is the place to start. Here you can find brief explanations on how to manually inspect some of the files and how to quickly transform them to other formats in case you want to explore them further.</p>
+            <ul id="publications">
+                <li>
+                    <b>Clue Data:</b> The data you download from the Clue app (file ending in .cluedata) is in a format called JSON which stands for JavaScript Object Notation. JSON files can be opened using a text editor (TextEdit on Mac or Notepad on Windows) or with Google Chrome and Mozilla Firefox, by dragging and dropping the file into your browser window. This file contains the following information:
+                    <ul>
+                        <li><b>Environment:</b> Information about your device, device configuration (e.g., language and timezone), and app version.</li>
+                        <li><b>Data:</b> Information you provide to the app by manually inputting your symptoms. Every field represents an input to the app (e.g., weight, period, mood, exercise, digestion) and contains information about the input (e.g., value, type) as well as the date (day, month, year) in which you reported it.</li>
+                        <li><b>Settings:</b> Information about the way you configured the app when you first used it. This includes the average length of your cycle, and your preferred fields (e.g., yes exercise, no birth control).</li>
+                    </ul>
+                </li><br>
+                <li><b>Google Voice and Audio Data:</b> The data you download from the Google Takeout (file starting with takeout) is in a ZIP format. ZIP files contain compressed files and folders and can be opened by double-clicking on the file, in Mac, or right-clicking on the file and selecting “Extract All” in Windows. The file contains the following:
+                    <ul>
+                        <li><b>Archive Browser File:</b> An HTML file, that you can open with any web browser, containing information about your download including the time, date and total size.</li>
+                        <li><b>"My Activity" Folder:</b> A folder containing the voice recordings for every query you have made to your voice assistant in mp3 format (listen by double-clicking), together with a <b>“My Activity” File</b>, an HTML file where you can see the time, date and transcript of each query.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
