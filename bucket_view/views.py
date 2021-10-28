@@ -272,7 +272,7 @@ def initialize_demographics_donation(token, sex, age):
         age_property = create_property(thingId, age_property, token)
 
         #Consent
-        consent = new_consent(['dcd:groups:ddd_demo'], ['dcd:read'])
+        consent = new_consent(['dcd:groups:ddd_demo'], ['dcd:actions:read'])
 
         if sex_property.ok:
             sex_propertyId = sex_property.json()['id']
@@ -304,7 +304,7 @@ def initialize_donation(project, choices, token):
                 propertyId = property.json()['id']
                 initialized_property_dict[key] = propertyId
 
-                consent = new_consent([project.groupId], ['dcd:read'])
+                consent = new_consent([project.groupId], ['dcd:actions:read'])
                 grant_consent(thingId, propertyId, consent, token)
             else:
                 logger.error("Initializing properties in donation to project {}".format(project.title))
