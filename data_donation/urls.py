@@ -29,5 +29,11 @@ urlpatterns = [
     #path("news/", include("about.urls")),
 ]
 
+# Error Handlers
+handler404 = 'pages.views.error_404'
+handler500 = 'pages.views.error_500'
+handler403 = 'pages.views.error_403'
+handler400 = 'pages.views.error_400'
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

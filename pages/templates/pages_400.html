@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+    <!-- Starting section-->
+    <section style="padding-top: 50px; padding-bottom: 50px">
+     <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+         <h1>It is not you, it is us...</h1>
+            <hr>
+        <div class="row">
+            <div class="col-sm-8">
+                <h3>Error 400</h3>
+                <p>This means we can not process what you were doing. Here are some helpful links instead:</p>
+                <ul id="steps">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="{% url 'project_list' %}">Projects</a></li>
+                    <li><a href="{% url 'pages_privacy' %}">Privacy</a></li>
+                </ul>
+                <br>
+                <p>Questions? Contact us by sending an email to: <a href="mailto:datadonation-ide@tudelft.nl">datadonation-ide@tudelft.nl</a></p>
+            </div>
+            <div class="col-sm-4">
+                <img class="featurette-image img-fluid mx-auto" src="{% static 'images/error_image.png' %}" alt="Image of dissapointed women with a broken heart" width="100%">
+            </div>
+            </div>
+        </div>
+    </div>
+    </section>
+{% endblock %}

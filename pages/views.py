@@ -21,3 +21,21 @@ def pages_terms(request):
 
 def pages_extensions(request):
     return render(request, 'pages_extensions.html')
+
+def error_404(request, exception):
+        data = {}
+        return render(request, 'pages_404.html', data)
+
+
+def error_403(request, exception):
+    data = {}
+    return render(request, 'pages_403.html', data)
+
+
+def error_400(request, exception):
+    data = {}
+    return render(request, 'pages_400.html', data)
+
+
+def error_500(request):
+    return render(request, 'pages_500.html', status=500)
