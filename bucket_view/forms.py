@@ -262,6 +262,34 @@ class DemographicsForm(forms.Form):
     )
 
 
+class ReminderForm(forms.Form):
+    REMINDER_CHOICES = (
+        (0, "Choose a Reminder Date*"),
+        (1, "1 second"),
+        (2, "10 seconds"),
+        (3, "30 seconds"),
+    )
+
+    reminder_time = forms.ChoiceField(
+        required=True,
+        label = "When Shall we remind you?: ",
+        choices=REMINDER_CHOICES,
+        widget=forms.Select(attrs={
+            'class' : 'form-control',
+        })
+    )
+
+    reminder_email = forms.EmailField(
+        required=True,
+        label = "Your Email: ",
+        widget=forms.EmailInput(attrs={
+            'class' : 'form-control',
+            'placeholder' : "Email*",
+        })
+    )
+
+
+
 class MotivationForm(forms.Form):
     significance = forms.BooleanField(
         initial=False,

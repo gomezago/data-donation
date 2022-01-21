@@ -35,6 +35,24 @@
                 <h5>How to donate?</h5>
             <p>{{ project.instructions }}<br>
                 <small>Curious about exploring your data? <a href="/extensions">Read More</a></small></p>
+                {% if project.id == 'ddd_voxpop' %}
+                    <p>Check something. If yes proceed. If not, let us know in how long you would like to be notified.</p>
+                    <form action="/project/{{ project.pk }}/", method="post", enctype="multipart/form-data">
+                          {% csrf_token %}
+                        <div class="form-row">
+                            <div class="form-col col-auto">
+                                {{ reminder.reminder_email }}
+                            </div>
+                            <div class="form-col col-auto">
+                              {{ reminder.reminder_time }}
+                            </div>
+                            <div class="form-col col-auto">
+                                <button name="remind" type="submit" class="btn btn-primary">Remind Me</button>
+                            </div>
+                        </div>
+                    </form>
+                    <br>
+                {% endif %}
 
             <h3>Donate Your Data</h3>
             {% include 'messages.html' %}
@@ -78,7 +96,7 @@
                             <div class="form-row">
                                 <div class="col-sm-3"></div>
                                 <div class="col-sm-7">
-                                    <button name="donate" type="submit", class="btn btn-primary btn-xs" style="float: left">Donate</button>
+                                    <button name="donate" type="submit" class="btn btn-primary btn-xs" style="float: left">Donate</button>
                                 </div>
                             </div>
                          </form>

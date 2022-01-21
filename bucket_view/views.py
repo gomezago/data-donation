@@ -1,7 +1,7 @@
 import json
 import logging
 from django.shortcuts import render
-from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm
+from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm, ReminderForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Project, Donation, Motivation
@@ -9,6 +9,7 @@ from utils.bucket_functions import *
 from .clue_functions import read_clue_file, transform_clue_dict, send_clue_data
 from django.http import HttpResponseRedirect, JsonResponse
 from operator import itemgetter
+from django.core.mail import send_mail
 
 logger = logging.getLogger('data_donation_logs')
 
@@ -196,21 +197,50 @@ def project_view(request, pk):
             form = DemographicsForm()
             return render(request, 'project_view.html', {'project': project, 'form': form})
     else:
-        if request.method == 'POST' and 'donate' in request.POST:
+
+        if request.method == 'POST' and 'remind' in request.POST:
+            reminder_form = ReminderForm(request.POST, request.FILES)
+            if reminder_form.is_valid():
+                email = reminder_form.cleaned_data['reminder_email']
+                when = reminder_form.cleaned_data['reminder_time']
+
+                subject = 'VoxPop: Data Donation Reminder'
+                message = 'Hey! Remember to donate your data.'
+
+                send_mail(subject, message, 'test@datadonation.ide.tudelft.nl', [email,], fail_silently=False)
+                messages.success(request, "We will send you an email soon!")
+
+                form = DonateForm(choices=data_tuple)
+                return render(request, 'project_view.html',
+                              {'project': project, 'form': form, 'reminder': reminder_form})
+            else:
+                messages.error(request, "Oops... Something went wrong. Please try again!")
+                form = DonateForm(choices=data_tuple)
+                return render(request, 'project_view.html', {'project': project, 'form': form, 'reminder': reminder_form})
+
+        elif request.method == 'POST' and 'donate' in request.POST:
             form = DonateForm(request.POST, request.FILES, choices=data_tuple)
             if form.is_valid():
-                #Read Data Choices
-                choices = form.cleaned_data['data_selection']
 
-                # Initialize Thing and Properties in Bucket
-                thingId, initialized_property_dict = initialize_donation(project, choices, request.session['token'])
+                if pk == 'ddd_period':
+                    #Read Data Choices
+                    choices = form.cleaned_data['data_selection']
 
-                # Read Data File
-                data = json.load(form.cleaned_data['data'])
-                data_dict = read_clue_file(data['data'], choices)
-                bucket_data_dict = transform_clue_dict(data_dict)
+                    # Initialize Thing and Properties in Bucket
+                    thingId, initialized_property_dict = initialize_donation(project, choices, request.session['token'])
 
-                send_clue_data(thingId, bucket_data_dict, initialized_property_dict, request.session['token'])
+                    # Read Data File
+                    data = json.load(form.cleaned_data['data'])
+                    data_dict = read_clue_file(data['data'], choices)
+                    bucket_data_dict = transform_clue_dict(data_dict)
+
+                    send_clue_data(thingId, bucket_data_dict, initialized_property_dict, request.session['token'])
+
+                elif pk == 'ddd_voxpop':
+                    # TODO
+                    thingId = None
+                    initialized_property_dict = None
+
 
                 # Save Donation
                 donation = Donation(
@@ -224,15 +254,18 @@ def project_view(request, pk):
                         propertyId  = initialized_property_dict,
                     )
                 donation.save()
+
                 logger.info("Donation by user {} to project {}".format(request.user.username, project.title))
                 moti_form = MotivationForm()
                 return render(request, "donation_view.html", {'donation': donation, 'form':moti_form})
             else:
                 messages.error(request, "Oops... Something went wrong. Please try again!")
-                return render(request, 'project_view.html', {'project': project, 'form': form})
+                reminder_form = ReminderForm()
+                return render(request, 'project_view.html', {'project': project, 'form': form, 'reminder': reminder_form})
         else:
             form = DonateForm(choices=data_tuple)
-            return render(request, 'project_view.html', {'project': project, 'form': form})
+            reminder_form = ReminderForm()
+            return render(request, 'project_view.html', {'project': project, 'form': form, 'reminder': reminder_form})
 
 
 def get_property_types(token):
