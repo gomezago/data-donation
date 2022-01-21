@@ -14,6 +14,8 @@
                 <img class="card-img-top" src="{{ project.image.url }}" width="100%">
                     {% if project.active %}
                         <h6><span class="small text-uppercase" style="color:#019875">STATUS: Open</span></h6>
+                    {% elif project.soon %}
+                        <h6><span class="small text-uppercase" style="color:#E67F0D">STATUS: Coming Soon</span></h6>
                     {% else %}
                        <h6><span class="small text-uppercase" style="color:#B8293D">STATUS: Closed</span></h6>
                 {% endif %}

@@ -28,6 +28,12 @@ class Project(models.Model):
             return True
         return False
 
+    def soon(self):
+        now = datetime.date.today()
+        if now <= self.start:
+            return True
+        return False
+
 class Donation(models.Model):
     user                   = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     project                = models.ForeignKey('Project', on_delete=models.CASCADE, blank=True, null=True) #For Demographics

@@ -34,3 +34,5 @@ data_donation/.env
 data_donation/.env
 data_donation/logs/log_file.log
 *.sqlite3
+db.sqlite3
+data_donation/__pycache__/settings.cpython-38.pyc

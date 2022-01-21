@@ -158,6 +158,8 @@
                                 <p class="card-text">{{ p.description_tweet }}</p>
                                 {% if p.active %}
                                     <h6><span class="small text-uppercase" style="color:#019875; text-align: right">STATUS: Open</span></h6>
+                                {% elif p.soon %}
+                                    <h6><span class="small text-uppercase" style="color:#E67F0D">STATUS: Coming Soon</span></h6>
                                 {% else %}
                                 <h6><span class="small text-uppercase" style="color:#B8293D">STATUS: Closed</span></h6>
                             {% endif %}
