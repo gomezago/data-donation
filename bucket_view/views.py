@@ -125,6 +125,7 @@ def bucket_new(request):
                         start=form.cleaned_data['start'],
                         end=form.cleaned_data['end'],
                         data_info=form.cleaned_data['data_info'],
+                        data_ext=form.cleaned_data['data_ext'],
                         groupId='dcd:groups:'+project_id,
                         instructions=form.cleaned_data['instructions'],
                         researcher_name=form.cleaned_data['researcher_name'],

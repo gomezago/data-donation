@@ -49,7 +49,7 @@
                                 <label class="col-sm-3 col-form-label col-form-label-sm control-label">Upload your Data</label>
                                  <div class="col-sm-7">
                                     {{ form.data }}
-                                     <small class="form-tex text-muted">Note that <b>{{ project.title }}</b> only accepts <b>.cluedata</b> files.</small>
+                                     <small class="form-tex text-muted">Note that <b>{{ project.title }}</b> only accepts <b>{{ project.data_ext }}</b> files.</small>
                                 </div>
                              </div>
                              <div class="form-group row required">

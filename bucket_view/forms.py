@@ -123,6 +123,18 @@ class ProjectForm(forms.Form):
         )
     )
 
+    data_ext = forms.CharField(
+        required=True,
+        label="Extension",
+        max_length=400,
+        widget=forms.Textarea(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Input the extension of the Takeout file',
+            }
+        )
+    )
+
     start = forms.DateField(
         required=True,
         widget=forms.SelectDateWidget(
@@ -214,7 +226,7 @@ class DonateForm(forms.Form):
             attrs={
                 'class' : 'form-control-file',
                 'multiple' : 'False', #TODO: At some point, allow for multiple uploads
-                'accept' : '.cluedata, .json, application/JSON,',
+                'accept' : '.cluedata, .json, application/JSON, .zip, .7zip',
                 #'style': 'display: none',
             }
         )

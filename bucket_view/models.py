@@ -15,6 +15,7 @@ class Project(models.Model):
     description             = models.TextField(blank=False)  # Large string frield to hold a piece of text
     hrec                    = models.BooleanField(default=False)
     data                    = models.JSONField(blank=False, null=True)
+    data_ext                = models.TextField(blank=True, null=True)
     image                   = models.ImageField(upload_to="images", blank=True, null=True)
     start                   = models.DateField(blank=False)  # Start of project
     end                     = models.DateField(blank=False)  # End of project
