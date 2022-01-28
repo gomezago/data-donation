@@ -10,6 +10,8 @@ from .clue_functions import read_clue_file, transform_clue_dict, send_clue_data
 from django.http import HttpResponseRedirect, JsonResponse
 from operator import itemgetter
 from django.core.mail import send_mail
+from bucket_view.tasks import send_email_task
+from datetime import datetime, timedelta
 
 logger = logging.getLogger('data_donation_logs')
 
@@ -202,13 +204,12 @@ def project_view(request, pk):
             reminder_form = ReminderForm(request.POST, request.FILES)
             if reminder_form.is_valid():
                 email = reminder_form.cleaned_data['reminder_email']
-                when = reminder_form.cleaned_data['reminder_time']
-
+                when = int(reminder_form.cleaned_data['reminder_time'])
+                email_date = datetime.utcnow() + timedelta(weeks=when+1)
                 subject = 'VoxPop: Data Donation Reminder'
                 message = 'Hey! Remember to donate your data.'
-
-                send_mail(subject, message, 'test@datadonation.ide.tudelft.nl', [email,], fail_silently=False)
-                messages.success(request, "We will send you an email soon!")
+                send_email_task.apply_async((subject, message, 'test@datadonation.ide.tudelft.nl', [email,]), eta=email_date)
+                messages.success(request, "Thank you for your interest! We will send you an email on " + email_date.strftime("%d-%m-%Y"))
 
                 form = DonateForm(choices=data_tuple)
                 return render(request, 'project_view.html',

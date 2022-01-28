@@ -265,9 +265,9 @@ class DemographicsForm(forms.Form):
 class ReminderForm(forms.Form):
     REMINDER_CHOICES = (
         (0, "Choose a Reminder Date*"),
-        (1, "1 second"),
-        (2, "10 seconds"),
-        (3, "30 seconds"),
+        (1, "2 Weeks"),
+        (2, "3 Weeks"),
+        (3, "4 Weeks"),
     )
 
     reminder_time = forms.ChoiceField(
