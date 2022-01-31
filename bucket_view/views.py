@@ -9,9 +9,10 @@ from utils.bucket_functions import *
 from .clue_functions import read_clue_file, transform_clue_dict, send_clue_data
 from django.http import HttpResponseRedirect, JsonResponse
 from operator import itemgetter
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from bucket_view.tasks import send_email_task
 from datetime import datetime, timedelta
+from django.template.loader import render_to_string, get_template
 
 logger = logging.getLogger('data_donation_logs')
 
@@ -206,9 +207,18 @@ def project_view(request, pk):
                 email = reminder_form.cleaned_data['reminder_email']
                 when = int(reminder_form.cleaned_data['reminder_time'])
                 email_date = datetime.utcnow() + timedelta(weeks=when+1)
+
+                context_message = {
+                    'email_message' : 'Thank you for your interest in the VoxPop project. Please remember to donate your data.',
+                }
+
+                html_message = get_template('email_card.html').render(context_message)
                 subject = 'VoxPop: Data Donation Reminder'
-                message = 'Hey! Remember to donate your data.'
-                send_email_task.apply_async((subject, message, 'test@datadonation.ide.tudelft.nl', [email,]), eta=email_date)
+
+                #email_msg = EmailMessage(subject, html_message, 'test@datadonation.ide.tudelft.nl', [email,])
+                #email_msg.content_subtype = 'html'
+                #email_msg.send()
+                send_email_task.apply_async((subject, html_message, 'test@datadonation.ide.tudelft.nl', [email, ]), eta=email_date)
                 messages.success(request, "Thank you for your interest! We will send you an email on " + email_date.strftime("%d-%m-%Y"))
 
                 form = DonateForm(choices=data_tuple)
