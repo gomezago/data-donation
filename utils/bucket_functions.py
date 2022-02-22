@@ -1,6 +1,7 @@
 import requests
 import time
 import datetime
+import json
 
 THING_URL = "https://dwd.tudelft.nl/bucket/api/things"
 
@@ -83,6 +84,19 @@ def update_property(thingId, propertyId, values, token):
     par = {'thingId': thingId, 'propertyId': propertyId}
 
     response = requests.put(UPDATE_PROPERTY_URL, json=values, headers=hed, params=par)
+    return response
+
+
+def update_property_media(thingId, propertyId, values, files, token):
+    UPDATE_PROPERTY_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}/properties/{propertyId}'
+
+    val = {"id": "speech-record-transcript", "values":values}
+    payload = {'property' : json.dumps(val)}
+
+    hed = {'Authorization': 'Bearer ' + token['access_token']}
+    par = {'thingId': thingId, 'propertyId': propertyId}
+
+    response = requests.put(UPDATE_PROPERTY_URL, data=payload, headers=hed, params=par, files=files)
     return response
 
 

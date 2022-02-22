@@ -13,6 +13,7 @@ from django.core.mail import send_mail, EmailMessage
 from bucket_view.tasks import send_email_task
 from datetime import datetime, timedelta
 from django.template.loader import render_to_string, get_template
+from .google_functions import *
 
 logger = logging.getLogger('data_donation_logs')
 
@@ -248,9 +249,21 @@ def project_view(request, pk):
                     send_clue_data(thingId, bucket_data_dict, initialized_property_dict, request.session['token'])
 
                 elif pk == 'ddd_voxpop':
-                    # TODO
-                    thingId = None
-                    initialized_property_dict = None
+
+                    choices = form.cleaned_data['data_selection']
+
+                    # Initialize Thing and Properties in Bucket
+                    thingId, initialized_property_dict = initialize_bucket(project, choices, request.session['token'])
+
+                    # Read Data File
+                    zip_file_dict = extract_zip(form.cleaned_data['data'])
+                    assistant_html = get_assistant_file(zip_file_dict)
+                    metadata_list = get_metadata(assistant_html, zip_file_dict)
+
+                    values, files = get_values_files(metadata_list)
+                    req = update_property_media(thingId, initialized_property_dict['SPEECH_RECORD'], values, files, request.session['token'])
+                    print(req)
+
 
 
                 # Save Donation
@@ -333,6 +346,30 @@ def initialize_demographics_donation(token, sex, age):
         logger.error("Initializing donation to project {}".format("Demographics"))
 
     return thingId, {'SEX' : sex_propertyId, 'DATE': age_propertyId}
+
+
+def initialize_bucket(project, choices, token):
+    selected_data_dict = {k: project.data[k] for k in choices}
+    thing = new_thing(project.title, project.description_tweet, project.description_tweet)
+    thing = create_thing(thing, token)
+    if thing.ok:
+        thingId = thing.json()['id']
+
+        initialized_property_dict = {}
+        for key, value in selected_data_dict.items(): #project.data.items():
+            property = new_property(type=key, description=value[1], name=value[0])
+            property = create_property(thingId, property, token)
+            if property.ok:
+                propertyId = property.json()['id']
+                initialized_property_dict[key] = propertyId
+                #consent = new_consent([project.groupId], ['dcd:actions:read'])
+                #grant_consent(thingId, propertyId, consent, token)
+            else:
+                logger.error("Initializing properties in donation to project {}".format(project.title))
+    else:
+        logger.error("Initializing thing in donation to project {}".format(project.title))
+    return thingId, initialized_property_dict
+
 
 def initialize_donation(project, choices, token):
     selected_data_dict = {k: project.data[k] for k in choices}
