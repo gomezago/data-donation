@@ -27,6 +27,8 @@ urlpatterns = [
     #path('oauth2_test/', include('oauth2_test.urls')),
     path('bucket/', include('bucket.urls')), #TODO: Change to login
     #path("news/", include("about.urls")),
+    path('', include('plot_test.urls')),
+    path('django_plotly_dash/', include('django_plotly_dash.urls')),
 ]
 
 # Error Handlers
