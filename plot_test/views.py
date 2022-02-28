@@ -29,3 +29,8 @@ def plot_test(request):
     }
 
     return render(request, 'plot_test.html', context)
+
+
+def plot_test_2(request):
+
+    return render(request, 'plot_test_2.html')
