@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+    <section style="padding-top: 50px; padding-bottom: 50px">
+        <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+            <h1>Your Donation to {{ donation.project.title }}</h1>
+            <hr>
+        </div>
+    <div class="col-md-8 offset-md-2">
+            <div class="row">
+                <div class="col-md-8" id="heatmap">
+                    {{ plot | safe }}
+                </div>
+                <div class="col-md-4">
+                    <h5>What Next?</h5>
+                    <p>If you agreed to further collaborate on this project, you will be soon contacted. For questions, you can always reach out by sending an email to <a href="mailto:{{ donation.project.user.email }}">{{ donation.project.user.email }}</a>.</p>
+
+                <h5>Manage your Data</h5>
+                    <p>By clicking below, you can delete the data you have donated. This data will <b>no longer be stored on our platform</b> and <b>no one will have access to it</b>.</p>
+                    <form action="/donation/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <button name="delete" type="submit", class="btn btn-danger btn-xs">Delete Data</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
