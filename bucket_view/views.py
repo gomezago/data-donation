@@ -2,7 +2,7 @@ import json
 import logging
 import pandas as pd
 from django.shortcuts import render
-from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm, ReminderForm
+from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm, ReminderForm, MetadataForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Project, Donation, Motivation
@@ -115,12 +115,13 @@ def donation_view(request, pk):
 
 @login_required()
 def metadata_view(request, pk):
-    donation = Donation.objects.get(pk=pk)
+    meta_form = MetadataForm()
 
+    donation = Donation.objects.get(pk=pk)
     donation_thing = donation.thingId
     donation_speech_property = donation.propertyId['SPEECH_RECORD']
     speech_data = read_property_data(donation_thing, donation_speech_property, request.session['token'])
-
+    # Create Graph
     if speech_data.ok:
         values = speech_data.json()['values']
         df = pd.DataFrame(values, columns=['Timestamp', 'Path','Transcript'])
@@ -143,11 +144,39 @@ def metadata_view(request, pk):
             plot_div = plot(fig, output_type='div', include_plotlyjs=False)
             return plot_div
 
+    if request.method == 'POST' and 'confirm' in request.POST:
+        meta_form = MetadataForm(request.POST)
+        if meta_form.is_valid():
+            print(meta_form.cleaned_data['sex'])
+            #TODO: Send Data to Bucket
+            #TODO: Send User to Motivation Form
+            meta_form = MetadataForm()
+
+    elif request.method == 'POST' and 'delete' in request.POST:
+        # Delete Thing and Properties.
+        delete_request = delete_thing(donation.thingId, request.session['token'])
+        if delete_request.ok:
+            # Delete Donation from DB
+            Donation.objects.get(pk=pk).delete()
+            logger.info("User {} deleted donation to project {}".format(request.user.username, donation.project.title))
+        else:
+            logger.error("User {} failed to delete donation to project {}".format(request.user.username, donation.project.title))
+
+        project = Project.objects.all()
+        demo_form = DemographicsForm()
+        donations = Donation.objects.filter(user=request.user)
+        if not donations:
+            messages.success(request, "Your data has been successfully deleted")
+            return render(request, 'first_hello.html', {'form': demo_form, 'project': project})
+        else:
+            messages.success(request, "Your data has been successfully deleted")
+            return render(request, 'bucket_hello.html', {'donations': donations, 'project':project})
+
     context = {
         'donation' : donation,
-        'plot': scatter()
+        'plot': scatter(),
+        'form' : meta_form,
     }
-
     return render(request, 'metadata_view.html', context)
 
 
@@ -237,7 +266,7 @@ def project_view(request, pk):
                 donation.save()
                 logger.info("Donation by user {} to project {}".format(request.user.username, "Demographics"))
                 moti_form = MotivationForm()
-                return render(request, "donation_view.html", {'donation': donation, 'form':moti_form})
+                return render(request, "donation_view.html", {'donation': donation, 'form': moti_form})
             else:
                 messages.error(request, "Oops... Something went wrong. Please try again!")
                 return render(request, 'project_view.html', {'project': project, 'form': form})
@@ -337,10 +366,12 @@ def project_view(request, pk):
                             propertyId  = initialized_property_dict,
                         )
                     donation.save()
-
                     logger.info("Donation by user {} to project {}".format(request.user.username, project.title))
-                    moti_form = MotivationForm()
-                    return render(request, "metadata_view.html", {'donation': donation, 'form':moti_form})
+
+                    scatter = create_scatter(thingId, initialized_property_dict['SPEECH_RECORD'], request.session['token'])
+
+                    meta_form = MetadataForm()
+                    return render(request, "metadata_view.html", {'donation': donation, 'form' : meta_form, 'plot' : scatter})
             else:
                 messages.error(request, "Oops... Something went wrong. Please try again!")
                 reminder_form = ReminderForm()
@@ -497,3 +528,29 @@ def get_data(request, pk): #For Single Donation
                 })
     sorted_data_array = sorted(data_array, key=itemgetter('timestamp'))
     return JsonResponse(sorted_data_array, safe=False)
+
+def create_scatter(donation_thing, donation_speech_property, token):
+    #donation_speech_property = donation.propertyId['SPEECH_RECORD']
+    speech_data = read_property_data(donation_thing, donation_speech_property, token)
+    # Create Graph
+    if speech_data.ok:
+        values = speech_data.json()['values']
+        df = pd.DataFrame(values, columns=['Timestamp', 'Path', 'Transcript'])
+        df['DateTime'] = pd.to_datetime(df['Timestamp'], unit='ms')
+        df['Hour'] = df['DateTime'].dt.hour
+
+        # Plot
+        def scatter():
+            fig = px.scatter(df, x="DateTime", y="Hour", custom_data=["Timestamp"],
+                             labels={
+                                 "DateTime": "Date",
+                                 "Hour": "Hour",
+                             },
+                             hover_name="DateTime", hover_data={'DateTime': False, 'Hour': False, 'Transcript': True, },
+                             )
+
+            fig.update_layout(clickmode='event+select')
+            fig.update_traces(marker_size=10)
+            plot_div = plot(fig, output_type='div', include_plotlyjs=False)
+            return plot_div
+    return scatter()

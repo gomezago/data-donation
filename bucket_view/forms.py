@@ -342,3 +342,135 @@ class MotivationForm(forms.Form):
 
 
 
+class MetadataForm(forms.Form):
+
+    # Speaker
+
+    SEX_CHOICES = (
+        (3, "---"),
+        (0, "Female"),
+        (1, "Male"),
+        (2, "Prefer to Self-Describe"),
+    )
+
+    AGE_CHOICES = (
+        (7, "---"),
+        (0, "18-24 Years Old"),
+        (1, "25-34 Years Old"),
+        (2, "35-44 Years Old"),
+        (3, "45-54 Years Old"),
+        (4, "55-64 Years Old"),
+        (5, "65-74 Years Old"),
+        (6, "Above 75 Years Old"),
+    )
+
+
+    LAN_CHOICES = (
+        (15, "---"),
+        (0, 'Danish'),
+        (1, 'Dutch'),
+        (2, 'English'),
+        (3, 'French'),
+        (4, 'German'),
+        (5, 'Hindi'),
+        (6, 'Indonesian'),
+        (7, 'Italian'),
+        (8, 'Japanese'),
+        (9, 'Korean'),
+        (10, 'Norwegian'),
+        (11, 'Portuguese'),
+        (12, 'Spanish'),
+        (13, 'Swedish'),
+        (14, 'Mandarin'),
+    )
+
+    DEV_CHOICES = (
+        (8, '---'),
+        (0, 'Smartphone'),
+        (1, 'Smart Speaker'),
+        (2, 'Smart Display'),
+        (3, 'Smart Car'),
+        (4, 'Smart TV'),
+        (5, 'Laptop or Tablet'),
+        (6, 'Smart Watch'),
+        (7, "Other"), # Eg., Thermostat, Smart clock
+    )
+
+    USE_CHOICES = (
+        (4, "---"),
+        (0, "None"),
+        (1, "One"),
+        (2, "Two"),
+        (3, "Three or more"),
+    )
+
+    sex = forms.ChoiceField(
+        required=True,
+        label = "Your Sex: ",
+        choices=SEX_CHOICES,
+        widget=forms.Select(attrs={
+            'class' : 'form-control',
+        })
+    )
+
+    age = forms.ChoiceField(
+        required = True,
+        label="Your Age: ",
+        choices=AGE_CHOICES,
+        widget = forms.Select(attrs={
+            'class' : 'form-control',
+        })
+    )
+
+    lan = forms.ChoiceField(
+        required = True,
+        label="The Language you Speak with your Assistant: ",
+        choices=LAN_CHOICES,
+        widget = forms.Select(attrs={
+            'class' : 'form-control',
+        })
+    )
+
+    acc = forms.CharField(
+        required=True,
+        label="Your Accent:",
+        max_length=40,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Your Accent',
+            }
+        )
+    )
+
+    use = forms.ChoiceField(
+        required = True,
+        label="How many people share your Voice Assistant? ",
+        choices=USE_CHOICES,
+        widget = forms.Select(attrs={
+            'class' : 'form-control',
+        })
+    )
+
+    # Device
+    dev = forms.ChoiceField(
+        required=True,
+        label='Your Device:',
+        choices=DEV_CHOICES,
+        widget=forms.Select(attrs={
+            'class' : 'form-control',
+        })
+    )
+
+    # Awareness
+    awa = forms.BooleanField(
+        initial=False,
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class': 'checkbox',
+            }
+        )
+    )
+
+

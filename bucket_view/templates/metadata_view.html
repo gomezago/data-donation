@@ -9,19 +9,58 @@
         </div>
     <div class="col-md-8 offset-md-2">
             <div class="row">
-                <div class="col-md-8" id="heatmap">
+                <div class="col-md-6" id="chart">
                     {{ plot | safe }}
                 </div>
-                <div class="col-md-4">
-                    <h5>What Next?</h5>
-                    <p>If you agreed to further collaborate on this project, you will be soon contacted. For questions, you can always reach out by sending an email to <a href="mailto:{{ donation.project.user.email }}">{{ donation.project.user.email }}</a>.</p>
-
-                <h5>Manage your Data</h5>
-                    <p>By clicking below, you can delete the data you have donated. This data will <b>no longer be stored on our platform</b> and <b>no one will have access to it</b>.</p>
-                    <form action="/donation/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
+                <div class="col-md-6">
+                    <p>Hover over to explore your data, each dot represents an interaction. What now? You can <b>confirm your donation</b> and input the required metadata or you can <b>delete your data</b> from our platform.</p>
+                    <form action="/metadata/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
+                     {% csrf_token %}
+                        <div class="form-group required">
+                            <div class="form-row">
+                              <div class="col-md-6">
+                                <label class="form-label control-label">Sex</label>
+                                <div>{{ form.sex }}</div>
+                              </div>
+                              <div class="col-md-6">
+                                <label class="form-label control-label">Age Range</label>
+                                  <div>
+                                      {{ form.age }}
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <label class="form-label control-label">Language</label>
+                                    <div>{{ form.lan }}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label control-label">Accent</label>
+                                    <div>{{ form.acc }}</div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <label class="form-label control-label">Device</label>
+                                    <div>{{ form.dev }}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label control-label">Additional Device Users</label>
+                                    <div>{{ form.use }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <label class="form-check-label">{{ form.awa }} I would like to <b>exclude</b> parts of the data from my donation</label>
+                            </div>
+                        </div>
+                        <button name="confirm" type="submit" class="btn btn-primary mr-2" style="float: left">Confirm Donation</button>
+                 </form>
+                 <form action="/metadata/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
                         {% csrf_token %}
                         <button name="delete" type="submit", class="btn btn-danger btn-xs">Delete Data</button>
-                    </form>
+                </form>
                 </div>
             </div>
         </div>
