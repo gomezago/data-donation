@@ -14,6 +14,7 @@
                 </div>
                 <div class="col-md-6">
                     <p>Hover over to explore your data, each dot represents an interaction. What now? You can <b>confirm your donation</b> and input the required metadata or you can <b>delete your data</b> from our platform.</p>
+                    {% include 'messages.html' %}
                     <form action="/metadata/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
                      {% csrf_token %}
                         <div class="form-group required">

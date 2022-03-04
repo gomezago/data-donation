@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Plot Test{% endblock %}
+
+{% block page_content %}
+    {% load plotly_dash %}
+<section style="padding-top: 50px; padding-bottom: 50px">
+<div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+            <h1>Your Data</h1>
+            <hr>
+    <p>Click on the points you want to <b>exclude</b> from your donation.</p>
+</div>
+<div class="col-md-8 offset-md-2">
+    <div class="{% plotly_class name="Test3"%} card" style="height: 100%; width: 100%">
+
+        {% plotly_app name='Test3' ratio=0.65 %}
+    </div>
+</div>
+</section>
+{% endblock %}

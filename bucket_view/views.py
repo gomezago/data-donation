@@ -5,7 +5,7 @@ from django.shortcuts import render
 from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm, ReminderForm, MetadataForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Project, Donation, Motivation
+from .models import Project, Donation, Motivation, Awareness
 from utils.bucket_functions import *
 from .clue_functions import read_clue_file, transform_clue_dict, send_clue_data
 from django.http import HttpResponseRedirect, JsonResponse
@@ -120,38 +120,24 @@ def metadata_view(request, pk):
     donation = Donation.objects.get(pk=pk)
     donation_thing = donation.thingId
     donation_speech_property = donation.propertyId['SPEECH_RECORD']
-    speech_data = read_property_data(donation_thing, donation_speech_property, request.session['token'])
+
     # Create Graph
-    if speech_data.ok:
-        values = speech_data.json()['values']
-        df = pd.DataFrame(values, columns=['Timestamp', 'Path','Transcript'])
-        df['DateTime'] = pd.to_datetime(df['Timestamp'], unit='ms')
-        df['Hour'] = df['DateTime'].dt.hour
-
-
-        #Plot
-        def scatter():
-            fig = px.scatter(df, x="DateTime", y="Hour", custom_data=["Timestamp"],
-                             labels={
-                                 "DateTime": "Date",
-                                 "Hour": "Hour",
-                             },
-                             hover_name="DateTime", hover_data={'DateTime': False, 'Hour': False, 'Transcript': True, },
-                             )
-
-            fig.update_layout(clickmode='event+select')
-            fig.update_traces(marker_size=10)
-            plot_div = plot(fig, output_type='div', include_plotlyjs=False)
-            return plot_div
+    scatter = create_scatter(donation_thing, donation_speech_property, request.session['token'])
 
     if request.method == 'POST' and 'confirm' in request.POST:
         meta_form = MetadataForm(request.POST)
         if meta_form.is_valid():
-            print(meta_form.cleaned_data['sex'])
-            #TODO: Send Data to Bucket
-            #TODO: Send User to Motivation Form
+            send_metadata(donation, request.session['token'], meta_form.cleaned_data['sex'], meta_form.cleaned_data['age'], meta_form.cleaned_data['lan'],
+                          meta_form.cleaned_data['acc'], meta_form.cleaned_data['dev'], meta_form.cleaned_data['use'])
+            awareness = Awareness(
+                donation = donation,
+                awareness = meta_form.cleaned_data['awa']
+            )
+            awareness.save()
             meta_form = MetadataForm()
-
+            messages.success(request, "Thank you for your Donation!") # TODO: Send User to Motivation Form
+        else:
+            messages.error(request, "Oops... Something went wrong. Please try again!")
     elif request.method == 'POST' and 'delete' in request.POST:
         # Delete Thing and Properties.
         delete_request = delete_thing(donation.thingId, request.session['token'])
@@ -174,7 +160,7 @@ def metadata_view(request, pk):
 
     context = {
         'donation' : donation,
-        'plot': scatter(),
+        'plot': scatter,
         'form' : meta_form,
     }
     return render(request, 'metadata_view.html', context)
@@ -551,6 +537,41 @@ def create_scatter(donation_thing, donation_speech_property, token):
 
             fig.update_layout(clickmode='event+select')
             fig.update_traces(marker_size=10)
+            fig.update_traces(hovertemplate='<b>Transcript:</b> %{customdata[1]} <br><b>Date:</b> %{hovertext}')
             plot_div = plot(fig, output_type='div', include_plotlyjs=False)
             return plot_div
     return scatter()
+
+
+def send_metadata(donation, token, sex,age, language, accent, device, users):
+
+    thingId = donation.thingId
+
+    # Grant Consent
+    consent = new_consent([donation.project.groupId], ['dcd:actions:read'])
+    consent_records = grant_consent(thingId, donation.propertyId['SPEECH_RECORD'], consent, token)
+
+    timestamp = round(time.time() * 1000)
+    values= {'values': [[timestamp, int(sex), int(age), int(language), accent, int(device), int(users)]]}
+    print(values)
+
+    if not 'SPEAKER_METADATA' in donation.propertyId:
+        # Create Property
+        metadata_property = new_property(type='SPEAKER_METADATA', description='Speaker Metadata', name='Speaker Metadata')
+        metadata_property = create_property(thingId, metadata_property, token)
+        # Send Data
+        if metadata_property.ok:
+            propertyId = metadata_property.json()['id']
+            update = update_property(donation.thingId, propertyId, values, token)
+            print(update.text)
+            grant_consent(thingId, propertyId, consent, token)
+
+        # Update Property ID in Donation
+        donation.propertyId['SPEAKER_METADATA'] = propertyId
+        donation.save(update_fields=['propertyId'])
+    else:
+        propertyId = donation.propertyId['SPEAKER_METADATA']
+        update = update_property(donation.thingId, propertyId, values, token)
+        print(update.text)
+        grant_consent(thingId, propertyId, consent, token)
+

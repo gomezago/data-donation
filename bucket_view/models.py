@@ -55,3 +55,7 @@ class Motivation(models.Model):
     researcher             = models.BooleanField(default=False)
     participate            = models.BooleanField(default=False)
     other                  = models.CharField(max_length=300, blank=True, null=True)
+
+class Awareness(models.Model):
+    donation               = models.ForeignKey(Donation, on_delete=models.CASCADE)
+    awareness              = models.BooleanField(default=False)

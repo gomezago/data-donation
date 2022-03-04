@@ -35,6 +35,7 @@ labels={
 
 fig.update_layout(clickmode='event+select')
 fig.update_traces(marker_size=20)
+fig.update_traces(hovertemplate='<b>Transcript:</b> %{customdata[1]} <br><b>Date:</b> %{hovertext}')
 
 app.layout = html.Div([
     dcc.Graph(
@@ -70,4 +71,10 @@ def display_selected_data(n_clicks, selectedData):
 # Callback Functions: Automatically called when an input component's property changes in order to update some property in another component (the output!)
 
 
-
+#KWARGS:
+# callback_context : Dash Callback Context
+# dash_app : DashApp model instance
+# dash_app_id
+# request : Django Request Object
+# session_state: Dictionary of information that is unique to this user session. # Any changes made to its content are persisted as part of the session.
+# user: Django User
