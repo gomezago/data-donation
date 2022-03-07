@@ -123,7 +123,8 @@ def metadata_view(request, pk):
     donation_speech_property = donation.propertyId['SPEECH_RECORD']
 
     # Create Graph
-    scatter = create_scatter(donation_thing, donation_speech_property, request.session['token'])
+    points = initialize_donation_points(donation_thing, donation_speech_property, request.session['token'])
+    scatter = create_scatter(points)
 
     if request.method == 'POST' and 'confirm' in request.POST:
         meta_form = MetadataForm(request.POST)
@@ -135,8 +136,18 @@ def metadata_view(request, pk):
                 awareness = meta_form.cleaned_data['awa']
             )
             awareness.save()
-            meta_form = MetadataForm()
             messages.success(request, "Thank you for your Donation!") # TODO: Send User to Motivation Form
+
+            if meta_form.cleaned_data['awa'] == True:
+                dash_context = request.session.get('django_plotly_dash',dict())
+                dash_context['django_to_dash_context'] = points
+                request.session['django_plotly_dash'] = dash_context
+
+                return render(request, 'point_selection.html', {'donation' : donation})
+            else:
+                moti_form = MotivationForm()
+                return render(request, 'donation_view.html', {'donation': donation, 'form': moti_form})
+
         else:
             messages.error(request, "Oops... Something went wrong. Please try again!")
     elif request.method == 'POST' and 'delete' in request.POST:
@@ -355,7 +366,8 @@ def project_view(request, pk):
                     donation.save()
                     logger.info("Donation by user {} to project {}".format(request.user.username, project.title))
 
-                    scatter = create_scatter(thingId, initialized_property_dict['SPEECH_RECORD'], request.session['token'])
+                    points = initialize_donation_points(thingId, initialized_property_dict['SPEECH_RECORD'], request.session['token'])
+                    scatter = create_scatter(points)
 
                     meta_form = MetadataForm()
                     return render(request, "metadata_view.html", {'donation': donation, 'form' : meta_form, 'plot' : scatter})
@@ -504,10 +516,8 @@ def get_data(request, pk): #For Single Donation
     for k, v in donation_properties.items():
         response = read_property_data_month(donation_thing, v, request.session['token'])
         for value in response.json()['values']:
-            if len(value[1:]) > 1:
-                values = len([x for x in value[1:] if x > 0])
-            else:
-                values = len(value[1:])
+
+            values = len(value[1:])
             data_array.append({
                 'name' : response.json()['name'],
                 'timestamp' : value[0],
@@ -516,33 +526,37 @@ def get_data(request, pk): #For Single Donation
     sorted_data_array = sorted(data_array, key=itemgetter('timestamp'))
     return JsonResponse(sorted_data_array, safe=False)
 
-def create_scatter(donation_thing, donation_speech_property, token):
+def initialize_donation_points(donation_thing, donation_speech_property, token):
+    speech_data = read_property_data(donation_thing, donation_speech_property, token)
+    if speech_data.ok:
+        point_list = speech_data.json()['values']
+    else:
+        point_list = []
+    return point_list
+
+def create_scatter(point_list):
     pio.templates.default = "plotly_white"
 
-    #donation_speech_property = donation.propertyId['SPEECH_RECORD']
-    speech_data = read_property_data(donation_thing, donation_speech_property, token)
     # Create Graph
-    if speech_data.ok:
-        values = speech_data.json()['values']
-        df = pd.DataFrame(values, columns=['Timestamp', 'Path', 'Transcript'])
-        df['DateTime'] = pd.to_datetime(df['Timestamp'], unit='ms')
-        df['Hour'] = df['DateTime'].dt.hour
+    df = pd.DataFrame(point_list, columns=['Timestamp', 'Path', 'Transcript'])
+    df['DateTime'] = pd.to_datetime(df['Timestamp'], unit='ms')
+    df['Hour'] = df['DateTime'].dt.hour
 
-        # Plot
-        def scatter():
-            fig = px.scatter(df, x="DateTime", y="Hour", custom_data=["Timestamp"],
-                             labels={
-                                 "DateTime": "Date",
-                                 "Hour": "Hour",
-                             },
-                             hover_name="DateTime", hover_data={'DateTime': False, 'Hour': False, 'Transcript': True, },
-                             )
+    # Plot
+    def scatter():
+        fig = px.scatter(df, x="DateTime", y="Hour", custom_data=["Timestamp"],
+                         labels={
+                             "DateTime": "Date",
+                             "Hour": "Hour",
+                         },
+                         hover_name="DateTime", hover_data={'DateTime': False, 'Hour': False, 'Transcript': True, },
+                         )
 
-            fig.update_layout(clickmode='event+select')
-            fig.update_traces(marker_size=10)
-            fig.update_traces(hovertemplate='<b>Transcript:</b> %{customdata[1]} <br><b>Date:</b> %{hovertext}')
-            plot_div = plot(fig, output_type='div', include_plotlyjs=False)
-            return plot_div
+        fig.update_layout(clickmode='event+select')
+        fig.update_traces(marker_size=10)
+        fig.update_traces(hovertemplate='<b>Transcript:</b> %{customdata[1]} <br><b>Date:</b> %{hovertext}')
+        plot_div = plot(fig, output_type='div', include_plotlyjs=False)
+        return plot_div
     return scatter()
 
 

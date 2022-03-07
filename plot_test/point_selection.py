@@ -8,17 +8,12 @@ import plotly.io as pio
 import pandas as pd
 from django_plotly_dash import DjangoDash
 
-app = DjangoDash('Test3')
-
+app = DjangoDash('PointSelection')
 pio.templates.default = "plotly_white"
 
-styles = {
-
-}
-#transcript_list = [[1626806294000, 'saludos'], [1626759008000, 'cuento mi amor en ir al trabajo en tren'], [1626758997000, 'cuánto memoria mira trabajo por truck en transporte público'], [1626758957000, 'cuéntame Morón ir a la oficina'], [1626758948000, 'qué hora es'], [1626555886000, 'para'], [1626555875000, 'reproduce música en Spotify'], [1626555453000, 'pon ladybug name'], [1626470066000, 'cómo es el nombre verdadero de Ruth'], [1626470024000, 'cuéntanos un chiste'], [1626357532000, 'reproduce Belinda'], [1626330944000, 'pon un verano en Nueva York']]
 
 def create_figure(transcript_list):
-    df = pd.DataFrame(transcript_list, columns=['Timestamp', 'Transcript'])
+    df = pd.DataFrame(transcript_list, columns=['Timestamp', 'Path', 'Transcript'])
     df['DateTime'] = pd.to_datetime(df['Timestamp'], unit='ms')
     df['Hour'] = df['DateTime'].dt.hour
 
@@ -42,33 +37,26 @@ app.layout = html.Div([
     dcc.Graph(id='basic-interactions'),
     html.Div(id='selected-data', style={
         'font-family': 'Lora',
-    }),
-    #html.Button(id='submit-button-state', n_clicks=0, children="Submit")
-
-])
+    }),])
 
 @app.expanded_callback(
     Output('selected-data', 'children'),
     Output('basic-interactions', 'figure'),
-    #Input('submit-button-state', 'n_clicks'),
     Input('basic-interactions', 'selectedData'),
-    #State('basic-interactions', 'selectedData'),
 )
-#n_clicks,
+
 def display_selected_data(selectedData, session_state=None, *args, **kwargs):
 
     if session_state is None:
         raise NotImplementedError("Missing session state")
     initial_points = session_state.get('django_to_dash_context', {})
-
     fig = create_figure(initial_points)
 
     if selectedData:
         points = len(selectedData['points'])
         session_state['selected_points'] = selectedData
-        print(session_state)
     else:
         points = 0
-
+        session_state['selected_points'] = {}
     n_points = f'Selected Points: {points}'
     return n_points, fig

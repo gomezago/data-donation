@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Plot Test{% endblock %}
+{% block title %}Select Points{% endblock %}
 
 {% block page_content %}
     {% load plotly_dash %}
@@ -11,15 +11,14 @@
     <p>Click on the points you want to <b>exclude</b> from your donation.</p>
 </div>
 <div class="col-md-8 offset-md-2">
-    <div class="{% plotly_class name="Test3"%} card" style="height: 100%; width: 100%">
-
-        {% plotly_app name='Test3' ratio=0.65 %}
+    <div class="{% plotly_class name="PointSelection"%} card" style="height: 100%; width: 100%">
+        {% plotly_app name='PointSelection' ratio=0.54 %}
     </div>
 </div>
 <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
-    <form action="/plot3/", method="post", enctype="multipart/form-data">
+    <form action="/select/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
         {% csrf_token %}
-        <button name="confirm" type="submit", class="btn btn-danger btn-xs">Confirm Selection</button>
+        <button name="confirm" type="submit", class="btn btn-primary btn-xs">Confirm Selection</button>
     </form>
 </div>
 </section>
