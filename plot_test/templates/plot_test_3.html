@@ -16,5 +16,11 @@
         {% plotly_app name='Test3' ratio=0.65 %}
     </div>
 </div>
+<div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+    <form action="/plot3/", method="post", enctype="multipart/form-data">
+        {% csrf_token %}
+        <button name="confirm" type="submit", class="btn btn-danger btn-xs">Confirm Selection</button>
+    </form>
+</div>
 </section>
 {% endblock %}

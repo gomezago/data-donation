@@ -18,6 +18,7 @@ from .google_functions import *
 from plotly.offline import plot
 import plotly.graph_objects as go
 import plotly.express as px
+import plotly.io as pio
 
 logger = logging.getLogger('data_donation_logs')
 
@@ -516,6 +517,8 @@ def get_data(request, pk): #For Single Donation
     return JsonResponse(sorted_data_array, safe=False)
 
 def create_scatter(donation_thing, donation_speech_property, token):
+    pio.templates.default = "plotly_white"
+
     #donation_speech_property = donation.propertyId['SPEECH_RECORD']
     speech_data = read_property_data(donation_thing, donation_speech_property, token)
     # Create Graph

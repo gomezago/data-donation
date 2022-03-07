@@ -38,6 +38,14 @@ def plot_test_2(request):
 
 def plot_test_3(request):
 
+    session = request.session
+
+    if request.method == 'POST' and 'confirm' in request.POST:
+        s = request.session.get('django_plotly_dash', dict())
+        print('------ POINTS HERE ------')
+        print(s)
+        #TODO: Render request somewhere else
+
     # Data:
     transcript_list = [[1626806294000, 'saludos'], [1626759008000, 'cuento mi amor en ir al trabajo en tren'],
                        [1626758997000, 'cuánto memoria mira trabajo por truck en transporte público'],
@@ -51,9 +59,10 @@ def plot_test_3(request):
 
     context = {}
 
-    dash_context = request.session.get('django_plotly_dash', dict())
-    dash_context['django_to_dash_context'] = transcript_list
-    request.session['django_plotly_dash'] = dash_context
+    dash_context = request.session.get('django_plotly_dash', dict()) # If session has a key with that value it returns the value associated with that key. Otherwise returns an empty dict
+    # Dash context: Session with django_plotly_dash key (could be empty)
+    dash_context['django_to_dash_context'] = transcript_list # Add data to session under key: django_to_dash_context. Meaning the session dictionary now has a key django_to_dash whose value are the transcripts
+    request.session['django_plotly_dash'] = dash_context # Adds dash_context to the session under django_plotly_dash.
 
     return render(request, 'plot_test_3.html', context=context)
 

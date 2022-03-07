@@ -4,20 +4,17 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
 import plotly.express as px
+import plotly.io as pio
 import pandas as pd
 from django_plotly_dash import DjangoDash
 
 app = DjangoDash('Test3')
 
+pio.templates.default = "plotly_white"
+
 styles = {
-    'pre': {
-        'border': 'thin lightgrey solid',
-        'overflowX': 'scroll'
-    }
+
 }
-
-
-
 #transcript_list = [[1626806294000, 'saludos'], [1626759008000, 'cuento mi amor en ir al trabajo en tren'], [1626758997000, 'cuánto memoria mira trabajo por truck en transporte público'], [1626758957000, 'cuéntame Morón ir a la oficina'], [1626758948000, 'qué hora es'], [1626555886000, 'para'], [1626555875000, 'reproduce música en Spotify'], [1626555453000, 'pon ladybug name'], [1626470066000, 'cómo es el nombre verdadero de Ruth'], [1626470024000, 'cuéntanos un chiste'], [1626357532000, 'reproduce Belinda'], [1626330944000, 'pon un verano en Nueva York']]
 
 def create_figure(transcript_list):
@@ -42,11 +39,12 @@ def create_figure(transcript_list):
 
 
 app.layout = html.Div([
-    dcc.Graph(
-        id='basic-interactions',
-    ),
-    html.Div(id='selected-data'),
+    dcc.Graph(id='basic-interactions'),
+    html.Div(id='selected-data', style={
+        'font-family': 'Lora',
+    }),
     #html.Button(id='submit-button-state', n_clicks=0, children="Submit")
+
 ])
 
 @app.expanded_callback(
@@ -57,14 +55,20 @@ app.layout = html.Div([
     #State('basic-interactions', 'selectedData'),
 )
 #n_clicks,
-def display_selected_data(selectedData, sesion_state=None, *args, **kwargs):
-    fig = create_figure(kwargs['session_state']['django_to_dash_context'])
-    #children = [html.Div(["The session context message is '%s'" % (kwargs['session_state']['django_to_dash_context'])])]
+def display_selected_data(selectedData, session_state=None, *args, **kwargs):
+
+    if session_state is None:
+        raise NotImplementedError("Missing session state")
+    initial_points = session_state.get('django_to_dash_context', {})
+
+    fig = create_figure(initial_points)
 
     if selectedData:
         points = len(selectedData['points'])
+        session_state['selected_points'] = selectedData
+        print(session_state)
     else:
         points = 0
 
-    n_points = f'Data Points Selected: {points}'
+    n_points = f'Selected Points: {points}'
     return n_points, fig
