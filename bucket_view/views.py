@@ -345,12 +345,12 @@ def project_view(request, pk):
 
                     # Read Data File
                     zip_file_dict = extract_zip(form.cleaned_data['data'])
-                    assistant_html = get_assistant_file(zip_file_dict)
-                    metadata_list = get_metadata(assistant_html, zip_file_dict)
+                    assistant_json = get_assistant_file(zip_file_dict)
+                    metadata_list = get_metadata(assistant_json, zip_file_dict)
 
                     values, files = get_values_files(metadata_list)
                     req = update_property_media(thingId, initialized_property_dict['SPEECH_RECORD'], values, files, request.session['token'])
-                    print(req)
+                    print(req.text)
 
                     # Save Donation
                     donation = Donation(
