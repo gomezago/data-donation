@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+    <!-- Starting section-->
+    <section style="padding-top: 50px; padding-bottom: 50px">
+        <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+            <h1>How to Get a Copy of your Data</h1>
+            <hr>
+              {% if project.id == 'ddd_voxpop'%}
+                <p>Information on how to obtain a copy of your data for the <b>{{ project.title }}</b> project:</p>
+                <ol id="publications">
+                    <li>Go to <a href="https://takeout.google.com/">takeout.google.com</a> and log in with your Google credentials if necessary<br>
+                    <img src="{% static 'images/takeout.png' %}" width="80%">
+                    </li>
+                    <li>Under <b>Select data to include</b> click on <b>Deselect all</b> </li>
+                    <li>Scroll down until you find <b>My Activity</b> and select it by ticking the box</li>
+                    <li>Click on <b>All activity data included</b>, this should open a pop-up where you can choose specific activity data to export. Click on <b>Deselect all</b> and tick only the box next to <b>Assistant</b></li>
+                    <li>Click on <b>Multiple formats</b>, this should open a pop-up where you can choose specific formats for your download. Under <b>Activity records</b> click on <b>JSON</b></li>
+                    <li>Under <b>My Activity</b> you should see <b>JSON and 2 other formats</b> and <b>1 product selected</b></li>
+                    <li>Scroll down and click on the <b>Next step</b> button</li>
+                    <li>Under <b>Choose file type, frequency & destination</b> select <b>Export once</b>, <b>.zip</b>, and <b>2 GB</b></li>
+                    <li>Click on the <b>Create export button.</b> You will receive an email when your data is ready</li>
+                    <li>Once your data is ready, download the <b>.zip</b> file and upload it in the <a href="/project/{{ project.pk }}/">{{ project.title }} page</a></li>
+
+                </ol>
+             {% else %}
+                <p>Project <b>{{ project.title }}</b> does not have detailed instructions. If you have any questions
+                    regarding this project please send an email to <a href="mailto:datadonation-ide@tudelft.nl">datadonation-ide@tudelft.nl</a>.</p>
+            {% endif %}
+        </div>
+    </section>
+
+
+
+{% endblock %}

@@ -34,7 +34,7 @@
                 <p>{{ project.data_info }}</p>
                 <h5>How to donate?</h5>
             <p>{{ project.instructions }}<br>
-                <small>Curious about exploring your data? <a href="/extensions">Read More</a></small></p>
+                <small><a href="/howto/{{ project.pk }}/">Detailed instructions can be found here</a></small></p>
                 {% if project.id == 'ddd_voxpop' and project.active %}
                     <p>If you have just enabled data collection on your Google device schedule a data donation reminder in a few weeks.</p>
                         <form action="/project/{{ project.pk }}/", method="post", enctype="multipart/form-data">

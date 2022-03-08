@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from bucket_view.models import Project
 
 # Create your views here.
 def pages_index(request):
@@ -18,6 +19,11 @@ def pages_privacy(request):
 
 def pages_terms(request):
     return render(request, 'pages_terms.html')
+
+def pages_instructions(request, pk):
+
+    project = Project.objects.get(pk=pk)
+    return render(request, 'pages_instructions.html', {'project': project})
 
 def pages_extensions(request):
     return render(request, 'pages_extensions.html')
