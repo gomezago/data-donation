@@ -18,7 +18,7 @@ def create_figure(transcript_list):
     df['Hour'] = df['DateTime'].dt.hour
 
     # Custom data to select to Hover, Click, and Selection Events
-    fig = px.scatter(df, x="DateTime", y="Hour", custom_data=["Timestamp"],
+    fig = px.scatter(df, x="DateTime", y="Hour", custom_data=["Timestamp"], opacity=0.5,
     labels={
                          "DateTime" : "Date",
                          "Hour": "Hour",
@@ -27,7 +27,7 @@ def create_figure(transcript_list):
                      )
 
     fig.update_layout(clickmode='event+select')
-    fig.update_traces(marker_size=20)
+    fig.update_traces(marker_size=10)
     fig.update_traces(hovertemplate='<b>Transcript:</b> %{customdata[1]} <br><b>Date:</b> %{hovertext}')
 
     return fig

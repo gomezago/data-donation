@@ -4,10 +4,25 @@ import pandas as pd
 import re
 import io
 import json
+import os
 
 def extract_zip(input_zip):
     input_zip = ZipFile(input_zip)
     return {name: input_zip.read(name) for name in input_zip.namelist()}
+
+def validate_voice(file_names_dict):
+    file_dirs = list(set([os.path.dirname(x) for x in file_names_dict]))
+    ext = [os.path.splitext(x)[1] for x in file_names_dict]
+
+    if len(file_dirs) == 3:
+        if '.json' and '.html' and '.mp3' in ext:
+            valid = True
+        else:
+            valid = False
+    else:
+        valid = False
+
+    return valid
 
 def get_assistant_file(unzip_dict):
 

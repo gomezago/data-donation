@@ -2,6 +2,7 @@ import json
 import logging
 import pandas as pd
 from django.shortcuts import render
+from django.utils.html import format_html
 from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm, ReminderForm, MetadataForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -338,39 +339,50 @@ def project_view(request, pk):
 
                 elif pk == 'ddd_voxpop':
 
-                    choices = form.cleaned_data['data_selection']
-
-                    # Initialize Thing and Properties in Bucket
-                    thingId, initialized_property_dict = initialize_bucket(project, choices, request.session['token'])
-
-                    # Read Data File
+                    # Read File
                     zip_file_dict = extract_zip(form.cleaned_data['data'])
-                    assistant_json = get_assistant_file(zip_file_dict)
-                    metadata_list = get_metadata(assistant_json, zip_file_dict)
 
-                    values, files = get_values_files(metadata_list)
-                    req = update_property_media(thingId, initialized_property_dict['SPEECH_RECORD'], values, files, request.session['token'])
-                    print(req.text)
+                    # Validate File
+                    valid = validate_voice(zip_file_dict.keys())
+                    if valid:
+                        choices = form.cleaned_data['data_selection']
 
-                    # Save Donation
-                    donation = Donation(
-                            user        = request.user,
-                            data = project.data,
-                            project     = project,
-                            updates     = form.cleaned_data['updates'],
-                            participate       = form.cleaned_data['participate'],
-                            consent      = form.cleaned_data['consent'],
-                            thingId     = thingId,
-                            propertyId  = initialized_property_dict,
-                        )
-                    donation.save()
-                    logger.info("Donation by user {} to project {}".format(request.user.username, project.title))
+                        # Initialize Thing and Properties in Bucket
+                        thingId, initialized_property_dict = initialize_bucket(project, choices, request.session['token'])
 
-                    points = initialize_donation_points(thingId, initialized_property_dict['SPEECH_RECORD'], request.session['token'])
-                    scatter = create_scatter(points)
+                        # Get Data
+                        assistant_json = get_assistant_file(zip_file_dict)
+                        metadata_list = get_metadata(assistant_json, zip_file_dict)
 
-                    meta_form = MetadataForm()
-                    return render(request, "metadata_view.html", {'donation': donation, 'form' : meta_form, 'plot' : scatter})
+                        values, files = get_values_files(metadata_list)
+                        req = update_property_media(thingId, initialized_property_dict['SPEECH_RECORD'], values, files, request.session['token'])
+                        print(req.text)
+
+                        # Save Donation
+                        donation = Donation(
+                                user        = request.user,
+                                data = project.data,
+                                project     = project,
+                                updates     = form.cleaned_data['updates'],
+                                participate       = form.cleaned_data['participate'],
+                                consent      = form.cleaned_data['consent'],
+                                thingId     = thingId,
+                                propertyId  = initialized_property_dict,
+                            )
+                        donation.save()
+                        logger.info("Donation by user {} to project {}".format(request.user.username, project.title))
+
+                        points = initialize_donation_points(thingId, initialized_property_dict['SPEECH_RECORD'], request.session['token'])
+                        scatter = create_scatter(points)
+
+                        meta_form = MetadataForm()
+                        return render(request, "metadata_view.html", {'donation': donation, 'form' : meta_form, 'plot' : scatter})
+                    else:
+                        error_message = format_html("Oops... It seems that the file you uploaded is not what we expected!")
+                        messages.error(request, error_message)
+                        reminder_form = ReminderForm()
+                        return render(request, 'project_view.html',
+                                      {'project': project, 'form': form, 'reminder': reminder_form})
             else:
                 messages.error(request, "Oops... Something went wrong. Please try again!")
                 reminder_form = ReminderForm()
@@ -544,7 +556,7 @@ def create_scatter(point_list):
 
     # Plot
     def scatter():
-        fig = px.scatter(df, x="DateTime", y="Hour", custom_data=["Timestamp"],
+        fig = px.scatter(df, x="DateTime", y="Hour", custom_data=["Timestamp"], opacity=0.5,
                          labels={
                              "DateTime": "Date",
                              "Hour": "Hour",
