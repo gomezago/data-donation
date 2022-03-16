@@ -553,7 +553,6 @@ def create_scatter(point_list):
     df = pd.DataFrame(point_list, columns=['Timestamp', 'Path', 'Transcript'])
     df['DateTime'] = pd.to_datetime(df['Timestamp'], unit='ms')
     df['Hour'] = df['DateTime'].dt.hour
-
     # Plot
     def scatter():
         fig = px.scatter(df, x="DateTime", y="Hour", custom_data=["Timestamp"], opacity=0.5,

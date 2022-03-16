@@ -77,6 +77,19 @@ def delete_property(thingId, propertyId, token):
     response = requests.delete(DELETE_PROPERTY_URL, json=property, headers=hed, params=par)
     return response
 
+def delete_property_timestamps(thingId, propertyId, timestamps, token):
+
+    DELETE_TIMESTAMPS_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}/properties/{propertyId}/timestamps'
+
+    hed = {'Authorization': 'bearer ' + token['access_token']}
+    par = {'thingId': thingId, 'propertyId': propertyId}
+
+    payload = {'timestamps' : timestamps}
+
+    response = requests.delete(DELETE_TIMESTAMPS_URL, headers=hed, params=par, json=payload)
+    return response
+
+
 def update_property(thingId, propertyId, values, token):
     UPDATE_PROPERTY_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}/properties/{propertyId}'
 

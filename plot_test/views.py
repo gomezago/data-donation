@@ -3,7 +3,7 @@ from plotly.offline import plot
 import plotly.graph_objects as go
 import pandas as pd
 from bucket_view.models import Donation
-from bucket_view.views import initialize_donation_points
+from bucket_view.views import initialize_donation_points, delete_property_timestamps
 from bucket_view.forms import MotivationForm
 
 # Create your views here.
@@ -23,9 +23,11 @@ def select_point(request, pk):
 
     if request.method == 'POST' and 'confirm' in request.POST:
         selection = request.session.get('django_plotly_dash', dict())
-        print('------ POINTS HERE ------')
-        print(selection['selected_points'])
-        #TODO: Delete points from Donation
+        selected_list = selection['selected_points']['points']
+        selected_time = [dic['customdata'][0] for dic in selected_list]
+
+        delete_selection = delete_property_timestamps(donation_thing, donation_speech_property, selected_time, request.session['token'])
+
         moti_form = MotivationForm()
         return render(request, "donation_view.html", {'donation': donation, 'form': moti_form})
 
@@ -38,3 +40,4 @@ def select_point(request, pk):
 # request : Django Request Object
 # session_state: Dictionary of information that is unique to this user session. # Any changes made to its content are persisted as part of the session.
 # user: Django User
+
