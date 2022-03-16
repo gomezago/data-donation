@@ -8,9 +8,10 @@ import plotly.io as pio
 import pandas as pd
 from django_plotly_dash import DjangoDash
 
-app = DjangoDash('PointSelection')
-pio.templates.default = "plotly_white"
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
+app = DjangoDash('PointSelection', external_stylesheets=external_stylesheets)
+pio.templates.default = "plotly_white"
 
 def create_figure(transcript_list):
     df = pd.DataFrame(transcript_list, columns=['Timestamp', 'Path', 'Transcript'])
@@ -26,21 +27,18 @@ def create_figure(transcript_list):
                          hover_name="DateTime", hover_data={'DateTime':False, 'Hour':False, 'Transcript':True,},
                      )
 
-    fig.update_layout(clickmode='event+select')
-    fig.update_traces(marker_size=10)
+    fig.update_layout(clickmode='event+select', margin=dict(l=20, r=20, t=20, b=20),)
+    fig.update_traces(marker_size=10, selector=dict(mode='markers', color='red'))
     fig.update_traces(hovertemplate='<b>Transcript:</b> %{customdata[1]} <br><b>Date:</b> %{hovertext}')
 
     return fig
 
 
 app.layout = html.Div([
-    dcc.Graph(id='basic-interactions'),
-    html.Div(id='selected-data', style={
-        'font-family': 'Lora',
-    }),])
+    dcc.Graph(id='basic-interactions',),
+],style={'marginBottom': 0, 'marginTop': 0,})
 
 @app.expanded_callback(
-    Output('selected-data', 'children'),
     Output('basic-interactions', 'figure'),
     Input('basic-interactions', 'selectedData'),
 )
@@ -53,10 +51,12 @@ def display_selected_data(selectedData, session_state=None, *args, **kwargs):
     fig = create_figure(initial_points)
 
     if selectedData:
-        points = len(selectedData['points'])
         session_state['selected_points'] = selectedData
+        x = [d['x'] for d in selectedData['points']]
+        y = [d['y'] for d in selectedData['points']]
+        fig.add_trace(go.Scatter(x=x, y=y, name='Selected', mode='markers',
+                                 marker_symbol='x',
+                                 marker_size=10))
     else:
-        points = 0
         session_state['selected_points'] = {}
-    n_points = f'Selected Points: {points}'
-    return n_points, fig
+    return fig
