@@ -238,7 +238,7 @@ def bucket_new(request):
 def project_list(request):
     project = Project.objects.all().order_by('-start')
     context = {
-        'project': project
+        'project': project,
     }
     return render(request, "project_list.html", context)
 
@@ -280,10 +280,10 @@ def project_view(request, pk):
                 return render(request, "donation_view.html", {'donation': donation, 'form': moti_form})
             else:
                 messages.error(request, "Oops... Something went wrong. Please try again!")
-                return render(request, 'project_view.html', {'project': project, 'form': form})
+                return render(request, 'project_view.html', {'project': project, 'form': form,})
         else:
             form = DemographicsForm()
-            return render(request, 'project_view.html', {'project': project, 'form': form})
+            return render(request, 'project_view.html', {'project': project, 'form': form,})
     else:
 
         if request.method == 'POST' and 'remind' in request.POST:
@@ -305,11 +305,11 @@ def project_view(request, pk):
 
                 form = DonateForm(choices=data_tuple)
                 return render(request, 'project_view.html',
-                              {'project': project, 'form': form, 'reminder': reminder_form})
+                              {'project': project, 'form': form, 'reminder': reminder_form,})
             else:
                 messages.error(request, "Oops... Something went wrong. Please try again!")
                 form = DonateForm(choices=data_tuple)
-                return render(request, 'project_view.html', {'project': project, 'form': form, 'reminder': reminder_form})
+                return render(request, 'project_view.html', {'project': project, 'form': form, 'reminder': reminder_form,})
 
         elif request.method == 'POST' and 'donate' in request.POST:
             form = DonateForm(request.POST, request.FILES, choices=data_tuple)
@@ -344,7 +344,7 @@ def project_view(request, pk):
 
                     logger.info("Donation by user {} to project {}".format(request.user.username, project.title))
                     moti_form = MotivationForm()
-                    return render(request, "donation_view.html", {'donation': donation, 'form': moti_form})
+                    return render(request, "donation_view.html", {'donation': donation, 'form': moti_form, 'd_count' : donation_count})
 
                 elif pk == 'ddd_voxpop':
 
@@ -391,15 +391,15 @@ def project_view(request, pk):
                         messages.error(request, error_message)
                         reminder_form = ReminderForm()
                         return render(request, 'project_view.html',
-                                      {'project': project, 'form': form, 'reminder': reminder_form})
+                                      {'project': project, 'form': form, 'reminder': reminder_form,})
             else:
                 messages.error(request, "Oops... Something went wrong. Please try again!")
                 reminder_form = ReminderForm()
-                return render(request, 'project_view.html', {'project': project, 'form': form, 'reminder': reminder_form})
+                return render(request, 'project_view.html', {'project': project, 'form': form, 'reminder': reminder_form,})
         else:
             form = DonateForm(choices=data_tuple)
             reminder_form = ReminderForm()
-            return render(request, 'project_view.html', {'project': project, 'form': form, 'reminder': reminder_form})
+            return render(request, 'project_view.html', {'project': project, 'form': form, 'reminder': reminder_form,})
 
 
 def get_property_types(token):

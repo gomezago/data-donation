@@ -5,7 +5,7 @@
     <div class="container" style="padding-top:20px">
         <h1>{{ project.title }}</h1>
               <hr>
-            <p><b>Main Researcher:</b> {{ project.researcher_name }}<br>
+            <p><b>Main Researcher(s):</b> {{ project.researcher_name }}<br>
                 <b>Contact Email: </b><a href="mailto:{{ project.user.email }}">{{ project.user.email }}</a><br>
                 <b>Affiliation:</b> {{ project.researcher_affiliation }}<br>
                 <b>Duration:</b> {{project.start}} to {{ project.end }}</p>
@@ -13,11 +13,17 @@
             <div class="col-md-5">
                 <img class="card-img-top" src="{{ project.image.url }}" width="100%">
                     {% if project.active %}
-                        <h6><span class="small text-uppercase" style="color:#019875">STATUS: Open</span></h6>
+                        <h6><span class="small text-uppercase" style="color:#019875">STATUS: Open. DONATIONS RECEIVED: {{ project.donation_set.count }}</span></h6>
                     {% elif project.soon %}
                         <h6><span class="small text-uppercase" style="color:#E67F0D">STATUS: Coming Soon</span></h6>
                     {% else %}
-                       <h6><span class="small text-uppercase" style="color:#B8293D">STATUS: Closed</span></h6>
+                        {% if project.id == 'ddd_period' %}
+                            <h6><span class="small text-uppercase" style="color:#B8293D">STATUS: Closed. DONATIONS RECEIVED: 35</span></h6>
+                        {% elif project.id == 'ddd_home' %}
+                            <h6><span class="small text-uppercase" style="color:#B8293D">STATUS: Closed. DONATIONS RECEIVED: 44</span></h6>
+                        {% else %}
+                            <h6><span class="small text-uppercase" style="color:#B8293D">STATUS: Closed. DONATIONS RECEIVED: {{ project.donation_set.count }}</span></h6>
+                        {% endif %}
                 {% endif %}
             </div>
             <div class="col-md-7">

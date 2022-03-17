@@ -18,8 +18,17 @@
                                 {% elif p.soon %}
                                     <h6><span class="small text-uppercase" style="color:#E67F0D">STATUS: Coming Soon</span></h6>
                                 {% else %}
-                                <h6><span class="small text-uppercase" style="color:#B8293D">STATUS: Closed</span></h6>
+                                        <h6><span class="small text-uppercase" style="color:#B8293D">STATUS: Closed</span></h6>
                                 {% endif %}
+
+                                {% if p.id == 'ddd_period' %}
+                                    <h6><span class="small text-muted text-uppercase">Donations Received: 35</span> </h6>
+                                {% elif p.id == 'ddd_home' %}
+                                    <h6><span class="small text-muted text-uppercase">Donations Received: 44</span> </h6>
+                                {% else %}
+                                    <h6><span class="small text-muted text-uppercase">Donations Received: {{ p.donation_set.count }}</span> </h6>
+                                {% endif %}
+
                                 <p class="card-text">{{ p.description_tweet }}</p>
                                 <a href="{% url 'project_view' pk=p.pk %}"
                                    class="btn btn-primary">
