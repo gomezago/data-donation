@@ -47,6 +47,10 @@ body{
     letter-spacing: -.05rem;
 }
 
+.progress-bar {
+    background-color: #499ed8;
+}
+
 /* Custom Button */
 .btn-primary{
     color: #ffffff;
