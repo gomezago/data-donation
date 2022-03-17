@@ -21,6 +21,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 import plotly.io as pio
 
+
 logger = logging.getLogger('data_donation_logs')
 
 @login_required()
@@ -137,7 +138,18 @@ def metadata_view(request, pk):
                 awareness = meta_form.cleaned_data['awa']
             )
             awareness.save()
-            messages.success(request, "Thank you for your Donation!") # TODO: Send User to Motivation Form
+            #messages.success(request, "Thank you for your Donation!")
+
+            #TODO: Change Button Link with Calendly Link
+            if donation.participate:
+                context_message = {'email_project': donation.project.title, 'email_username': request.user.username}
+                html_message = get_template('email_card_thanks.html').render(context_message)
+                subject = 'VoxPop: Thank you for your donation'
+
+                #email_msg = EmailMessage(subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [request.user.email,])
+                #email_msg.content_subtype = 'html'
+                #email_msg.send()
+                send_email_task.apply_async((subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [request.user.email, ]))
 
             if meta_form.cleaned_data['awa'] == True:
                 dash_context = request.session.get('django_plotly_dash',dict())
@@ -281,17 +293,14 @@ def project_view(request, pk):
                 when = int(reminder_form.cleaned_data['reminder_time'])
                 email_date = datetime.utcnow() + timedelta(weeks=when+1)
 
-                context_message = {
-                    'email_message' : 'Thank you for your interest in the VoxPop project. Please remember to donate your data.',
-                }
-
+                context_message = {'email_project' : project.title, 'email_project_id' : project.pk}
                 html_message = get_template('email_card.html').render(context_message)
                 subject = 'VoxPop: Data Donation Reminder'
 
-                #email_msg = EmailMessage(subject, html_message, 'test@datadonation.ide.tudelft.nl', [email,])
+                #email_msg = EmailMessage(subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [email,])
                 #email_msg.content_subtype = 'html'
                 #email_msg.send()
-                send_email_task.apply_async((subject, html_message, 'test@datadonation.ide.tudelft.nl', [email, ]), eta=email_date)
+                send_email_task.apply_async((subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [email, ]), eta=email_date)
                 messages.success(request, "Thank you for your interest! We will send you an email on " + email_date.strftime("%d-%m-%Y"))
 
                 form = DonateForm(choices=data_tuple)

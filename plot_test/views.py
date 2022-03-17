@@ -27,7 +27,7 @@ def select_point(request, pk):
             selected_list = selection['selected_points']['points']
             selected_time = [dic['customdata'][0] for dic in selected_list]
             delete_selection = delete_property_timestamps(donation_thing, donation_speech_property, selected_time, request.session['token'])
-            
+
         moti_form = MotivationForm()
         return render(request, "donation_view.html", {'donation': donation, 'form': moti_form})
 
