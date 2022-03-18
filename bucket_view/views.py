@@ -146,10 +146,10 @@ def metadata_view(request, pk):
                 html_message = get_template('email_card_thanks.html').render(context_message)
                 subject = 'VoxPop: Thank you for your donation'
 
-                #email_msg = EmailMessage(subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [request.user.email,])
+                #email_msg = EmailMessage(subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [request.user.email,], bcc=['datadonation-ide@tudelft.nl', ])
                 #email_msg.content_subtype = 'html'
                 #email_msg.send()
-                send_email_task.apply_async((subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [request.user.email, ]))
+                send_email_task.apply_async((subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [request.user.email, ], ['datadonation-ide@tudelft.nl', ]))
 
             if meta_form.cleaned_data['awa'] == True:
                 dash_context = request.session.get('django_plotly_dash',dict())
@@ -297,10 +297,10 @@ def project_view(request, pk):
                 html_message = get_template('email_card.html').render(context_message)
                 subject = 'VoxPop: Data Donation Reminder'
 
-                #email_msg = EmailMessage(subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [email,])
+                #email_msg = EmailMessage(subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [email,], bcc=['datadonation-ide@tudelft.nl', ])
                 #email_msg.content_subtype = 'html'
                 #email_msg.send()
-                send_email_task.apply_async((subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [email, ]), eta=email_date)
+                send_email_task.apply_async((subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [email, ], ['datadonation-ide@tudelft.nl', ]), eta=email_date)
                 messages.success(request, "Thank you for your interest! We will send you an email on " + email_date.strftime("%d-%m-%Y"))
 
                 form = DonateForm(choices=data_tuple)

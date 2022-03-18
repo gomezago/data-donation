@@ -6,9 +6,9 @@ def add(x,y):
     return x+y
 
 @shared_task()
-def send_email_task(subject, message, sender_email, recipient_list):
+def send_email_task(subject, message, sender_email, recipient_list, bcc):
     print('Sending Email')
-    email_msg = EmailMessage(subject, message, sender_email, recipient_list)
+    email_msg = EmailMessage(subject, message, sender_email, recipient_list, bcc=bcc)
     email_msg.content_subtype = 'html'
     email_msg.send()
     return 'Email Sent'
