@@ -78,11 +78,11 @@
                         <br><br>
                 {% endif %}
 
-            <h3>Donate Your Data</h3>
+            <h3>Upload Your Data</h3>
             {% include 'messages.html' %}
             {% if project.active %}
                 {% if not user.is_authenticated %}
-                <p>You first must <a href="/bucket/login/">log in</a> or <a href="/bucket/login/">create a user</a> to donate your data.</p>
+                <p>You first must <a href="/bucket/login/">log in</a> or <a href="/bucket/login/">create a user</a> to upload your data.</p>
                 {% else %}
                     {% if project.id != 'ddd_demo' %}
                          <form action="/project/{{ project.pk }}/", method="post", enctype="multipart/form-data">
@@ -98,7 +98,11 @@
                                 <label class="col-sm-3 col-form-label col-form-label-sm control-label">Select the Data</label>
                                 <div class="col-sm-7">
                                     {{ form.data_selection }}
+                                    {% if project.id != 'ddd_voxpop' %}
                                     <small class="form-tex text-muted">Select the type(s) of data you wish to donate to <b>{{ project.title }}</b>. Hold <b>CTRL</b>, <b>⌘</b> or <b>drag with the mouse</b> to select more than one.</small>
+                                    {% else %}
+                                     <small class="form-tex text-muted">Select the type(s) of data you wish to upload. Note that <b>{{ project.title }}</b> requires both types of data. Hold <b>CTRL</b>, <b>⌘</b> or <b>drag with the mouse</b> to select more than one.</small>
+                                    {% endif %}
                                 </div>
                              </div>
                             <div class="form-group row">
@@ -112,15 +116,15 @@
                                 <label class="col-sm-3 col-form-label col-form-label-sm control-label">Confirm your Agreement</label>
                                 <div class="col-sm-7">
                                     <label class="control-label">{{ form.consent }} I have read and understood this page</label>
-                                    <label class="control-label">{{ form.consent }} I consent voluntarily to donate my data to <b>{{ project.title }}</b></label>
-                                    <label class="control-label">{{ form.consent }} I understand that I can <b>withdraw my donation</b> any time</label>
                                     <label class="control-label">{{ form.consent }} I confirm that I am <b>18 years old or older</b></label>
+                                    <label class="control-label">{{ form.consent }} I understand that I can <b>delete my data</b> any time</label>
+                                    <label class="control-label">{{ form.consent }} I consent voluntarily to <b>{{ project.title }}</b> researchers using my data as stated</label>
                                 </div>
                              </div>
                             <div class="form-row">
                                 <div class="col-sm-3"></div>
                                 <div class="col-sm-7">
-                                    <button name="donate" type="submit" class="btn btn-primary btn-xs" style="float: left">Donate</button>
+                                    <button name="donate" type="submit" class="btn btn-primary btn-xs" style="float: left">Upload</button>
                                 </div>
                             </div>
                          </form>
@@ -144,7 +148,7 @@
                     {% endif %}
                 {% endif %}
             {% else %}
-                <p>This project is closed. At this time you cannot donate your data. We invite you to <a href="{% url 'project_list' %}">explore other projects</a>.</p>
+                <p>This project is closed. At this time you cannot upload your data. We invite you to <a href="{% url 'project_list' %}">explore other projects</a>.</p>
             {% endif %}
         </div>
     </div>
