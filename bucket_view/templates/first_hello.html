@@ -3,22 +3,28 @@
 {% block page_content %}
 <section style="padding-top: 50px; padding-bottom: 50px">
     <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
-        <h1>Your Donations</h1>
+        <h1>Welcome</h1>
         <hr>
          {% include 'messages.html' %}
     </div>
     <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
         <div class="row">
             <div class="col-sm-4">
-                <img class="featurette-image img-fluid mx-auto" src="{% static 'images/Welcome.png' %}" alt="Welcome Celebration" width="100%">
+                <img class="featurette-image img-fluid mx-auto" src="{% static 'images/Welcome.png' %}" alt="Welcome Celebration" width="85%">
             </div>
             <div class="col-sm-8">
                 <h3>Get Started</h3>
-                <p>Hey <b>{{ user }}</b>, we are excited to have you here!
+                <p>Hey <b>{{ user }}</b>, we are excited to have you here! To get started, find a project to contribute to.<br>
+                    Note that by donating your data you consent to your data being accessible to the project's <b>Data Receivers</b>
+                    for the duration of the project.
+                    If at any point you change your mind you can <b>delete</b> your data directly from your <a href="/hello">dashboard</a>.
+                    <!--
                     To get started you can donate your basic demographic data, you can donate neither, either, or both <b>gender</b> and <b>date of birth</b>. This will allow us to learn about the users of our platform and
                     it will make it easier if you are ever contributing to a project where demographic data is requested.<br>
                     <small><a href="/project/ddd_demo/">Read More</a></small>
+                    -->
                 </p>
+                <!--
                  <form class="row g-3" action="/hello/", method="post", enctype="multipart/form-data">
                      {% csrf_token %}
                       <div class="col-md">
@@ -35,34 +41,39 @@
                         <button type="submit" class="btn btn-primary" style="float: left">Donate</button>
                       </div>
                  </form>
+                 -->
             </div>
         </div>
         </div>
     </div>
+    <!--
     <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 50px">
     <h3>What Happens When You Donate?</h3>
         <p>By donating your data you consent to your data being accessible to the project's <b>Data Receivers</b> for the entire duration of the project. If at any point you change your mind you can <b>delete</b> your data or <b>revoke access</b> to the Data Receivers. You can do this directly from your <a href="/hello">dashboard</a>.</p>
     </div>
+    -->
     <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 10px">
-    <h3>Browse our Projects</h3>
+    <h3>Latest Projects</h3>
         <p>Here are some projects you can contribute to.</p>
         <div class="row">
         {% for p in project %}
                 {% if p.id != 'ddd_demo' %}
                     <div class="col-md-4">
                         <div class="card mb-2">
-                            <img class="card-img-top" src="{{ p.image.url }}">
-                            <div class="card-body">
-                                <h5 class="card-title"><a href="{% url 'project_view' pk=p.pk %}">{{ p.title }}</a></h5>
-                                <p class="card-text">{{ p.description_tweet }}</p>
-                                {% if p.active %}
-                                    <h6><span class="small text-uppercase" style="color:#019875; text-align: right">STATUS: Open</span></h6>
+                        <img class="card-img" src="{{ p.image.url }}" style="opacity: 0.3">
+                        <div class="card-img-overlay">
+                            <!--<h5 class="card-title"><a href="{% url 'project_view' pk=p.pk %}">{{p.title}}</a></h5>-->
+                            <h5><mark style="background-color:rgba(255, 255, 255, 0.5)"><a href="{% url 'project_view' pk=p.pk %}">{{ p.title }}</a></mark></h5>
+                            <p><mark style="background-color:rgba(255, 255, 255, 0.5)">{{p.description_tweet}}</mark></p>
+                            {% if p.active %}
+                                <h6><span class="small text-uppercase" style="color:#019875; background-color:rgba(255, 255, 255, 0.5); text-align: right">STATUS: Open</span></h6>
                                 {% elif p.soon %}
-                                    <h6><span class="small text-uppercase" style="color:#E67F0D">STATUS: Coming Soon</span></h6>
+                                    <h6><span class="small text-uppercase" style="color:#E67F0D; background-color:rgba(255, 255, 255, 0.5)">STATUS: Coming Soon</span></h6>
                                 {% else %}
-                                <h6><span class="small text-uppercase" style="color:#B8293D">STATUS: Closed</span></h6>
+                                <h6><span class="small text-uppercase" style="color:#B8293D; background-color:rgba(255, 255, 255, 0.5)">STATUS: Closed</span></h6>
                             {% endif %}
-
+                        </div>
+                            <div class="card-body">
                              {% if p.id == 'ddd_period' %}
                                     <div class="progress">
                                         <div class="progress-bar" role="progressbar" style="width: 70%" aria-valuenow="35" aria-valuemin="0" aria-valuemax="50"></div>
@@ -79,7 +90,6 @@
                                     </div>
                                     <h6><span class="small text-muted text-uppercase">Donations Received</span> </h6>
                                 {% endif %}
-
                             </div>
                         </div>
                     </div>
