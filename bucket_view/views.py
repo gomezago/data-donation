@@ -3,10 +3,10 @@ import logging
 import pandas as pd
 from django.shortcuts import render
 from django.utils.html import format_html
-from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm, ReminderForm, MetadataForm
+from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm, ReminderForm, MetadataForm, AwarenessSurveyForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Project, Donation, Motivation, Awareness
+from .models import Project, Donation, Motivation, Awareness, InitialAwareness, FinalAwareness
 from utils.bucket_functions import *
 from .clue_functions import read_clue_file, transform_clue_dict, send_clue_data
 from django.http import HttpResponseRedirect, JsonResponse
@@ -145,11 +145,11 @@ def metadata_view(request, pk):
                 context_message = {'email_project': donation.project.title, 'email_username': request.user.username}
                 html_message = get_template('email_card_thanks.html').render(context_message)
                 subject = 'VoxPop: Thank you for your donation'
-
+                #TODO: Uncomment Email
                 #email_msg = EmailMessage(subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [request.user.email,], bcc=['datadonation-ide@tudelft.nl', ])
                 #email_msg.content_subtype = 'html'
                 #email_msg.send()
-                send_email_task.apply_async((subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [request.user.email, ], ['datadonation-ide@tudelft.nl', ]))
+                #send_email_task.apply_async((subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [request.user.email, ], ['datadonation-ide@tudelft.nl', ]))
 
             if meta_form.cleaned_data['awa'] == True:
                 dash_context = request.session.get('django_plotly_dash',dict())
@@ -158,8 +158,8 @@ def metadata_view(request, pk):
 
                 return render(request, 'point_selection.html', {'donation' : donation})
             else:
-                moti_form = MotivationForm()
-                return render(request, 'donation_view.html', {'donation': donation, 'form': moti_form})
+                form = AwarenessSurveyForm()
+                return render(request, 'survey_view.html', {'donation': donation, 'form': form, 'plot':scatter})
 
         else:
             messages.error(request, "Oops... Something went wrong. Please try again!")
@@ -189,6 +189,44 @@ def metadata_view(request, pk):
         'form' : meta_form,
     }
     return render(request, 'metadata_view.html', context)
+
+
+@login_required()
+def survey_view(request, pk):
+    form = AwarenessSurveyForm()
+
+    donation = Donation.objects.get(pk=pk)
+    donation_thing = donation.thingId
+    donation_speech_property = donation.propertyId['SPEECH_RECORD']
+
+    # Create Graph
+    points = initialize_donation_points(donation_thing, donation_speech_property, request.session['token'])
+    scatter = create_scatter(points)
+
+    if request.method == 'POST':
+        form = AwarenessSurveyForm(request.POST)
+        if form.is_valid():
+            awa = FinalAwareness(
+                collected = form.cleaned_data['amount'],
+                types = form.cleaned_data['types'],
+                duration = form.cleaned_data['duration'],
+                decision = form.cleaned_data['decision'],
+                learn = form.cleaned_data['learn'],
+            )
+            awa.save()
+            moti_form = MotivationForm()
+            return render(request, 'donation_view.html', {'donation': donation, 'form': moti_form})
+        else:
+            messages.error(request, "Oops... Something went wrong. Please try again!")
+            return render(request, 'survey_view.html', {'form': form, 'donation': donation, 'plot' : scatter})
+
+    context = {
+        'donation' : donation,
+        'plot': scatter,
+        'form' : form,
+    }
+
+    return render(request, 'survey_view.html', context=context)
 
 
 @login_required()
@@ -344,17 +382,16 @@ def project_view(request, pk):
 
                     logger.info("Donation by user {} to project {}".format(request.user.username, project.title))
                     moti_form = MotivationForm()
-                    return render(request, "donation_view.html", {'donation': donation, 'form': moti_form, 'd_count' : donation_count})
+                    return render(request, "donation_view.html", {'donation': donation, 'form': moti_form})
 
                 elif pk == 'ddd_voxpop':
-
                     # Read File
                     zip_file_dict = extract_zip(form.cleaned_data['data'])
-
                     # Validate File
                     valid = validate_voice(zip_file_dict.keys())
                     if valid:
-                        choices = form.cleaned_data['data_selection']
+                        #choices = form.cleaned_data['data_selection']
+                        choices = {"SPEECH_RECORD": ["Speech Record", ""], "SPEAKER_METADATA": ["Speaker Metadata", "Speaker Metadata"]}
 
                         # Initialize Thing and Properties in Bucket
                         thingId, initialized_property_dict = initialize_bucket(project, choices, request.session['token'])
@@ -374,11 +411,20 @@ def project_view(request, pk):
                                 project     = project,
                                 updates     = form.cleaned_data['updates'],
                                 participate       = form.cleaned_data['participate'],
-                                consent      = form.cleaned_data['consent'],
+                                consent      = True,
                                 thingId     = thingId,
                                 propertyId  = initialized_property_dict,
                             )
                         donation.save()
+
+                        initial_awa = InitialAwareness(
+                            donation    = donation,
+                            collection  = form.cleaned_data['stored'],
+                            takeout     = form.cleaned_data['takeout'],
+                            goal        =form.cleaned_data['goal'],
+                        )
+                        initial_awa.save()
+
                         logger.info("Donation by user {} to project {}".format(request.user.username, project.title))
 
                         points = initialize_donation_points(thingId, initialized_property_dict['SPEECH_RECORD'], request.session['token'])

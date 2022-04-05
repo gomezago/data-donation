@@ -180,7 +180,7 @@ class DonateForm(forms.Form):
 
     data_selection = forms.MultipleChoiceField(
         choices=(),
-        required=True,
+        required=False,
         widget=forms.SelectMultiple(
             attrs={
                 'class': 'form-control', #form-select in Boostrap 5
@@ -188,10 +188,9 @@ class DonateForm(forms.Form):
         )
     )
 
-
     consent = forms.BooleanField(
         initial=False,
-        required=True,
+        required=False,
         widget=forms.CheckboxInput(
             attrs={
                 'class': 'checkbox',
@@ -231,6 +230,39 @@ class DonateForm(forms.Form):
             }
         )
     )
+
+    stored = forms.BooleanField(
+        initial=False,
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class' : 'checkbox',
+            }
+        )
+    )
+
+    takeout = forms.BooleanField(
+        initial=False,
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class' : 'checkbox',
+            }
+        )
+    )
+
+    goal = forms.CharField(
+        required=False,
+        label="Goal",
+        max_length=200,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'I would like to learn...',
+            }
+        )
+    )
+
 
 
 class DemographicsForm(forms.Form):
@@ -345,7 +377,6 @@ class MotivationForm(forms.Form):
 class MetadataForm(forms.Form):
 
     # Speaker
-
     SEX_CHOICES = (
         (3, "---"),
         (0, "Female"),
@@ -432,7 +463,7 @@ class MetadataForm(forms.Form):
     )
 
     acc = forms.CharField(
-        required=True,
+        required=False,
         label="Your Accent:",
         max_length=40,
         widget=forms.TextInput(
@@ -473,4 +504,82 @@ class MetadataForm(forms.Form):
         )
     )
 
+    consent = forms.BooleanField(
+        initial=False,
+        required=True,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class': 'checkbox',
+            }
+        )
+    )
 
+class AwarenessSurveyForm(forms.Form):
+
+    amount = forms.IntegerField(
+        initial=2,
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                'class':'form-control-range',
+                'type' : 'range',
+                'min': 0,
+                'max': 4,
+                'step' : 1,
+            }
+        )
+    )
+
+    types = forms.IntegerField(
+        initial=2,
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                'class':'form-control-range',
+                'type' : 'range',
+                'min': 0,
+                'max': 4,
+                'step' : 1,
+            }
+        )
+    )
+
+    duration = forms.IntegerField(
+        initial=2,
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                'class':'form-control-range',
+                'type' : 'range',
+                'min': 0,
+                'max': 4,
+                'step' : 1,
+            }
+        )
+    )
+
+    decision = forms.IntegerField(
+        initial=2,
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                'class':'form-control-range',
+                'type' : 'range',
+                'min': 0,
+                'max': 4,
+                'step' : 1,
+            }
+        )
+    )
+
+    learn = forms.CharField(
+        required=False,
+        label="Goal",
+        max_length=200,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'I learned...',
+            }
+        )
+    )

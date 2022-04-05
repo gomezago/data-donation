@@ -60,7 +60,7 @@
                 {% if p.id != 'ddd_demo' %}
                     <div class="col-md-4">
                         <div class="card mb-2">
-                        <img class="card-img" src="{{ p.image.url }}" style="opacity: 0.3">
+                        <img class="card-img" src="{{ p.image.url }}" style="opacity: 0.2">
                         <div class="card-img-overlay">
                             <!--<h5 class="card-title"><a href="{% url 'project_view' pk=p.pk %}">{{p.title}}</a></h5>-->
                             <h5><mark style="background-color:rgba(255, 255, 255, 0.5)"><a href="{% url 'project_view' pk=p.pk %}">{{ p.title }}</a></mark></h5>

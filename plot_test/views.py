@@ -3,8 +3,9 @@ from plotly.offline import plot
 import plotly.graph_objects as go
 import pandas as pd
 from bucket_view.models import Donation
-from bucket_view.views import initialize_donation_points, delete_property_timestamps
-from bucket_view.forms import MotivationForm
+from bucket_view.views import initialize_donation_points, delete_property_timestamps, create_scatter
+from bucket_view.forms import MotivationForm, AwarenessSurveyForm
+
 
 # Create your views here.
 def select_point(request, pk):
@@ -26,10 +27,14 @@ def select_point(request, pk):
         if selection['selected_points']:
             selected_list = selection['selected_points']['points']
             selected_time = [dic['customdata'][0] for dic in selected_list]
-            delete_selection = delete_property_timestamps(donation_thing, donation_speech_property, selected_time, request.session['token'])
+            delete_property_timestamps(donation_thing, donation_speech_property, selected_time, request.session['token'])
 
-        moti_form = MotivationForm()
-        return render(request, "donation_view.html", {'donation': donation, 'form': moti_form})
+        form = AwarenessSurveyForm()
+
+        points = initialize_donation_points(donation_thing, donation_speech_property, request.session['token'])
+        scatter = create_scatter(points)
+
+        return render(request, "survey_view.html", {'donation':donation, 'form':form, 'plot':scatter})
 
     return render(request, 'point_selection.html', {'donation': donation})
 

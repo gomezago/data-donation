@@ -4,16 +4,16 @@
 {% block page_content %}
     <section style="padding-top: 50px; padding-bottom: 50px">
         <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
-            <h1>Your Donation to {{ donation.project.title }}</h1>
+            <h1>Uploaded Data</h1>
             <hr>
         </div>
     <div class="col-md-8 offset-md-2">
+        <p>Hover over to explore your data, each dot represents an interaction. What now? You can <b>confirm your donation to {{ donation.project.title }}</b> and input the required metadata or you can <b>delete your data</b> from our platform.</p>
             <div class="row">
                 <div class="col-md-6" id="chart">
                     {{ plot | safe }}
                 </div>
                 <div class="col-md-6">
-                    <p>Hover over to explore your data, each dot represents an interaction. What now? You can <b>confirm your donation</b> and input the required metadata or you can <b>delete your data</b> from our platform.</p>
                     {% include 'messages.html' %}
                     <form action="/metadata/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
                      {% csrf_token %}
@@ -36,7 +36,7 @@
                                     <div>{{ form.lan }}</div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label control-label">Accent</label>
+                                    <label class="form-label">Accent</label>
                                     <div>{{ form.acc }}</div>
                                 </div>
                             </div>
@@ -53,7 +53,16 @@
                         </div>
                         <div class="form-group">
                             <div class="form-row">
-                                <label class="form-check-label">{{ form.awa }} I would like to <b>exclude</b> parts of the data from my donation</label>
+                                <label class="control-label">{{ form.awa }} I would like to <b>exclude</b> parts of the data from my donation</label>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="form-group required">
+                            <div class="form-row">
+                                <label class="control-label">{{ form.consent }} I confirm that I am <b>18 years old or older</b></label>
+                                <label class="control-label">{{ form.consent }} I understand that I can <b>delete my data</b> any time</label>
+                                <label class="control-label">{{ form.consent }} I have read and understood the <b>{{ donation.project.title }}</b> page</label>
+                                <label class="control-label">{{ form.consent }} I consent to <b>{{ donation.project.title }}</b> researchers using my data as stated</label>
                             </div>
                         </div>
                         <button name="confirm" type="submit" class="btn btn-primary mr-2" style="float: left">Confirm Donation</button>

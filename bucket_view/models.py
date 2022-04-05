@@ -59,3 +59,16 @@ class Motivation(models.Model):
 class Awareness(models.Model):
     donation               = models.ForeignKey(Donation, on_delete=models.CASCADE)
     awareness              = models.BooleanField(default=False)
+
+class InitialAwareness(models.Model):
+    donation            = models.ForeignKey(Donation, on_delete=models.CASCADE)
+    collection          = models.BooleanField(default=False)
+    takeout             = models.BooleanField(default=False)
+    goal                = models.CharField(max_length=200, unique=False, default=None, null=True)
+
+class FinalAwareness(models.Model):
+    collected       = models.CharField(max_length=1, unique=False, default=None, null=True)
+    types           = models.CharField(max_length=1, unique=False, default=None, null=True)
+    duration        = models.CharField(max_length=1, unique=False, default=None, null=True)
+    decision        = models.CharField(max_length=1, unique=False, default=None, null=True)
+    learn           = models.CharField(max_length=200, unique=False, default=None, null=True)
