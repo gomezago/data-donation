@@ -3,7 +3,7 @@
 {% block page_content %}
 <section style="padding-top: 50px; padding-bottom: 50px">
     <div class="container" style="padding-top:20px">
-        <h1>{{ project.title }}</h1>
+        <h4>{{ project.title }}</h4>
               <hr>
             <p><b>Main Researcher(s):</b> {{ project.researcher_name }}<br>
                 <b>Contact Email: </b><a href="mailto:{{ project.user.email }}">{{ project.user.email }}</a><br>
@@ -77,8 +77,8 @@
                         </form>
                         <br><br>
                 {% endif %}
-
-            <h3>Upload Your Data</h3>
+            <hr>
+            <h5>Upload Your Data</h5>
             {% include 'messages.html' %}
             {% if project.active %}
                 {% if not user.is_authenticated %}
