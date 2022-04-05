@@ -94,6 +94,23 @@
                                      <small class="form-tex text-muted">Note that <b>{{ project.title }}</b> only accepts <b>{{ project.data_ext }}</b> files.</small>
                                 </div>
                              </div>
+                            {% if project.id == 'ddd_voxpop' %}
+                            <div class="form-group row required">
+                                <label class="col-sm-3 col-form-label col-form-label-sm control-label">Previous Knowledge</label>
+                                <div class="col-sm-7">
+                                    <label>{{ form.stored }} I knew that Google <b>collects and stores</b> my voice assistant logs</label>
+                                    <label>{{ form.takeout }} I knew that I could <b>obtain a copy</b> of my voice assistant logs</label>
+                                </div>
+                            </div>
+                            <div class="form-group row required">
+                                <label class="col-sm-3 col-form-label col-form-label-sm control-label">Set a Learning Goal</label>
+                                <div class="col-sm-7">
+                                    <small class="form-tex text-muted">What would <b>you</b> like to learn from your voice assistant logs?</small>
+                                    {{ form.goal }}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if project.id != 'ddd_voxpop' %}
                              <div class="form-group row required">
                                 <label class="col-sm-3 col-form-label col-form-label-sm control-label">Select the Data</label>
                                 <div class="col-sm-7">
@@ -105,6 +122,7 @@
                                     {% endif %}
                                 </div>
                              </div>
+                             {% endif %}
                             <div class="form-group row">
                                 <label class="col-sm-3 col-form-label col-form-label-sm">Indicate your Preferences</label>
                                 <div class="col-sm-7">
@@ -112,6 +130,7 @@
                                     <label>{{ form.participate }} I wish to participate in an individual session to explore my <b>{{ project.title }}</b> data</label>
                                 </div>
                             </div>
+                            {% if project.id != 'ddd_voxpop' %}
                              <div class="form-group row required">
                                 <label class="col-sm-3 col-form-label col-form-label-sm control-label">Confirm your Agreement</label>
                                 <div class="col-sm-7">
@@ -121,6 +140,7 @@
                                     <label class="control-label">{{ form.consent }} I consent voluntarily to <b>{{ project.title }}</b> researchers using my data as stated</label>
                                 </div>
                              </div>
+                            {% endif %}
                             <div class="form-row">
                                 <div class="col-sm-3"></div>
                                 <div class="col-sm-7">

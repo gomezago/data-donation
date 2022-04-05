@@ -180,7 +180,7 @@ class DonateForm(forms.Form):
 
     data_selection = forms.MultipleChoiceField(
         choices=(),
-        required=True,
+        required=False,
         widget=forms.SelectMultiple(
             attrs={
                 'class': 'form-control', #form-select in Boostrap 5
@@ -188,10 +188,9 @@ class DonateForm(forms.Form):
         )
     )
 
-
     consent = forms.BooleanField(
         initial=False,
-        required=True,
+        required=False,
         widget=forms.CheckboxInput(
             attrs={
                 'class': 'checkbox',
@@ -231,6 +230,39 @@ class DonateForm(forms.Form):
             }
         )
     )
+
+    stored = forms.BooleanField(
+        initial=False,
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class' : 'checkbox',
+            }
+        )
+    )
+
+    takeout = forms.BooleanField(
+        initial=False,
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class' : 'checkbox',
+            }
+        )
+    )
+
+    goal = forms.CharField(
+        required=False,
+        label="Goal",
+        max_length=200,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'I would like to learn...',
+            }
+        )
+    )
+
 
 
 class DemographicsForm(forms.Form):
@@ -472,5 +504,3 @@ class MetadataForm(forms.Form):
             }
         )
     )
-
-
