@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+    <section style="padding-top: 50px; padding-bottom: 50px">
+        <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+            <h4>Your Donation to {{ donation.project.title }}</h4>
+            <hr>
+        </div>
+    <div class="col-md-8 offset-md-2">
+        <p>Bla Bla</p>
+            <div class="row">
+                <div class="col-md-6" id="chart">
+                    {{ plot | safe }}
+                </div>
+                <div class="col-md-6">
+                    {% include 'messages.html' %}
+                    <form action="/survey/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
+                     {% csrf_token %}
+                        <div class="form-group required">
+                               <label class="form-label">
+                                    To what extent do you agree with the following statements?<br>
+                                    <small>Note scale from <b>Strongly Disagree (1)</b> to <b>Strongly Agree (5)</b><br></small>
+                               </label>
+                            <label class="form-label label-control">Seeing my data is helpful to...</label>
+                              <div class="form-row justify-content-center">
+                                   <div class="col-md-8">
+                                       <small><span class="font-weight-light mb-6">Understand <b>how much data</b> is collected</span></small>
+                                  </div>
+                                  <div class="col-md-4">
+                                        <div class="d-flex justify-content-center my-4">
+                                            <small><span class="font-weight-bold mr-2 mt-1">1</span></small>
+                                            {{ form.amount }}
+                                            <small><span class="font-weight-bold ml-2 mt-1">5</span></small>
+                                        </div>
+                                  </div>
+                              </div>
+                              <div class="form-row justify-content-center">
+                                   <div class="col-md-8">
+                                       <small><span class="font-weight-light mb-6">Understand what <b>types of data</b> are collected</span></small>
+                                  </div>
+                                  <div class="col-md-4">
+                                        <div class="d-flex justify-content-center my-4">
+                                            <small><span class="font-weight-bold mr-2 mt-1">1</span></small>
+                                            {{ form.types }}
+                                            <small><span class="font-weight-bold ml-2 mt-1">5</span></small>
+                                        </div>
+                                  </div>
+                              </div>
+                              <div class="form-row justify-content-center">
+                                   <div class="col-md-8">
+                                       <small><span class="font-weight-light mb-6">Understand <b>how long</b> data has been collected</span></small>
+                                  </div>
+                                  <div class="col-md-4">
+                                        <div class="d-flex justify-content-center my-4">
+                                            <small><span class="font-weight-bold mr-2 mt-1">1</span></small>
+                                            {{ form.duration }}
+                                            <small><span class="font-weight-bold ml-2 mt-1">5</span></small>
+                                        </div>
+                                  </div>
+                              </div>
+                              <div class="form-row justify-content-center">
+                                   <div class="col-md-8">
+                                       <small><span class="font-weight-light mb-6"><b>Decide</b> whether to donate my data</span></small>
+                                  </div>
+                                  <div class="col-md-4">
+                                        <div class="d-flex justify-content-center my-4">
+                                            <small><span class="font-weight-bold mr-2 mt-1">1</span></small>
+                                            {{ form.decision}}
+                                            <small><span class="font-weight-bold ml-2 mt-1">5</span></small>
+                                        </div>
+                                  </div>
+                              </div>
+                            <label class="form-label">What did you learn from seeing your data in this way?</label>
+                             <div class="form-row justify-content-center">
+                                {{ form.learn }}
+                             </div>
+                        </div>
+                        <button name="confirm" type="submit" class="btn btn-primary mr-2" style="float: left">Submit</button>
+                 </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

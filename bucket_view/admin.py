@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Project, Donation, Motivation, Awareness, InitialAwareness
+from .models import Project, Donation, Motivation, Awareness, InitialAwareness, FinalAwareness
 # Register your models here.
 class ProjectAdmin(admin.ModelAdmin):
     pass
@@ -16,8 +16,12 @@ class AwarenessAdmin(admin.ModelAdmin):
 class InitialAwarenessAdmin(admin.ModelAdmin):
     pass
 
+class FinalAwarenessAdmin(admin.ModelAdmin):
+    pass
+
 admin.site.register(Project,ProjectAdmin)
 admin.site.register(Donation, DonationAdmin)
 admin.site.register(Motivation, MotivationAdmin)
 admin.site.register(Awareness, AwarenessAdmin)
 admin.site.register(InitialAwareness, InitialAwarenessAdmin)
+admin.site.register(FinalAwareness, FinalAwarenessAdmin)

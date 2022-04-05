@@ -3,10 +3,10 @@ import logging
 import pandas as pd
 from django.shortcuts import render
 from django.utils.html import format_html
-from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm, ReminderForm, MetadataForm
+from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm, ReminderForm, MetadataForm, AwarenessSurveyForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Project, Donation, Motivation, Awareness, InitialAwareness
+from .models import Project, Donation, Motivation, Awareness, InitialAwareness, FinalAwareness
 from utils.bucket_functions import *
 from .clue_functions import read_clue_file, transform_clue_dict, send_clue_data
 from django.http import HttpResponseRedirect, JsonResponse
@@ -158,8 +158,8 @@ def metadata_view(request, pk):
 
                 return render(request, 'point_selection.html', {'donation' : donation})
             else:
-                moti_form = MotivationForm()
-                return render(request, 'donation_view.html', {'donation': donation, 'form': moti_form})
+                form = AwarenessSurveyForm()
+                return render(request, 'survey_view.html', {'donation': donation, 'form': form, 'plot':scatter})
 
         else:
             messages.error(request, "Oops... Something went wrong. Please try again!")
@@ -189,6 +189,44 @@ def metadata_view(request, pk):
         'form' : meta_form,
     }
     return render(request, 'metadata_view.html', context)
+
+
+@login_required()
+def survey_view(request, pk):
+    form = AwarenessSurveyForm()
+
+    donation = Donation.objects.get(pk=pk)
+    donation_thing = donation.thingId
+    donation_speech_property = donation.propertyId['SPEECH_RECORD']
+
+    # Create Graph
+    points = initialize_donation_points(donation_thing, donation_speech_property, request.session['token'])
+    scatter = create_scatter(points)
+
+    if request.method == 'POST':
+        form = AwarenessSurveyForm(request.POST)
+        if form.is_valid():
+            awa = FinalAwareness(
+                collected = form.cleaned_data['amount'],
+                types = form.cleaned_data['types'],
+                duration = form.cleaned_data['duration'],
+                decision = form.cleaned_data['decision'],
+                learn = form.cleaned_data['learn'],
+            )
+            awa.save()
+            moti_form = MotivationForm()
+            return render(request, 'donation_view.html', {'donation': donation, 'form': moti_form})
+        else:
+            messages.error(request, "Oops... Something went wrong. Please try again!")
+            return render(request, 'survey_view.html', {'form': form, 'donation': donation, 'plot' : scatter})
+
+    context = {
+        'donation' : donation,
+        'plot': scatter,
+        'form' : form,
+    }
+
+    return render(request, 'survey_view.html', context=context)
 
 
 @login_required()

@@ -11,4 +11,5 @@ urlpatterns = [
     path("data_count/", views.get_data_count, name="data_count"),
     path("data_time/<str:pk>/", views.get_data, name="data_time"),
     path("metadata/<str:pk>/", views.metadata_view, name="metadata"),
+    path("survey/<str:pk>/", views.survey_view, name="survey"),
 ]

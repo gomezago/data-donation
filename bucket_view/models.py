@@ -65,3 +65,10 @@ class InitialAwareness(models.Model):
     collection          = models.BooleanField(default=False)
     takeout             = models.BooleanField(default=False)
     goal                = models.CharField(max_length=200, unique=False, default=None, null=True)
+
+class FinalAwareness(models.Model):
+    collected       = models.CharField(max_length=1, unique=False, default=None, null=True)
+    types           = models.CharField(max_length=1, unique=False, default=None, null=True)
+    duration        = models.CharField(max_length=1, unique=False, default=None, null=True)
+    decision        = models.CharField(max_length=1, unique=False, default=None, null=True)
+    learn           = models.CharField(max_length=200, unique=False, default=None, null=True)
