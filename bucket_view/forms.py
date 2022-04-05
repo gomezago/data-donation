@@ -464,7 +464,7 @@ class MetadataForm(forms.Form):
     )
 
     acc = forms.CharField(
-        required=True,
+        required=False,
         label="Your Accent:",
         max_length=40,
         widget=forms.TextInput(
@@ -504,3 +504,27 @@ class MetadataForm(forms.Form):
             }
         )
     )
+
+    consent = forms.BooleanField(
+        initial=False,
+        required=True,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class': 'checkbox',
+            }
+        )
+    )
+
+    #test = forms.IntegerField(
+    #    initial=2,
+    #    required=False,
+    #    widget=forms.NumberInput(
+    #        attrs={
+    #            'class':'form-control-range',
+    #            'type' : 'range',
+    #            'min': 0,
+    #            'max': 4,
+    #            'step' : 1,
+    #        }
+    #    )
+    #)
