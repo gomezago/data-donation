@@ -85,6 +85,7 @@
                 <p>You first must <a href="/bucket/login/">log in</a> or <a href="/bucket/login/">create a user</a> to upload your data.</p>
                 {% else %}
                     {% if project.id != 'ddd_demo' %}
+                        <p>This is the first step of the data donation process! Don't worry, you will be able to explore your data <b>before</b> making a decision to donate. You will also find a few questions that we ask to better support you and inform our research.</p>
                          <form action="/project/{{ project.pk }}/", method="post", enctype="multipart/form-data">
                             {% csrf_token %}
                               <div class="form-group row required">

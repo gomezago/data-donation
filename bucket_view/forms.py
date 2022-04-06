@@ -469,7 +469,7 @@ class MetadataForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Your Accent',
+                'placeholder': 'e.g., Yorkshire',
             }
         )
     )

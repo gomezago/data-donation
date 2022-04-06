@@ -142,7 +142,7 @@
                 </div>
                 <div class="col-md-4">
                     <h5>What Next?</h5>
-                    <p>If you agreed to further collaborate on this project, you will be soon contacted. For questions, you can always reach out by sending an email to <a href="mailto:{{ donation.project.user.email }}">{{ donation.project.user.email }}</a>.</p>
+                    <p>If you agreed to participate in an individual session to explore your data, you will be soon contacted.<br> For questions, you can always reach out by sending an email to <a href="mailto:{{ donation.project.user.email }}">{{ donation.project.user.email }}</a>.</p>
 
                 <h5>Manage your Data</h5>
                     <p>By clicking below, you can delete the data you have donated. This data will <b>no longer be stored on our platform</b> and <b>no one will have access to it</b>.</p>
@@ -154,9 +154,9 @@
             </div>
         </div>
         <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; margin-top: 20px">
-            <h3>Motivation</h3>
+            <h5>Motivation</h5>
             {% include 'messages.html' %}
-            <p><b>What prompted you to donate your data to this project?</b> We know this may not be an easy question, but your answer is very valuable to us. It will allow us to better understand how to reach people like you in the future. Don't worry, you don't have to answer if you don't want to.
+            <p><b>What prompted you to donate your data to {{ donation.project.title }}?</b> We know this may not be an easy question, but your answer is very valuable to us. It will allow us to better understand how to reach people like you in the future. Don't worry, you don't have to answer if you don't want to.
             </p>
                  <form action="/donation/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
                     {% csrf_token %}

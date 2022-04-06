@@ -80,7 +80,7 @@ def donation_view(request, pk):
         else:
             logger.error("User {} failed to delete donation to project {}".format(request.user.username, donation.project.title))
 
-        project = Project.objects.all()
+        project = Project.objects.all().order_by('-start')[:3]
         demo_form = DemographicsForm()
         donations = Donation.objects.filter(user=request.user)
         if not donations:
@@ -145,7 +145,7 @@ def metadata_view(request, pk):
                 context_message = {'email_project': donation.project.title, 'email_username': request.user.username}
                 html_message = get_template('email_card_thanks.html').render(context_message)
                 subject = 'VoxPop: Thank you for your donation'
-                #TODO: Uncomment Email
+
                 #email_msg = EmailMessage(subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [request.user.email,], bcc=['datadonation-ide@tudelft.nl', ])
                 #email_msg.content_subtype = 'html'
                 #email_msg.send()
@@ -173,7 +173,7 @@ def metadata_view(request, pk):
         else:
             logger.error("User {} failed to delete donation to project {}".format(request.user.username, donation.project.title))
 
-        project = Project.objects.all()
+        project = Project.objects.all().order_by('-start')[:3]
         demo_form = DemographicsForm()
         donations = Donation.objects.filter(user=request.user)
         if not donations:

@@ -13,7 +13,7 @@
                 <img class="featurette-image img-fluid mx-auto" src="{% static 'images/Welcome.png' %}" alt="Welcome Celebration" width="85%">
             </div>
             <div class="col-sm-8">
-                <h3>Get Started</h3>
+                <h5>Get Started</h5>
                 <p>Hey <b>{{ user }}</b>, we are excited to have you here! To get started, find a project to contribute to.<br>
                     Note that by donating your data you consent to your data being accessible to the project's <b>Data Receivers</b>
                     for the duration of the project.
@@ -53,27 +53,24 @@
     </div>
     -->
     <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 10px">
-    <h4>Latest Projects</h4>
+    <h5>Latest Projects</h5>
         <p>Here are some projects you can contribute to.</p>
         <div class="row">
         {% for p in project %}
                 {% if p.id != 'ddd_demo' %}
                     <div class="col-md-4">
                         <div class="card mb-2">
-                        <img class="card-img" src="{{ p.image.url }}" style="opacity: 0.2">
-                        <div class="card-img-overlay">
-                            <!--<h5 class="card-title"><a href="{% url 'project_view' pk=p.pk %}">{{p.title}}</a></h5>-->
-                            <h5><mark style="background-color:rgba(255, 255, 255, 0.5)"><a href="{% url 'project_view' pk=p.pk %}">{{ p.title }}</a></mark></h5>
-                            <p><mark style="background-color:rgba(255, 255, 255, 0.5)">{{p.description_tweet}}</mark></p>
-                            {% if p.active %}
-                                <h6><span class="small text-uppercase" style="color:#019875; background-color:rgba(255, 255, 255, 0.5); text-align: right">STATUS: Open</span></h6>
-                                {% elif p.soon %}
-                                    <h6><span class="small text-uppercase" style="color:#E67F0D; background-color:rgba(255, 255, 255, 0.5)">STATUS: Coming Soon</span></h6>
-                                {% else %}
-                                <h6><span class="small text-uppercase" style="color:#B8293D; background-color:rgba(255, 255, 255, 0.5)">STATUS: Closed</span></h6>
-                            {% endif %}
-                        </div>
+                            <img class="card-img-top" src="{{ p.image.url }}">
                             <div class="card-body">
+                                <h5 class="card-title"><a href="{% url 'project_view' pk=p.pk %}">{{ p.title }}</a></h5>
+                                <p class="card-text">{{ p.description_tweet }}</p>
+                                {% if p.active %}
+                                    <h6><span class="small text-uppercase" style="color:#019875; text-align: right">STATUS: Open</span></h6>
+                                {% elif p.soon %}
+                                    <h6><span class="small text-uppercase" style="color:#E67F0D">STATUS: Coming Soon</span></h6>
+                                {% else %}
+                                <h6><span class="small text-uppercase" style="color:#B8293D">STATUS: Closed</span></h6>
+                            {% endif %}
                              {% if p.id == 'ddd_period' %}
                                     <div class="progress">
                                         <div class="progress-bar" role="progressbar" style="width: 70%" aria-valuenow="35" aria-valuemin="0" aria-valuemax="50"></div>
@@ -98,7 +95,7 @@
         </div>
     </div>
     <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 10px">
-    <h3>Create your Own Project</h3>
+    <h5>Create your Own Project</h5>
         <p>If you want to start a project that could benefit from collaborations impulsed by data and you think <b>Designerly Data Donation</b> can help you meet your goals feel free to contact us by sending an email to: <a href="mailto:datadonation-ide@tudelft.nl">datadonation-ide@tudelft.nl</a>.</p>
     </div>
 </section>
