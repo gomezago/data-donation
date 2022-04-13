@@ -2,7 +2,7 @@ from django.shortcuts import render
 from plotly.offline import plot
 import plotly.graph_objects as go
 import pandas as pd
-from bucket_view.models import Donation
+from bucket_view.models import Donation, DeletedPoint
 from bucket_view.views import initialize_donation_points, delete_property_timestamps, create_scatter
 from bucket_view.forms import MotivationForm, AwarenessSurveyForm
 
@@ -13,6 +13,8 @@ def select_point(request, pk):
     donation = Donation.objects.get(pk=pk)
     donation_thing = donation.thingId
     donation_speech_property = donation.propertyId['SPEECH_RECORD']
+
+
 
     # Create Graph
     points = initialize_donation_points(donation_thing, donation_speech_property, request.session['token'])
@@ -25,9 +27,18 @@ def select_point(request, pk):
     if request.method == 'POST' and 'confirm' in request.POST:
         selection = request.session.get('django_plotly_dash', dict())
         if selection['selected_points']:
+
             selected_list = selection['selected_points']['points']
             selected_time = [dic['customdata'][0] for dic in selected_list]
             delete_property_timestamps(donation_thing, donation_speech_property, selected_time, request.session['token'])
+
+            # Save Deleted Points
+            del_entry = DeletedPoint(
+                donation=donation,
+                point=selected_time,
+            )
+            del_entry.save()
+
 
         form = AwarenessSurveyForm()
 

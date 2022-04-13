@@ -97,17 +97,25 @@
                              </div>
                             {% if project.id == 'ddd_voxpop' %}
                             <div class="form-group row required">
-                                <label class="col-sm-3 col-form-label col-form-label-sm control-label">Previous Knowledge</label>
+                                <label class="col-sm-3 col-form-label col-form-label-sm">Previous Knowledge</label>
                                 <div class="col-sm-7">
-                                    <label>{{ form.stored }} I knew that Google <b>collects and stores</b> my voice assistant logs</label>
-                                    <label>{{ form.takeout }} I knew that I could <b>obtain a copy</b> of my voice assistant logs</label>
+                                    <div>
+                                        <label>{{ form.stored }} I knew that Google <b>collects and stores</b> my voice assistant logs</label>
+                                        <label>{{ form.takeout }} I knew that I could <b>obtain a copy</b> of my voice assistant logs</label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-group row required">
-                                <label class="col-sm-3 col-form-label col-form-label-sm control-label">Set a Learning Goal</label>
+                                <label class="col-sm-3 col-form-label col-form-label-sm">Open Questions</label>
                                 <div class="col-sm-7">
-                                    <small class="form-tex text-muted">What would <b>you</b> like to learn from your voice assistant logs?</small>
-                                    {{ form.goal }}
+                                    <div>
+                                        <small class="form-tex control-label">What information <b>do you think is contained</b> in your voice assistant logs?</small>
+                                        {{ form.info }}
+                                    </div>
+                                    <div>
+                                        <small class="form-tex control-label">What would <b>you like to learn</b> from your voice assistant logs?</small>
+                                        {{ form.goal }}
+                                    </div>
                                 </div>
                             </div>
                             {% endif %}

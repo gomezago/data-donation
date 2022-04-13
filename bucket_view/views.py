@@ -421,7 +421,8 @@ def project_view(request, pk):
                             donation    = donation,
                             collection  = form.cleaned_data['stored'],
                             takeout     = form.cleaned_data['takeout'],
-                            goal        =form.cleaned_data['goal'],
+                            goal        = form.cleaned_data['goal'],
+                            info        = form.cleaned_data['info'],
                         )
                         initial_awa.save()
 

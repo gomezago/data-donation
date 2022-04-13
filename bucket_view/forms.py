@@ -251,6 +251,19 @@ class DonateForm(forms.Form):
         )
     )
 
+    info = forms.CharField(
+        required=False,
+        label="Goal",
+        max_length=200,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'My voice assistant logs contain...',
+            }
+        )
+    )
+
+
     goal = forms.CharField(
         required=False,
         label="Goal",
