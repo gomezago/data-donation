@@ -608,20 +608,21 @@ def create_scatter(point_list):
     # Create Graph
     df = pd.DataFrame(point_list, columns=['Timestamp', 'Path', 'Transcript'])
     df['DateTime'] = pd.to_datetime(df['Timestamp'], unit='ms')
+    df['DateString'] = df['DateTime'].dt.strftime("%m/%d/%Y, %H:%M")
     df['Hour'] = df['DateTime'].dt.hour
     # Plot
     def scatter():
-        fig = px.scatter(df, x="DateTime", y="Hour", custom_data=["Timestamp"], opacity=0.5,
+        fig = px.scatter(df, x="DateTime", y="Hour", custom_data=["Timestamp", "DateString"], opacity=0.5,
                          labels={
                              "DateTime": "Date",
                              "Hour": "Hour",
                          },
-                         hover_name="DateTime", hover_data={'DateTime': False, 'Hour': False, 'Transcript': True, },
+                         hover_name="DateTime", hover_data={'DateTime': False, 'Hour': False, 'Transcript': True, 'DateString' : True, },
                          )
 
         fig.update_layout(clickmode='event+select')
         fig.update_traces(marker_size=10)
-        fig.update_traces(hovertemplate='<b>Transcript:</b> %{customdata[1]} <br><b>Date:</b> %{hovertext}')
+        fig.update_traces(hovertemplate='<b>Transcript:</b> %{customdata[2]} <br><b>Date:</b> %{customdata[1]}')
         plot_div = plot(fig, output_type='div', include_plotlyjs=False)
         return plot_div
     return scatter()

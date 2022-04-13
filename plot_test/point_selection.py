@@ -16,20 +16,21 @@ pio.templates.default = "plotly_white"
 def create_figure(transcript_list):
     df = pd.DataFrame(transcript_list, columns=['Timestamp', 'Path', 'Transcript'])
     df['DateTime'] = pd.to_datetime(df['Timestamp'], unit='ms')
+    df['DateString'] = df['DateTime'].dt.strftime("%m/%d/%Y, %H:%M")
     df['Hour'] = df['DateTime'].dt.hour
 
     # Custom data to select to Hover, Click, and Selection Events
-    fig = px.scatter(df, x="DateTime", y="Hour", custom_data=["Timestamp"], opacity=0.5,
+    fig = px.scatter(df, x="DateTime", y="Hour", custom_data=["Timestamp", "DateString"], opacity=0.5,
     labels={
                          "DateTime" : "Date",
                          "Hour": "Hour",
                      },
-                         hover_name="DateTime", hover_data={'DateTime':False, 'Hour':False, 'Transcript':True,},
+                         hover_name="DateTime", hover_data={'DateTime':False, 'Hour':False, 'Transcript':True, 'DateString' : True, },
                      )
 
     fig.update_layout(clickmode='event+select', margin=dict(l=20, r=20, t=20, b=20),)
     fig.update_traces(marker_size=10, selector=dict(mode='markers', color='red'))
-    fig.update_traces(hovertemplate='<b>Transcript:</b> %{customdata[1]} <br><b>Date:</b> %{hovertext}')
+    fig.update_traces(hovertemplate='<b>Transcript:</b> %{customdata[2]} <br><b>Date:</b> %{customdata[1]}')
 
     return fig
 
