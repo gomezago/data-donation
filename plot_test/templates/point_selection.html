@@ -11,6 +11,7 @@
     <p>This is the third step of the data donation process! Click on the points you want to <b>exclude</b> from your donation and we will delete them. To select more than one point hold down the shift button while clicking or use the Box and Lasso Select tools in the upper right corner of the chart.</p>
 </div>
 <div class="col-md-8 offset-md-2" style="align-content: center">
+    {% include 'messages.html' %}
     <div class="row justify-content-center">
         <div class="col">
             <div class="{% plotly_class name="PointSelection"%}">
@@ -20,7 +21,17 @@
         <div class="col-auto">
         <form action="/select/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
             {% csrf_token %}
-            <button name="confirm" type="submit", class="btn btn-primary btn-xs">Exclude Selected Points</button>
+            <div class="form-group required">
+                <div class="col">
+                    <div>
+                        <small class="form-tex control-label">Why do you choose to <b>exclude</b> these points?</small>
+                    {{ form.delete_motive}}
+                    </div>
+                </div>
+                <div class="col">
+                    <button name="confirm" type="submit", class="btn btn-primary btn-xs", style="margin-top: 10px">Exclude Selected Points</button>
+                </div>
+            </div>
         </form>
         </div>
     </div>

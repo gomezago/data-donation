@@ -77,3 +77,4 @@ class FinalAwareness(models.Model):
 class DeletedPoint(models.Model):
     donation               = models.ForeignKey(Donation, on_delete=models.CASCADE)
     point                  = models.JSONField(blank=True, null=True)
+    why                    = models.CharField(max_length=200, unique=False, default=None, null=True)

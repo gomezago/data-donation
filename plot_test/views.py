@@ -5,7 +5,8 @@ import pandas as pd
 from bucket_view.models import Donation, DeletedPoint
 from bucket_view.views import initialize_donation_points, delete_property_timestamps, create_scatter
 from bucket_view.forms import MotivationForm, AwarenessSurveyForm
-
+from .forms import DeleteMotivationForm
+from django.contrib import messages
 
 # Create your views here.
 def select_point(request, pk):
@@ -14,7 +15,7 @@ def select_point(request, pk):
     donation_thing = donation.thingId
     donation_speech_property = donation.propertyId['SPEECH_RECORD']
 
-
+    delete_form = DeleteMotivationForm()
 
     # Create Graph
     points = initialize_donation_points(donation_thing, donation_speech_property, request.session['token'])
@@ -26,7 +27,9 @@ def select_point(request, pk):
 
     if request.method == 'POST' and 'confirm' in request.POST:
         selection = request.session.get('django_plotly_dash', dict())
-        if selection['selected_points']:
+        delete_form = DeleteMotivationForm(request.POST)
+
+        if selection['selected_points'] and delete_form.is_valid():
 
             selected_list = selection['selected_points']['points']
             selected_time = [dic['customdata'][0] for dic in selected_list]
@@ -34,20 +37,22 @@ def select_point(request, pk):
 
             # Save Deleted Points
             del_entry = DeletedPoint(
-                donation=donation,
-                point=selected_time,
+                donation    = donation,
+                point       = selected_time,
+                why         = delete_form.cleaned_data['delete_motive']
             )
             del_entry.save()
-
+        else:
+            messages.error(request, "Oops... Something went wrong. Please try again!")
+            return render(request, 'point_selection.html', {'donation': donation, 'form': delete_form})
 
         form = AwarenessSurveyForm()
-
         points = initialize_donation_points(donation_thing, donation_speech_property, request.session['token'])
         scatter = create_scatter(points)
 
         return render(request, "survey_view.html", {'donation':donation, 'form':form, 'plot':scatter})
 
-    return render(request, 'point_selection.html', {'donation': donation})
+    return render(request, 'point_selection.html', {'donation': donation, 'form' : delete_form})
 
 #KWARGS:
 # callback_context : Dash Callback Context
