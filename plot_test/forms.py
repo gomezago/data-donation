@@ -3,7 +3,7 @@ from django import forms
 
 class DeleteMotivationForm(forms.Form):
     delete_motive = forms.CharField(
-        required=False,
+        required=True,
         label="Goal",
         max_length=200,
         widget=forms.Textarea(

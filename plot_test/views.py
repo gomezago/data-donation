@@ -29,22 +29,22 @@ def select_point(request, pk):
         selection = request.session.get('django_plotly_dash', dict())
         delete_form = DeleteMotivationForm(request.POST)
 
-        if selection['selected_points'] and delete_form.is_valid():
-
+        if selection['selected_points']:
             selected_list = selection['selected_points']['points']
             selected_time = [dic['customdata'][0] for dic in selected_list]
-            delete_property_timestamps(donation_thing, donation_speech_property, selected_time, request.session['token'])
+            delete_property_timestamps(donation_thing, donation_speech_property, selected_time,request.session['token'])
 
-            # Save Deleted Points
-            del_entry = DeletedPoint(
-                donation    = donation,
-                point       = selected_time,
-                why         = delete_form.cleaned_data['delete_motive']
-            )
-            del_entry.save()
-        else:
-            messages.error(request, "Oops... Something went wrong. Please try again!")
-            return render(request, 'point_selection.html', {'donation': donation, 'form': delete_form})
+            if delete_form.is_valid():
+                # Save Deleted Points
+                del_entry = DeletedPoint(
+                    donation    = donation,
+                    point       = selected_time,
+                    why         = delete_form.cleaned_data['delete_motive']
+                )
+                del_entry.save()
+            else:
+                messages.error(request, "Oops... Something went wrong with the form! Please try again")
+                return render(request, 'point_selection.html', {'donation': donation, 'form': delete_form})
 
         form = AwarenessSurveyForm()
         points = initialize_donation_points(donation_thing, donation_speech_property, request.session['token'])

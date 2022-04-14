@@ -78,3 +78,12 @@ class DeletedPoint(models.Model):
     donation               = models.ForeignKey(Donation, on_delete=models.CASCADE)
     point                  = models.JSONField(blank=True, null=True)
     why                    = models.CharField(max_length=200, unique=False, default=None, null=True)
+
+class DeleteDonation(models.Model):
+    user            = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    collected       = models.CharField(max_length=1, unique=False, default=None, null=True)
+    types           = models.CharField(max_length=1, unique=False, default=None, null=True)
+    duration        = models.CharField(max_length=1, unique=False, default=None, null=True)
+    decision        = models.CharField(max_length=1, unique=False, default=None, null=True)
+    learn           = models.CharField(max_length=200, unique=False, default=None, null=True)
+    delete          = models.CharField(max_length=200, unique=False, default=None, null=True)

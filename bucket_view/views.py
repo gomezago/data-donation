@@ -3,10 +3,11 @@ import logging
 import pandas as pd
 from django.shortcuts import render
 from django.utils.html import format_html
-from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm, ReminderForm, MetadataForm, AwarenessSurveyForm
+from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm, ReminderForm, MetadataForm, AwarenessSurveyForm, DeleteSurveyForm
+from plot_test.forms import DeleteMotivationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Project, Donation, Motivation, Awareness, InitialAwareness, FinalAwareness
+from .models import Project, Donation, Motivation, Awareness, InitialAwareness, FinalAwareness, DeleteDonation
 from utils.bucket_functions import *
 from .clue_functions import read_clue_file, transform_clue_dict, send_clue_data
 from django.http import HttpResponseRedirect, JsonResponse
@@ -156,7 +157,9 @@ def metadata_view(request, pk):
                 dash_context['django_to_dash_context'] = points
                 request.session['django_plotly_dash'] = dash_context
 
-                return render(request, 'point_selection.html', {'donation' : donation})
+                delete_form = DeleteMotivationForm()
+
+                return render(request, 'point_selection.html', {'donation' : donation, 'form' : delete_form})
             else:
                 form = AwarenessSurveyForm()
                 return render(request, 'survey_view.html', {'donation': donation, 'form': form, 'plot':scatter})
@@ -172,16 +175,9 @@ def metadata_view(request, pk):
             logger.info("User {} deleted donation to project {}".format(request.user.username, donation.project.title))
         else:
             logger.error("User {} failed to delete donation to project {}".format(request.user.username, donation.project.title))
+        del_form = DeleteSurveyForm()
 
-        project = Project.objects.all().order_by('-start')[:3]
-        demo_form = DemographicsForm()
-        donations = Donation.objects.filter(user=request.user)
-        if not donations:
-            messages.success(request, "Your data has been successfully deleted")
-            return render(request, 'first_hello.html', {'form': demo_form, 'project': project})
-        else:
-            messages.success(request, "Your data has been successfully deleted")
-            return render(request, 'bucket_hello.html', {'donations': donations, 'project':project})
+        return render(request, 'delete_survey_view.html', {'form' : del_form})
 
     context = {
         'donation' : donation,
@@ -227,6 +223,43 @@ def survey_view(request, pk):
     }
 
     return render(request, 'survey_view.html', context=context)
+
+
+@login_required()
+def delete_survey_view(request):
+    form = DeleteSurveyForm()
+
+    if request.method == 'POST':
+        form = DeleteSurveyForm(request.POST)
+        if form.is_valid():
+            deldo = DeleteDonation(
+                user=request.user,
+                collected = form.cleaned_data['amount'],
+                types = form.cleaned_data['types'],
+                duration = form.cleaned_data['duration'],
+                decision = form.cleaned_data['decision'],
+                learn = form.cleaned_data['learn'],
+                delete = form.cleaned_data['delete'],
+            )
+            deldo.save()
+            project = Project.objects.all().order_by('-start')[:3]
+            demo_form = DemographicsForm()
+            donations = Donation.objects.filter(user=request.user)
+            if not donations:
+                messages.success(request, "Thank you for contributing to our research!")
+                return render(request, 'first_hello.html', {'form': demo_form, 'project': project})
+            else:
+                messages.success(request, "Thank you for contributing to our research!")
+                return render(request, 'bucket_hello.html', {'donations': donations, 'project': project})
+        else:
+            messages.error(request, "Oops... Something went wrong. Please try again!")
+            return render(request, 'delete_survey_view.html', {'form': form})
+
+    context = {
+        'form' : form,
+    }
+
+    return render(request, 'delete_survey_view.html', context=context)
 
 
 @login_required()

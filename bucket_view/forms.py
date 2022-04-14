@@ -596,3 +596,90 @@ class AwarenessSurveyForm(forms.Form):
             }
         )
     )
+
+
+class DeleteSurveyForm(forms.Form):
+
+    amount = forms.IntegerField(
+        initial=2,
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                'class':'form-control-range',
+                'type' : 'range',
+                'min': 0,
+                'max': 4,
+                'step' : 1,
+            }
+        )
+    )
+
+    types = forms.IntegerField(
+        initial=2,
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                'class':'form-control-range',
+                'type' : 'range',
+                'min': 0,
+                'max': 4,
+                'step' : 1,
+            }
+        )
+    )
+
+    duration = forms.IntegerField(
+        initial=2,
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                'class':'form-control-range',
+                'type' : 'range',
+                'min': 0,
+                'max': 4,
+                'step' : 1,
+            }
+        )
+    )
+
+    decision = forms.IntegerField(
+        initial=2,
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                'class':'form-control-range',
+                'type' : 'range',
+                'min': 0,
+                'max': 4,
+                'step' : 1,
+            }
+        )
+    )
+
+    learn = forms.CharField(
+        required=False,
+        label="Goal",
+        max_length=200,
+        widget=forms.Textarea(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'I learned...',
+                'rows': 5,
+                'cols': 5,
+            }
+        )
+    )
+
+    delete = forms.CharField(
+        required=True,
+        label="Goal",
+        max_length=200,
+        widget=forms.Textarea(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'I delecided to delete my data because...',
+                'rows': 5,
+                'cols': 5,
+            }
+        )
+    )
