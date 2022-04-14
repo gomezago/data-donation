@@ -252,26 +252,28 @@ class DonateForm(forms.Form):
     )
 
     info = forms.CharField(
-        required=False,
+        required=True,
         label="Goal",
         max_length=200,
-        widget=forms.TextInput(
+        widget=forms.Textarea(
             attrs={
                 'class': 'form-control',
                 'placeholder': 'My voice assistant logs contain...',
+                'rows':2,
             }
         )
     )
 
 
     goal = forms.CharField(
-        required=False,
+        required=True,
         label="Goal",
         max_length=200,
-        widget=forms.TextInput(
+        widget=forms.Textarea(
             attrs={
                 'class': 'form-control',
                 'placeholder': 'I would like to learn...',
+                'rows': 2,
             }
         )
     )
@@ -589,10 +591,11 @@ class AwarenessSurveyForm(forms.Form):
         required=False,
         label="Goal",
         max_length=200,
-        widget=forms.TextInput(
+        widget=forms.Textarea(
             attrs={
                 'class': 'form-control',
                 'placeholder': 'I learned...',
+                'rows':2,
             }
         )
     )
