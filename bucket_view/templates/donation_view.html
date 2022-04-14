@@ -4,7 +4,7 @@
 {% block page_content %}
     <section style="padding-top: 50px; padding-bottom: 50px">
         <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
-            <h4>Your Donation to {{ donation.project.title }}</h4>
+            <h4>Thank you for your Donation to {{ donation.project.title }}!</h4>
             <hr>
         </div>
     <div class="col-md-8 offset-md-2">
@@ -143,16 +143,19 @@
                 <div class="col-md-4">
                     <h5>What Next?</h5>
                     <p>If you agreed to participate in an individual session to explore your data, you will be soon contacted.<br> For questions, you can always reach out by sending an email to <a href="mailto:{{ donation.project.user.email }}">{{ donation.project.user.email }}</a>.</p>
-
-                <h5>Manage your Data</h5>
-                    <p>By clicking below, you can delete the data you have donated. This data will <b>no longer be stored on our platform</b> and <b>no one will have access to it</b>.</p>
-                    <form action="/donation/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <button name="delete" type="submit", class="btn btn-danger btn-xs">Delete Data</button>
-                    </form>
+                    <a href="{% url 'hello' %}" class="btn btn-primary">Back to my Dashboard</a>
                 </div>
             </div>
         </div>
+        <div class="col-md-8 offset-md-2">
+            <h5>Manage your Donation</h5>
+                <p>By clicking below, you can delete the data you have donated. This data will <b>no longer be stored on our platform</b> and <b>no one will have access to it</b>.</p>
+                <form action="/donation/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <button name="delete" type="submit", class="btn btn-danger btn-xs">Delete Data</button>
+                </form>
+        </div>
+        <!--
         <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; margin-top: 20px">
             <h5>Motivation</h5>
             {% include 'messages.html' %}
@@ -182,5 +185,6 @@
                     </div>
                 </form>
         </div>
+        -->
     </section>
 {% endblock %}
