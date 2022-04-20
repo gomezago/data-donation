@@ -1,6 +1,8 @@
 from django import forms
 from utils.bucket_functions import list_property_types
 from django.core.validators import FileExtensionValidator
+from django.core.validators import validate_email
+
 class ProjectForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
@@ -329,6 +331,7 @@ class ReminderForm(forms.Form):
     reminder_email = forms.EmailField(
         required=True,
         label = "Your Email: ",
+        validators= [validate_email],
         widget=forms.EmailInput(attrs={
             'class' : 'form-control',
             'placeholder' : "Email*",

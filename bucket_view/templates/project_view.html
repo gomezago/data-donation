@@ -5,6 +5,7 @@
     <div class="container" style="padding-top:20px">
         <h4>{{ project.title }}</h4>
               <hr>
+            {% include 'messages.html' %}
             <p><b>Main Researcher(s):</b> {{ project.researcher_name }}<br>
                 <b>Contact Email: </b><a href="mailto:{{ project.user.email }}">{{ project.user.email }}</a><br>
                 <b>Affiliation:</b> {{ project.researcher_affiliation }}<br>
@@ -79,7 +80,6 @@
                 {% endif %}
             <hr>
             <h5>Upload Your Data</h5>
-            {% include 'messages.html' %}
             {% if project.active %}
                 {% if not user.is_authenticated %}
                 <p>You first must <a href="/bucket/login/">log in</a> or <a href="/bucket/login/">create a user</a> to upload your data.</p>

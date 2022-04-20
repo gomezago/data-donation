@@ -378,7 +378,7 @@ def project_view(request, pk):
                 return render(request, 'project_view.html',
                               {'project': project, 'form': form, 'reminder': reminder_form,})
             else:
-                messages.error(request, "Oops... Something went wrong. Please try again!")
+                messages.error(request, "Oops... Please enter a valid email address!")
                 form = DonateForm(choices=data_tuple)
                 return render(request, 'project_view.html', {'project': project, 'form': form, 'reminder': reminder_form,})
 
