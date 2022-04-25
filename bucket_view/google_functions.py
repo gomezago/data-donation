@@ -14,7 +14,7 @@ def validate_voice(file_names_dict):
     file_dirs = list(set([os.path.dirname(x) for x in file_names_dict]))
     ext = [os.path.splitext(x)[1] for x in file_names_dict]
 
-    if len(file_dirs) == 3:
+    if len(file_dirs) == 2:
         if '.json' and '.html' and '.mp3' in ext:
             valid = True
         else:
