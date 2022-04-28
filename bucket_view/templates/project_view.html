@@ -16,7 +16,7 @@
                     {% if project.active %}
                         <h6><span class="small text-uppercase" style="color:#019875">STATUS: Open</span></h6>
                         <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: width:{% widthratio project.donation_set.count 1 2%}%" aria-valuenow="{{ project.donation_set.count }}" aria-valuemin="0" aria-valuemax="50"></div>
+                            <div class="progress-bar" role="progressbar" style="width: {% widthratio project.donation_set.count 1 2%}%" aria-valuenow="{{ p.donation_set.count }}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <h6><span class="small text-muted text-uppercase">Donations Received</span> </h6>
                     {% elif project.soon %}
