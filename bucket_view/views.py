@@ -150,7 +150,7 @@ def metadata_view(request, pk):
                 email_msg = EmailMessage(subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [request.user.email,], bcc=['datadonation-ide@tudelft.nl', ])
                 email_msg.content_subtype = 'html'
                 email_msg.send()
-                send_email_task.apply_async((subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [request.user.email, ], ['datadonation-ide@tudelft.nl', ]))
+                #send_email_task.apply_async((subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [request.user.email, ], ['datadonation-ide@tudelft.nl', ]))
 
             if meta_form.cleaned_data['awa'] == True:
                 dash_context = request.session.get('django_plotly_dash',dict())
