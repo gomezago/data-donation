@@ -663,7 +663,7 @@ class DeleteSurveyForm(forms.Form):
     )
 
     learn = forms.CharField(
-        required=False,
+        required=True,
         label="Goal",
         max_length=200,
         widget=forms.Textarea(
