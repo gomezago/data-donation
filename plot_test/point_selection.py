@@ -1,4 +1,5 @@
 import json
+import base64
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
@@ -7,6 +8,7 @@ import plotly.express as px
 import plotly.io as pio
 import pandas as pd
 from django_plotly_dash import DjangoDash
+from utils.bucket_functions import get_property_media
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -20,7 +22,7 @@ def create_figure(transcript_list):
     df['Hour'] = df['DateTime'].dt.hour
 
     # Custom data to select to Hover, Click, and Selection Events
-    fig = px.scatter(df, x="DateTime", y="Hour", custom_data=["Timestamp", "DateString"], opacity=0.5,
+    fig = px.scatter(df, x="DateTime", y="Hour", custom_data=["Timestamp", "DateString", "Path"], opacity=0.5,
     labels={
                          "DateTime" : "Date",
                          "Hour": "Hour",
@@ -30,14 +32,45 @@ def create_figure(transcript_list):
 
     fig.update_layout(clickmode='event+select', margin=dict(l=20, r=20, t=20, b=20),)
     fig.update_traces(marker_size=10, selector=dict(mode='markers', color='red'))
-    fig.update_traces(hovertemplate='<b>Transcript:</b> %{customdata[2]} <br><b>Date:</b> %{customdata[1]}')
+    fig.update_traces(hovertemplate='<b>Transcript:</b> %{customdata[3]} <br><b>Date:</b> %{customdata[1]}<br>')
 
     return fig
 
 
 app.layout = html.Div([
+    html.Div(id='audio-player', children=[]),
     dcc.Graph(id='basic-interactions',),
 ],style={'marginBottom': 0, 'marginTop': 0,})
+
+@app.expanded_callback(
+    Output('audio-player', 'children'),
+    Input('basic-interactions', 'hoverData'),
+)
+
+def reproduce_on_click(hoverData, session_state=None, *args, **kwargs):
+    if session_state is None:
+        raise NotImplementedError("Missing session state")
+
+    token = session_state.get('token', {})
+    thing = session_state.get('thing_id', {})
+    property = session_state.get('property', {})
+    type = 'speech-record-mp3'
+
+    if hoverData:
+        if 'customdata' in hoverData['points'][0].keys():
+            timestamp = hoverData['points'][0]['customdata'][0]
+            a = get_property_media(thingId=thing, propertyId=property, timestamp=timestamp, dimension=type, token=token)
+            encoded = base64.b64encode(a.content).decode('utf8')
+            string = f'data:audio/mpeg;base64,{encoded}'
+
+            audio = html.Div(children=[
+                html.Audio(autoPlay=True, preload='auto', controls=True, src=string)
+            ])
+        else:
+            audio = html.Div([])
+    else:
+        audio = html.Div([])
+    return audio
 
 @app.expanded_callback(
     Output('basic-interactions', 'figure'),
@@ -61,3 +94,4 @@ def display_selected_data(selectedData, session_state=None, *args, **kwargs):
     else:
         session_state['selected_points'] = {}
     return fig
+
