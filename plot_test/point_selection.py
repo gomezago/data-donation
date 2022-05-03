@@ -38,16 +38,18 @@ def create_figure(transcript_list):
 
 
 app.layout = html.Div([
-    html.Div(id='audio-player', children=[]),
+    html.Audio(id='audio-player', autoPlay=True, preload='auto', controls=True, title='Hover over the points to listen to your data'),
     dcc.Graph(id='basic-interactions',),
 ],style={'marginBottom': 0, 'marginTop': 0,})
 
 @app.expanded_callback(
-    Output('audio-player', 'children'),
+    Output('audio-player', 'src'),
     Input('basic-interactions', 'hoverData'),
 )
 
 def reproduce_on_click(hoverData, session_state=None, *args, **kwargs):
+    audio_string = ''
+
     if session_state is None:
         raise NotImplementedError("Missing session state")
 
@@ -61,16 +63,9 @@ def reproduce_on_click(hoverData, session_state=None, *args, **kwargs):
             timestamp = hoverData['points'][0]['customdata'][0]
             a = get_property_media(thingId=thing, propertyId=property, timestamp=timestamp, dimension=type, token=token)
             encoded = base64.b64encode(a.content).decode('utf8')
-            string = f'data:audio/mpeg;base64,{encoded}'
+            audio_string = f'data:audio/mpeg;base64,{encoded}'
 
-            audio = html.Div(children=[
-                html.Audio(autoPlay=True, preload='auto', controls=True, src=string)
-            ])
-        else:
-            audio = html.Div([])
-    else:
-        audio = html.Div([])
-    return audio
+    return audio_string
 
 @app.expanded_callback(
     Output('basic-interactions', 'figure'),

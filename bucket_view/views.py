@@ -155,7 +155,11 @@ def metadata_view(request, pk):
             if meta_form.cleaned_data['awa'] == True:
                 dash_context = request.session.get('django_plotly_dash',dict())
                 dash_context['django_to_dash_context'] = points
+                dash_context['token'] = request.session['token']
+                dash_context['thing_id'] = donation_thing
+                dash_context['property'] = donation_speech_property
                 request.session['django_plotly_dash'] = dash_context
+                
 
                 delete_form = DeleteMotivationForm()
 
