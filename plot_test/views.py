@@ -57,6 +57,29 @@ def select_point(request, pk):
 
     return render(request, 'point_selection.html', {'donation': donation, 'form' : delete_form})
 
+
+def explore_point(request, pk):
+
+    donation = Donation.objects.get(pk=pk)
+    donation_thing = donation.thingId
+    donation_speech_property = donation.propertyId['SPEECH_RECORD']
+
+    delete_form = DeleteMotivationForm()
+
+    # Create Graph
+    points = initialize_donation_points(donation_thing, donation_speech_property, request.session['token'])
+
+    # Pass Points
+    dash_context = request.session.get('django_plotly_dash', dict())
+    dash_context['django_to_dash_context'] = points
+    dash_context['token'] = request.session['token']
+    dash_context['thing_id'] = donation_thing
+    dash_context['property'] = donation_speech_property
+    request.session['django_plotly_dash'] = dash_context
+
+
+    return render(request, 'point_exploration.html', {'donation': donation, 'form' : delete_form})
+
 #KWARGS:
 # callback_context : Dash Callback Context
 # dash_app : DashApp model instance

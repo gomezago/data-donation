@@ -159,7 +159,7 @@ def metadata_view(request, pk):
                 dash_context['thing_id'] = donation_thing
                 dash_context['property'] = donation_speech_property
                 request.session['django_plotly_dash'] = dash_context
-                
+
 
                 delete_form = DeleteMotivationForm()
 
