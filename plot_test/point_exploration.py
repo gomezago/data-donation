@@ -30,7 +30,7 @@ def create_figure(transcript_list):
                          hover_name="DateTime", hover_data={'DateTime':False, 'Hour':False, 'Transcript':True, 'DateString' : True, },
                      )
 
-    fig.update_layout(clickmode='event+select', margin=dict(l=20, r=20, t=20, b=20),)
+    fig.update_layout(clickmode='event+select', margin=dict(l=20, r=20, t=20, b=20), height=350,)
     fig.update_traces(marker_size=10, selector=dict(mode='markers', color='red'))
     fig.update_traces(hovertemplate='<b>Transcript:</b> %{customdata[3]} <br><b>Date:</b> %{customdata[1]}<br>')
 
@@ -39,7 +39,7 @@ def create_figure(transcript_list):
 
 app.layout = html.Div([
     html.Audio(id='audio-player', autoPlay=True, preload='auto', controls=True, title='Hover over the points to listen to your data'),
-    dcc.Graph(id='basic-interactions',),
+    dcc.Graph(id='basic-interactions'),
 ],style={'marginBottom': 0, 'marginTop': 0,})
 
 @app.expanded_callback(
