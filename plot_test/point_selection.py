@@ -30,7 +30,7 @@ def create_figure(transcript_list):
                          hover_name="DateTime", hover_data={'DateTime':False, 'Hour':False, 'Transcript':True, 'DateString' : True, },
                      )
 
-    fig.update_layout(clickmode='event+select', margin=dict(l=20, r=20, t=20, b=20),)
+    fig.update_layout(clickmode='event+select', margin=dict(l=20, r=20, t=20, b=20), height=350,)
     fig.update_traces(marker_size=10, selector=dict(mode='markers', color='red'))
     fig.update_traces(hovertemplate='<b>Transcript:</b> %{customdata[3]} <br><b>Date:</b> %{customdata[1]}<br>')
 
@@ -62,8 +62,9 @@ def reproduce_on_click(hoverData, session_state=None, *args, **kwargs):
         if 'customdata' in hoverData['points'][0].keys():
             timestamp = hoverData['points'][0]['customdata'][0]
             a = get_property_media(thingId=thing, propertyId=property, timestamp=timestamp, dimension=type, token=token)
-            encoded = base64.b64encode(a.content).decode('utf8')
-            audio_string = f'data:audio/mpeg;base64,{encoded}'
+            if a.ok:
+                encoded = base64.b64encode(a.content).decode('utf8')
+                audio_string = f'data:audio/mpeg;base64,{encoded}'
 
     return audio_string
 

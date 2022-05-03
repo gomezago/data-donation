@@ -3,7 +3,7 @@ from plotly.offline import plot
 import plotly.graph_objects as go
 import pandas as pd
 import logging
-from bucket_view.models import Donation, DeletedPoint, Awareness
+from bucket_view.models import Donation, DeletedPoint, Awareness, City
 from bucket_view.views import initialize_donation_points, delete_property_timestamps, create_scatter, send_metadata
 from bucket_view.forms import MotivationForm, AwarenessSurveyForm, MetadataForm, DeleteSurveyForm
 from .forms import DeleteMotivationForm
@@ -93,8 +93,12 @@ def explore_point(request, pk):
                 awareness = meta_form.cleaned_data['awa']
             )
             awareness.save()
+            city = City(
+                donation = donation,
+                city    = meta_form.cleaned_data['city']
+            )
+            city.save()
             #messages.success(request, "Thank you for your Donation!")
-
 
             if donation.participate:
                 context_message = {'email_project': donation.project.title, 'email_username': request.user.username}

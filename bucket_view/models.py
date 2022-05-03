@@ -87,3 +87,7 @@ class DeleteDonation(models.Model):
     decision        = models.CharField(max_length=1, unique=False, default=None, null=True)
     learn           = models.CharField(max_length=200, unique=False, default=None, null=True)
     delete          = models.CharField(max_length=200, unique=False, default=None, null=True)
+
+class City(models.Model):
+    donation        = models.ForeignKey(Donation, on_delete=models.CASCADE)
+    city            = models.CharField(max_length=50, unique=False, default=None, null=True)

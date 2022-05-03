@@ -66,7 +66,8 @@ def reproduce_on_click(hoverData, session_state=None, *args, **kwargs):
         if 'customdata' in hoverData['points'][0].keys():
             timestamp = hoverData['points'][0]['customdata'][0]
             a = get_property_media(thingId=thing, propertyId=property, timestamp=timestamp, dimension=type, token=token)
-            encoded = base64.b64encode(a.content).decode('utf8')
-            audio_string = f'data:audio/mpeg;base64,{encoded}'
+            if a.ok:
+                encoded = base64.b64encode(a.content).decode('utf8')
+                audio_string = f'data:audio/mpeg;base64,{encoded}'
 
     return audio_string, fig

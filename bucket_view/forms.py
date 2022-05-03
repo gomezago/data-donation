@@ -492,6 +492,18 @@ class MetadataForm(forms.Form):
         )
     )
 
+    city = forms.CharField(
+        required=True,
+        label="Your City:",
+        max_length=50,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., Delft',
+            }
+        )
+    )
+
     use = forms.ChoiceField(
         required = True,
         label="How many people share your Voice Assistant? ",
