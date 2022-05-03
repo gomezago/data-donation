@@ -465,11 +465,27 @@ def project_view(request, pk):
 
                         logger.info("Donation by user {} to project {}".format(request.user.username, project.title))
 
-                        points = initialize_donation_points(thingId, initialized_property_dict['SPEECH_RECORD'], request.session['token'])
-                        scatter = create_scatter(points)
+                        #points = initialize_donation_points(thingId, initialized_property_dict['SPEECH_RECORD'], request.session['token'])
+                        #scatter = create_scatter(points)
+
+                        donation_speech_property = initialized_property_dict['SPEECH_RECORD']
+                        donation_thing = thingId
+
+                        # Create Graph
+                        points = initialize_donation_points(donation_thing, donation_speech_property,
+                                                            request.session['token'])
+
+                        # Pass Points
+                        dash_context = request.session.get('django_plotly_dash', dict())
+                        dash_context['django_to_dash_context'] = points
+                        dash_context['token'] = request.session['token']
+                        dash_context['thing_id'] = donation_thing
+                        dash_context['property'] = donation_speech_property
+                        request.session['django_plotly_dash'] = dash_context
 
                         meta_form = MetadataForm()
-                        return render(request, "metadata_view.html", {'donation': donation, 'form' : meta_form, 'plot' : scatter})
+                        return render(request, "point_exploration.html", {'donation': donation, 'form' : meta_form,})
+                        #return render(request, "metadata_view.html", {'donation': donation, 'form' : meta_form, 'plot' : scatter})
                     else:
                         error_message = format_html("Oops... It seems that the file you uploaded is not what we expected!")
                         messages.error(request, error_message)
