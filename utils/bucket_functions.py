@@ -112,6 +112,14 @@ def update_property_media(thingId, propertyId, values, files, token):
     response = requests.put(UPDATE_PROPERTY_URL, data=payload, headers=hed, params=par, files=files)
     return response
 
+def get_property_media(thingId, propertyId, timestamp, dimension, token):
+    READ_PROPERTY_FILE_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}/properties/{propertyId}/dimensions/{dimension}/timestamp/{timestamp}'
+
+    hed = {'Authorization': 'bearer ' + token['access_token']}
+    par = {'thingId': thingId, 'propertyId': propertyId, 'timestamp': timestamp}
+    response = requests.get(READ_PROPERTY_FILE_URL, headers=hed, params=par)
+
+    return response
 
 def grant_consent(thingId, propertyId, consent, token):
 

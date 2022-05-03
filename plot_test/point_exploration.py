@@ -12,7 +12,7 @@ from utils.bucket_functions import get_property_media
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = DjangoDash('PointSelection', external_stylesheets=external_stylesheets)
+app = DjangoDash('PointExploration', external_stylesheets=external_stylesheets)
 pio.templates.default = "plotly_white"
 
 def create_figure(transcript_list):
@@ -39,11 +39,12 @@ def create_figure(transcript_list):
 
 app.layout = html.Div([
     html.Audio(id='audio-player', autoPlay=True, preload='auto', controls=True, title='Hover over the points to listen to your data'),
-    dcc.Graph(id='basic-interactions',),
+    dcc.Graph(id='basic-interactions'),
 ],style={'marginBottom': 0, 'marginTop': 0,})
 
 @app.expanded_callback(
     Output('audio-player', 'src'),
+    Output('basic-interactions', 'figure'),
     Input('basic-interactions', 'hoverData'),
 )
 
@@ -52,6 +53,9 @@ def reproduce_on_click(hoverData, session_state=None, *args, **kwargs):
 
     if session_state is None:
         raise NotImplementedError("Missing session state")
+
+    initial_points = session_state.get('django_to_dash_context', {})
+    fig = create_figure(initial_points)
 
     token = session_state.get('token', {})
     thing = session_state.get('thing_id', {})
@@ -66,28 +70,4 @@ def reproduce_on_click(hoverData, session_state=None, *args, **kwargs):
                 encoded = base64.b64encode(a.content).decode('utf8')
                 audio_string = f'data:audio/mpeg;base64,{encoded}'
 
-    return audio_string
-
-@app.expanded_callback(
-    Output('basic-interactions', 'figure'),
-    Input('basic-interactions', 'selectedData'),
-)
-
-def display_selected_data(selectedData, session_state=None, *args, **kwargs):
-
-    if session_state is None:
-        raise NotImplementedError("Missing session state")
-    initial_points = session_state.get('django_to_dash_context', {})
-    fig = create_figure(initial_points)
-
-    if selectedData:
-        session_state['selected_points'] = selectedData
-        x = [d['x'] for d in selectedData['points']]
-        y = [d['y'] for d in selectedData['points']]
-        fig.add_trace(go.Scatter(x=x, y=y, name='Selected', mode='markers',
-                                 marker_symbol='x',
-                                 marker_size=10))
-    else:
-        session_state['selected_points'] = {}
-    return fig
-
+    return audio_string, fig

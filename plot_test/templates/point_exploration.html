@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+{% load plotly_dash %}
+    <section style="padding-top: 50px; padding-bottom: 50px">
+        <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+            <h4>Your Data</h4>
+            <hr>
+        </div>
+    <div class="col-md-8 offset-md-2">
+        <p>This is the second step of the data donation process! We invite you to explore your data by hovering over the dots, each dot represents an interaction with your voice assistant.
+            Below you can either <b>confirm your donation to {{ donation.project.title }}</b> or you can <b>delete your data from our platform</b>. If you decide to confirm your donation, please enter the corresponding metadata.
+            <div class="row">
+                <div class="col-md-6" id="chart">
+                    <div class="{% plotly_class name="PointExploration"%}">
+                        {% plotly_app name='PointExploration' ratio=1 %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    {% include 'messages.html' %}
+                    <form action="/metadata/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
+                     {% csrf_token %}
+                        <div class="form-group required">
+                            <div class="form-row">
+                              <div class="col-md-6">
+                                    <small class="form-tex control-label">Sex (main speaker)</small>
+                                    {{ form.sex }}
+                              </div>
+                              <div class="col-md-6">
+                                    <small class="form-label control-label">Age Range (main speaker)</small>
+                                    {{ form.age }}
+                              </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <small class="form-label control-label">Language (used with assistant)</small>
+                                    {{ form.lan }}
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="form-label">Accent (main speaker)</small>
+                                    {{ form.acc }}
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <small class="form-label control-label">Device type</small>
+                                    {{ form.dev }}
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="form-label control-label">Additional device users</small>
+                                    {{ form.use }}
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                <small class="form-label control-label">City where you currently live</small>
+                                {{ form.city }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <label class="control-label">{{ form.awa }} I would like to <b>exclude</b> parts of the data from my donation</label>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="form-group required">
+                            <div class="form-row">
+                                <label class="control-label">{{ form.consent }} I confirm that I am <b>18 years old or older</b></label>
+                                <label class="control-label">{{ form.consent }} I understand that I can <b>delete my data</b> any time</label>
+                                <label class="control-label">{{ form.consent }} I have read and understood the <b>{{ donation.project.title }}</b> page</label>
+                                <label class="control-label">{{ form.consent }} I consent to <b>{{ donation.project.title }}</b> researchers using my data as stated</label>
+                            </div>
+                        </div>
+                        <button name="confirm" type="submit" class="btn btn-primary mr-2" style="float: left">Confirm Donation</button>
+                 </form>
+                 <form action="/metadata/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <button name="delete" type="submit", class="btn btn-danger btn-xs">Delete Data</button>
+                </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
