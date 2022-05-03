@@ -425,7 +425,7 @@ def project_view(request, pk):
                     # Read File
                     zip_file_dict = extract_zip(form.cleaned_data['data'])
                     # Validate File
-                    valid = validate_voice(zip_file_dict.keys())
+                    valid, error_string = validate_voice(zip_file_dict.keys())
                     if valid:
                         #choices = form.cleaned_data['data_selection']
                         choices = {"SPEECH_RECORD": ["Speech Record", ""], "SPEAKER_METADATA": ["Speaker Metadata", "Speaker Metadata"]}
@@ -487,7 +487,10 @@ def project_view(request, pk):
                         return render(request, "point_exploration.html", {'donation': donation, 'form' : meta_form,})
                         #return render(request, "metadata_view.html", {'donation': donation, 'form' : meta_form, 'plot' : scatter})
                     else:
-                        error_message = format_html("Oops... It seems that the file you uploaded is not what we expected!")
+                        if error_string:
+                            error_message = format_html("Oops... " + error_string)
+                        else:
+                            error_message = format_html("Oops... It seems that the file you uploaded is not what we expected!")
                         messages.error(request, error_message)
                         reminder_form = ReminderForm()
                         return render(request, 'project_view.html',

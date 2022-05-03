@@ -13,16 +13,21 @@ def extract_zip(input_zip):
 def validate_voice(file_names_dict):
     file_dirs = list(set([os.path.dirname(x) for x in file_names_dict]))
     ext = [os.path.splitext(x)[1] for x in file_names_dict]
-
     if len(file_dirs) == 2:
         if '.json' and '.html' and '.mp3' in ext:
             valid = True
-        else:
+            error_string = ''
+        if '.json' not in ext:
             valid = False
+            error_string = 'Your .zip does not contain .json files. Make sure to click on JSON under Activity Records.'
+        if '.mp3' not in ext:
+            valid = False
+            error_string = "Your .zip does not contain .mp3 files. Make sure voice data collection is enabled on your device or enable it and come back in a couple of weeks!"
     else:
         valid = False
+        error_string = "Your .zip contains unexpected files. Make sure to only select the Assistant data."
 
-    return valid
+    return valid, error_string
 
 def get_assistant_file(unzip_dict):
 
