@@ -4,4 +4,5 @@ from . import point_selection, point_exploration # Needs to be imported for some
 urlpatterns = [
     path('select/<str:pk>/', views.select_point, name='select'),
     path('explore/<str:pk>/', views.explore_point, name='explore'),
+    path('overview/<str:pk>/', views.receiver_view, name='receive'),
 ]

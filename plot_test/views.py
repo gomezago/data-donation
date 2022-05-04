@@ -3,7 +3,7 @@ from plotly.offline import plot
 import plotly.graph_objects as go
 import pandas as pd
 import logging
-from bucket_view.models import Donation, DeletedPoint, Awareness, City
+from bucket_view.models import Donation, DeletedPoint, Awareness, City, Project
 from bucket_view.views import initialize_donation_points, delete_property_timestamps, create_scatter, send_metadata
 from bucket_view.forms import MotivationForm, AwarenessSurveyForm, MetadataForm, DeleteSurveyForm
 from .forms import DeleteMotivationForm
@@ -11,6 +11,11 @@ from django.template.loader import render_to_string, get_template
 from django.contrib import messages
 from django.core.mail import send_mail, EmailMessage
 from utils.bucket_functions import delete_thing
+from django.contrib.auth.decorators import login_required
+from plotly.offline import plot
+import plotly.graph_objects as go
+import plotly.express as px
+import plotly.io as pio
 
 logger = logging.getLogger('data_donation_logs')
 
@@ -144,9 +149,47 @@ def explore_point(request, pk):
 
     return render(request, "point_exploration.html", {'donation': donation, 'form': meta_form, })
 
+@login_required()
+def receiver_view(request, pk):
 
+    project = Project.objects.get(pk=pk)
 
+    donations = Donation.objects.filter(project=project)
+    total_d = donations.count()
+    participate = donations.filter(participate=True).count()
+    updates = donations.filter(updates=True).count()
 
+    donations_df = pd.DataFrame.from_records(donations.values())
+    scatter = create_scatter(donations_df)
+    context = {'project': project, 'donations': donations,
+               'part' : participate, 'upda': updates,
+               'no_part' : int(total_d-participate),
+               'no_upda': int(total_d-updates), 'plot' : scatter,}
+    return render(request, "receiver_view.html", context=context)
+
+def create_scatter(donations):
+    pio.templates.default = "plotly_white"
+    # Create Graph
+    donations['DateString'] = donations['timestamp'].dt.strftime("%m/%d/%Y, %H:%M")
+    donations['Hour'] = donations['timestamp'].dt.hour
+
+    # Plot
+    def scatter():
+        fig = px.scatter(donations, y=donations.index+1, x="timestamp", custom_data = ["user_id", "DateString"],
+                      labels={
+                          "y": "Donations",
+                          "timestamp": "Date",
+                      },
+                      hover_name="timestamp",
+                      hover_data={'timestamp': False, 'Hour': False, 'user_id': True, 'DateString': True, },
+                      )
+        fig.update_layout(clickmode='event+select')
+        fig.update_yaxes(dtick=1)
+        fig.update_traces(marker_size=10)
+        fig.update_traces(hovertemplate='<b>Username:</b> %{customdata[0]} <br><b>Date:</b> %{customdata[1]}')
+        plot_div = plot(fig, output_type='div', include_plotlyjs=False)
+        return plot_div
+    return scatter()
 
 
 
