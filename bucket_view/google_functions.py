@@ -19,13 +19,13 @@ def validate_voice(file_names_dict):
             error_string = ''
         if '.json' not in ext:
             valid = False
-            error_string = 'Your .zip does not contain .json files. Make sure to click on JSON under Activity Records.'
+            error_string = "Your .zip does not contain .JSON files. Did you click on JSON under 'Activity Records' when downloading your data?"
         if '.mp3' not in ext:
             valid = False
-            error_string = "Your .zip does not contain .mp3 files. Make sure voice data collection is enabled on your device or enable it and come back in a couple of weeks!"
+            error_string = "Your .zip does not contain .mp3 files. Make sure the collection of 'Voice and Audio' is enabled or enable it and come back in a couple of weeks!"
     else:
         valid = False
-        error_string = "Your .zip contains unexpected files. Make sure to only select the Assistant data."
+        error_string = "Your .zip contains unexpected files. Did you only selected 'Assistant' when downloading your data?"
 
     return valid, error_string
 
