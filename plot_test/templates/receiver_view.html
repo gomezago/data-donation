@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+{% load plotly_dash %}
+    <section style="padding-top: 50px; padding-bottom: 50px">
+        <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+            <h4>Received Donations: {{ project.title }}
+                <button type="button" class="btn btn-success" style="vertical-align: middle; float: right" disabled>
+                    Total Donations: <span class="badge badge-light">{{ donations.count }}</span>
+                </button>
+            </h4>
+            <hr>
+            <div class="row">
+                <div class="col-md-4">
+                    <row>
+                        <table class="table" style="margin-top: 25px">
+                            <thead>
+                                <tr>
+                                    <th scope="col"></th>
+                                    <th scope="col">Yes</th>
+                                    <th scope="col">No</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">Interview</th>
+                                    <td>{{ part }}</td>
+                                    <td>{{ no_part}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Updates</th>
+                                    <td>{{ upda }}</td>
+                                    <td>{{ no_upda }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </row>
+                    <div class="row justify-content-end" style="width: 100%">
+                        <form class="form-inline" action="/overview/{{ project.pk }}/", method="post", enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="col-xs-9 my-1 mr-sm-2">
+                            {{ form.donation }}
+                        </div>
+                        <div class="col-xs-3 my-1">
+                            <button type="submit", class="btn btn-primary btn-xs">Go</button>
+                         </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-8" id="chart">
+                    {{ plot | safe }}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

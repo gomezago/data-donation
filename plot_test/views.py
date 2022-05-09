@@ -3,14 +3,20 @@ from plotly.offline import plot
 import plotly.graph_objects as go
 import pandas as pd
 import logging
-from bucket_view.models import Donation, DeletedPoint, Awareness, City
+from bucket_view.models import Donation, DeletedPoint, Awareness, City, Project
 from bucket_view.views import initialize_donation_points, delete_property_timestamps, create_scatter, send_metadata
 from bucket_view.forms import MotivationForm, AwarenessSurveyForm, MetadataForm, DeleteSurveyForm
-from .forms import DeleteMotivationForm
+from .forms import DeleteMotivationForm, SelectDonationForm
 from django.template.loader import render_to_string, get_template
 from django.contrib import messages
 from django.core.mail import send_mail, EmailMessage
-from utils.bucket_functions import delete_thing
+from utils.bucket_functions import delete_thing, read_shared_property_data
+from django.contrib.auth.decorators import login_required
+from plotly.offline import plot
+import plotly.graph_objects as go
+import plotly.express as px
+import plotly.io as pio
+
 
 logger = logging.getLogger('data_donation_logs')
 
@@ -144,9 +150,108 @@ def explore_point(request, pk):
 
     return render(request, "point_exploration.html", {'donation': donation, 'form': meta_form, })
 
+@login_required()
+def receiver_view(request, pk):
+
+    project = Project.objects.get(pk=pk)
+
+    donations = Donation.objects.filter(project=project)
+    total_d = donations.count()
+    participate = donations.filter(participate=True).count()
+    updates = donations.filter(updates=True).count()
+
+    donations_df = pd.DataFrame.from_records(donations.values())
+    scatter = create_scatter(donations_df)
+
+    form = SelectDonationForm(choices=[(d.id, d.user) for d in donations])
+
+    if request.method == 'POST':
+        form = SelectDonationForm(request.POST, choices =[(d.id, d.user) for d in donations] )
+        if form.is_valid():
+            donation_id = form.cleaned_data['donation']
+            donation = Donation.objects.get(pk=donation_id)
+            donation_thing = donation.thingId
+            donation_speech_property = donation.propertyId['SPEECH_RECORD']
+            donation_project = donation.project.__str__()
+            groupId = 'dcd:groups:' + donation_project
+
+            # Create Graph
+            points = initialize_shared_points(donation_thing, donation_speech_property, groupId,
+                                              request.session['token'])
+
+            # Pass Points
+            dash_context = request.session.get('django_plotly_dash', dict())
+            dash_context['django_to_dash_context'] = points
+            dash_context['token'] = request.session['token']
+            dash_context['thing_id'] = donation_thing
+            dash_context['group_id'] = groupId
+            dash_context['property'] = donation_speech_property
+            request.session['django_plotly_dash'] = dash_context
+
+            return render(request, 'receiver_exploration.html', {'donation': donation})
+
+    context = {'project': project, 'donations': donations,
+               'part' : participate, 'upda': updates,
+               'no_part' : int(total_d-participate),
+               'no_upda': int(total_d-updates), 'plot' : scatter,
+               'form' : form}
+    return render(request, "receiver_view.html", context=context)
+
+@login_required()
+def receiver_explore(request, pk):
+
+    donation = Donation.objects.get(pk=pk)
+    donation_thing = donation.thingId
+    donation_speech_property = donation.propertyId['SPEECH_RECORD']
+    donation_project = donation.project.__str__()
+    groupId = 'dcd:groups:'+donation_project
+
+    # Create Graph
+    points = initialize_shared_points(donation_thing, donation_speech_property, groupId, request.session['token'])
+
+    # Pass Points
+    dash_context = request.session.get('django_plotly_dash', dict())
+    dash_context['django_to_dash_context'] = points
+    dash_context['token'] = request.session['token']
+    dash_context['thing_id'] = donation_thing
+    dash_context['group_id'] = groupId
+    dash_context['property'] = donation_speech_property
+    request.session['django_plotly_dash'] = dash_context
+
+    return render(request, 'receiver_exploration.html', context={'donation' : donation})
+
+def initialize_shared_points(donation_thing, donation_speech_property, groupId, token):
+    speech_data = read_shared_property_data(donation_thing, donation_speech_property, groupId, token)
+    if speech_data.ok:
+        point_list = speech_data.json()['values']
+    else:
+        point_list = []
+    return point_list
 
 
+def create_scatter(donations):
+    pio.templates.default = "plotly_white"
+    # Create Graph
+    donations['DateString'] = donations['timestamp'].dt.strftime("%m/%d/%Y, %H:%M")
+    donations['Hour'] = donations['timestamp'].dt.hour
 
+    # Plot
+    def scatter():
+        fig = px.scatter(donations, y=donations.index+1, x="timestamp", custom_data = ["user_id", "DateString"],
+                      labels={
+                          "y": "Donations",
+                          "timestamp": "Date",
+                      },
+                      hover_name="timestamp",
+                      hover_data={'timestamp': False, 'Hour': False, 'user_id': True, 'DateString': True, },
+                      )
+        fig.update_layout(clickmode='event+select')
+        fig.update_yaxes(dtick=1)
+        fig.update_traces(marker_size=10)
+        fig.update_traces(hovertemplate='<b>Username:</b> %{customdata[0]} <br><b>Date:</b> %{customdata[1]}')
+        plot_div = plot(fig, output_type='div', include_plotlyjs=False)
+        return plot_div
+    return scatter()
 
 
 

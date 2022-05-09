@@ -15,3 +15,21 @@ class DeleteMotivationForm(forms.Form):
             }
         )
     )
+
+class SelectDonationForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        donation_choices = kwargs.pop("choices")
+        super(SelectDonationForm, self).__init__(*args, **kwargs)
+
+        self.fields['donation'].choices = donation_choices
+
+    donation = forms.ChoiceField(
+        choices=(),
+        required=True,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+{% load plotly_dash %}
+    <section style="padding-top: 50px; padding-bottom: 50px">
+        <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+             <h4>Donation from: {{ donation.user }}</h4>
+            <hr>
+            <div class="{% plotly_class name="PointExploration"%}">
+                {% plotly_app name='ReceiverExploration' ratio=1 %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
