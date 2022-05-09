@@ -35,6 +35,9 @@ class Project(models.Model):
             return True
         return False
 
+    def __str__(self):
+        return self.id
+
 class Donation(models.Model):
     user                   = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     project                = models.ForeignKey('Project', on_delete=models.CASCADE, blank=True, null=True) #For Demographics
@@ -45,7 +48,6 @@ class Donation(models.Model):
     participate                  = models.BooleanField(default=False) # Wants to further participate
     updates                = models.BooleanField(default=False) # Wants to receive updates?
     timestamp              = models.DateTimeField(auto_now_add=True)
-
 
 class Motivation(models.Model):
     user                   = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

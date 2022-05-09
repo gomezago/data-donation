@@ -121,6 +121,14 @@ def get_property_media(thingId, propertyId, timestamp, dimension, token):
 
     return response
 
+def get_shared_property_media(thingId, propertyId, groupId, timestamp, dimension, token):
+    READ_PROPERTY_FILE_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}/properties/{propertyId}/dimensions/{dimension}/timestamp/{timestamp}'
+
+    hed = {'Authorization': 'bearer ' + token['access_token']}
+    par = {'thingId': thingId, 'propertyId': propertyId, 'sharedWith' : groupId, 'timestamp': timestamp}
+    response = requests.get(READ_PROPERTY_FILE_URL, headers=hed, params=par)
+    return response
+
 def grant_consent(thingId, propertyId, consent, token):
 
     GRANT_CONSENT_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}/properties/{propertyId}/consents'
@@ -178,6 +186,17 @@ def read_property_data(thingId, propertyId, token):
     response = requests.get(READ_PROPERTY_URL, headers=hed, params=par)
 
     return response
+
+def read_shared_property_data(thingId, propertyId, groupId, token):
+
+    READ_PROPERTY_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}/properties/{propertyId}'
+
+    hed = {'Authorization': 'bearer ' + token['access_token']}
+    par = {'thingId': thingId, 'propertyId': propertyId, 'sharedWith' : groupId, 'from' : 0, 'to': round(time.time()*1000)} # Start and End Timestamps
+    response = requests.get(READ_PROPERTY_URL, headers=hed, params=par)
+
+    return response
+
 
 def read_property_data_month(thingId, propertyId, token):
         READ_PROPERTY_URL = f'https://dwd.tudelft.nl/bucket/api/things/{thingId}/properties/{propertyId}'
