@@ -156,14 +156,27 @@ def receiver_view(request, pk):
     project = Project.objects.get(pk=pk)
 
     donations = Donation.objects.filter(project=project)
-    total_d = donations.count()
-    participate = donations.filter(participate=True).count()
-    updates = donations.filter(updates=True).count()
+    if donations.exists():
+        total_d = donations.count()
+        participate = donations.filter(participate=True).count()
+        updates = donations.filter(updates=True).count()
 
-    donations_df = pd.DataFrame.from_records(donations.values())
-    scatter = create_scatter(donations_df)
+        donations_df = pd.DataFrame.from_records(donations.values())
+        scatter = donations_scatter(donations_df)
 
-    form = SelectDonationForm(choices=[(d.id, d.user) for d in donations])
+        form = SelectDonationForm(choices=[(d.id, d.user) for d in donations])
+
+        context = {'project': project, 'donations': donations,
+                   'part': participate, 'upda': updates,
+                   'no_part': int(total_d - participate),
+                   'no_upda': int(total_d - updates), 'plot': scatter,
+                   'form': form}
+    else:
+        context = {'project': project, 'donations': donations,
+                   'part': 0, 'upda': 0,
+                   'no_part': 0,
+                   'no_upda': 0, 'plot': 'Not Available',
+                   'form': SelectDonationForm(choices=[(0, "---")])}
 
     if request.method == 'POST':
         form = SelectDonationForm(request.POST, choices =[(d.id, d.user) for d in donations] )
@@ -189,12 +202,6 @@ def receiver_view(request, pk):
             request.session['django_plotly_dash'] = dash_context
 
             return render(request, 'receiver_exploration.html', {'donation': donation})
-
-    context = {'project': project, 'donations': donations,
-               'part' : participate, 'upda': updates,
-               'no_part' : int(total_d-participate),
-               'no_upda': int(total_d-updates), 'plot' : scatter,
-               'form' : form}
     return render(request, "receiver_view.html", context=context)
 
 @login_required()
@@ -229,7 +236,7 @@ def initialize_shared_points(donation_thing, donation_speech_property, groupId, 
     return point_list
 
 
-def create_scatter(donations):
+def donations_scatter(donations):
     pio.templates.default = "plotly_white"
     # Create Graph
     donations['DateString'] = donations['timestamp'].dt.strftime("%m/%d/%Y, %H:%M")
