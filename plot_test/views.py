@@ -3,7 +3,7 @@ from plotly.offline import plot
 import plotly.graph_objects as go
 import pandas as pd
 import logging
-from bucket_view.models import Donation, DeletedPoint, Awareness, City, Project
+from bucket_view.models import Donation, DeletedPoint, Awareness, Project, City
 from bucket_view.views import initialize_donation_points, delete_property_timestamps, create_scatter, send_metadata
 from bucket_view.forms import MotivationForm, AwarenessSurveyForm, MetadataForm, DeleteSurveyForm
 from .forms import DeleteMotivationForm, SelectDonationForm
@@ -94,16 +94,17 @@ def explore_point(request, pk):
         if meta_form.is_valid():
             send_metadata(donation, request.session['token'], meta_form.cleaned_data['sex'], meta_form.cleaned_data['age'], meta_form.cleaned_data['lan'],
                           meta_form.cleaned_data['acc'], meta_form.cleaned_data['dev'], meta_form.cleaned_data['use'])
+            donation_city = City(
+                donation = donation,
+                city = meta_form.cleaned_data['city'],
+            )
+            donation_city.save()
+
             awareness = Awareness(
                 donation = donation,
                 awareness = meta_form.cleaned_data['awa']
             )
             awareness.save()
-            city = City(
-                donation = donation,
-                city    = meta_form.cleaned_data['city']
-            )
-            city.save()
             #messages.success(request, "Thank you for your Donation!")
 
             if donation.participate:
@@ -123,7 +124,6 @@ def explore_point(request, pk):
                 dash_context['thing_id'] = donation_thing
                 dash_context['property'] = donation_speech_property
                 request.session['django_plotly_dash'] = dash_context
-
 
                 delete_form = DeleteMotivationForm()
 

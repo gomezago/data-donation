@@ -19,7 +19,7 @@
                 </div>
                 <div class="col-md-6">
                     {% include 'messages.html' %}
-                    <form action="/metadata/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
+                    <form action="/explore/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
                      {% csrf_token %}
                         <div class="form-group required">
                             <div class="form-row">

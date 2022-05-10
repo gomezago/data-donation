@@ -7,7 +7,7 @@ from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm, Re
 from plot_test.forms import DeleteMotivationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Project, Donation, Motivation, Awareness, InitialAwareness, FinalAwareness, DeleteDonation
+from .models import Project, Donation, Motivation, Awareness, InitialAwareness, FinalAwareness, DeleteDonation, City
 from utils.bucket_functions import *
 from .clue_functions import read_clue_file, transform_clue_dict, send_clue_data
 from django.http import HttpResponseRedirect, JsonResponse
@@ -139,6 +139,12 @@ def metadata_view(request, pk):
                 awareness = meta_form.cleaned_data['awa']
             )
             awareness.save()
+
+            donation_city = City(
+                donation = donation,
+                city = meta_form.cleaned_data['city'],
+            )
+            donation_city.save()
             #messages.success(request, "Thank you for your Donation!")
 
 
