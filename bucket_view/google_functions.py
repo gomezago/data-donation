@@ -39,11 +39,9 @@ def get_assistant_file(unzip_dict):
 def get_metadata(assistant_file, unzip_dict):
 
     file_names = unzip_dict.keys()
-
     audio_list = []
     for item in assistant_file:
         if 'audioFiles' in item:
-
             file_source = item['audioFiles'][0]
             time = item['time']
             t = pd.to_datetime(time, infer_datetime_format=True)
@@ -55,12 +53,10 @@ def get_metadata(assistant_file, unzip_dict):
             audio_data['timestamp'] = t_unix
             audio_data['file_name'] = file_source
 
-            for file in file_names:
-                if file_source in file:
-                    audio_data['file'] = io.BytesIO(unzip_dict[(file)])
-
-            audio_list.append(audio_data)
-
+            file_path = [file for file in file_names if file_source in file]
+            if file_path:
+                audio_data['file'] = io.BytesIO(unzip_dict[(file_path[0])])
+                audio_list.append(audio_data)
     return audio_list
 
 def get_values_files(audio_list):
