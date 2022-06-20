@@ -1,5 +1,7 @@
 import json
 import logging
+import time
+
 import pandas as pd
 from django.shortcuts import render
 from django.utils.html import format_html
@@ -21,7 +23,7 @@ from plotly.offline import plot
 import plotly.graph_objects as go
 import plotly.express as px
 import plotly.io as pio
-
+import asyncio
 
 logger = logging.getLogger('data_donation_logs')
 
@@ -440,16 +442,12 @@ def project_view(request, pk):
                         thingId, initialized_property_dict = initialize_bucket(project, choices, request.session['token'])
 
                         # Get Data
+                        #start = time.time()
                         assistant_json = get_assistant_file(zip_file_dict)
-                        metadata_list = get_metadata(assistant_json, zip_file_dict)
-
-                        values, files = get_values_files(metadata_list)
-                        new_val, new_file = get_data_chunks(values,files,100)
-
-                        req = upload_chunks(new_val, new_file, thingId, initialized_property_dict['SPEECH_RECORD'], request.session['token'])
-                        print(req.text)
-                        #req = update_property_media(thingId, initialized_property_dict['SPEECH_RECORD'], values, files, request.session['token'])
-
+                        response = get_metadata(assistant_json, zip_file_dict, thingId, initialized_property_dict['SPEECH_RECORD'], request.session['token'], 30)
+                        response_list = list(response)
+                        #end = time.time()
+                        #print(end-start)
                         # Save Donation
                         donation = Donation(
                                 user        = request.user,

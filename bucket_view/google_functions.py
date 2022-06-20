@@ -7,6 +7,7 @@ import json
 import os
 import itertools
 from utils.bucket_functions import *
+import time
 
 def extract_zip(input_zip):
     input_zip = ZipFile(input_zip)
@@ -38,46 +39,32 @@ def get_assistant_file(unzip_dict):
     json_data = json.loads(unzip_dict[json_file[0]])
     return json_data
 
-def get_metadata(assistant_file, unzip_dict):
+def get_metadata(assistant_file, unzip_dict, thingId, propertyId, token,n):
 
     file_names = unzip_dict.keys()
-    audio_list = []
-    for item in assistant_file:
-        if 'audioFiles' in item:
-            file_source = item['audioFiles'][0]
-            time = item['time']
-            t = pd.to_datetime(time, infer_datetime_format=True)
-            t_unix = int(t.timestamp() * 1e3)
 
-            audio_data = {}
-            audio_data['transcript'] = item['title']
-            audio_data['time'] = time
-            audio_data['timestamp'] = t_unix
-            audio_data['file_name'] = file_source
+    for i in range(0, len(assistant_file), n):
+        values = []
+        files = []
+        for item in assistant_file[i:i + n]:
+            if 'audioFiles' in item:
+                file_source = item['audioFiles'][0]
+                file_path = [file for file in file_names if file_source in file]
 
-            file_path = [file for file in file_names if file_source in file]
-            if file_path:
-                audio_data['file'] = io.BytesIO(unzip_dict[(file_path[0])])
-                audio_list.append(audio_data)
-    return audio_list
+                if file_path:
+                    time = item['time']
+                    t = pd.to_datetime(time, infer_datetime_format=True)
+                    t_unix = int(t.timestamp() * 1e3)
 
-def get_values_files(audio_list):
-    values = []
-    files = []
-    for record in audio_list:
-        v = [record['timestamp'], record['transcript']]
-        f = ('speech-record-mp3', (str(record['timestamp'])+".mp3", record['file'], 'audio/mpeg'))
-        values.append(v)
-        files.append(f)
+                    v = [t_unix, item['title']]
+                    f = ('speech-record-mp3', (str(t_unix) + ".mp3", io.BytesIO(unzip_dict[(file_path[0])]), 'audio/mpeg'))
 
-    return values, files
+                    values.append(v)
+                    files.append(f)
 
-def get_data_chunks(values, files, n):
-    chunk_val = [values[i * n:(i + 1) * n] for i in range((len(values) + n - 1) // n)]
-    chunk_files = [files[i * n:(i + 1) * n] for i in range((len(files) + n - 1) // n)]
-    return chunk_val, chunk_files
+        yield update_property_media(thingId, propertyId, values, files, token)
 
-def upload_chunks(values, files, thingId, propertyID, token):
-    for val, file in zip(values, files):
-        req = update_property_media(thingId, propertyID, val, file,token)
-    return req
+
+def send_chunks_bucket(values, files, thingId, propertyId, token, n):
+    for i in range(0, len(values), n):
+        yield update_property_media(thingId, propertyId, values[i:i + n], files[i:i + n],token)
