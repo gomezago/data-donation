@@ -39,7 +39,7 @@
                                     <h6><span class="small text-muted text-uppercase">Donations Received</span> </h6>
                                 {% else %}
                                     <div class="progress">
-                                        <div class="progress-bar" role="progressbar" style="width:{% widthratio project.donation_set.count 1 2%}%" aria-valuenow="{{ project.donation_set.count }}" aria-valuemin="0" aria-valuemax="30"></div>
+                                        <div class="progress-bar" role="progressbar" style="width:{% widthratio project.donation_set.count 1 3%}%" aria-valuenow="{{ project.donation_set.count }}" aria-valuemin="0" aria-valuemax="30"></div>
                                     </div>
                                     <h6><span class="small text-muted text-uppercase">Donations Received</span> </h6>
                             {% endif %}
