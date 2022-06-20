@@ -5,6 +5,8 @@ import re
 import io
 import json
 import os
+import itertools
+from utils.bucket_functions import *
 
 def extract_zip(input_zip):
     input_zip = ZipFile(input_zip)
@@ -70,3 +72,12 @@ def get_values_files(audio_list):
 
     return values, files
 
+def get_data_chunks(values, files, n):
+    chunk_val = [values[i * n:(i + 1) * n] for i in range((len(values) + n - 1) // n)]
+    chunk_files = [files[i * n:(i + 1) * n] for i in range((len(files) + n - 1) // n)]
+    return chunk_val, chunk_files
+
+def upload_chunks(values, files, thingId, propertyID, token):
+    for val, file in zip(values, files):
+        req = update_property_media(thingId, propertyID, val, file,token)
+    return req

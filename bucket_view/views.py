@@ -444,8 +444,11 @@ def project_view(request, pk):
                         metadata_list = get_metadata(assistant_json, zip_file_dict)
 
                         values, files = get_values_files(metadata_list)
-                        req = update_property_media(thingId, initialized_property_dict['SPEECH_RECORD'], values, files, request.session['token'])
+                        new_val, new_file = get_data_chunks(values,files,100)
+
+                        req = upload_chunks(new_val, new_file, thingId, initialized_property_dict['SPEECH_RECORD'], request.session['token'])
                         print(req.text)
+                        #req = update_property_media(thingId, initialized_property_dict['SPEECH_RECORD'], values, files, request.session['token'])
 
                         # Save Donation
                         donation = Donation(
