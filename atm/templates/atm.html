@@ -1,0 +1,24 @@
+{% extends "base_dataslip.html" %}
+{% load static %}
+
+{% block page_content %}
+<!-- Starting section-->
+<section style="padding-top: 5px; padding-bottom: 50px">
+<div class="px-4 py-5 text-center mt-sm-5">
+    <!--<img src="{% static 'images/DDD.svg' %}" alt width="85">-->
+    <img class="d-block mx-auto mb-4" src="{% static 'images/DataSlip.svg' %}" alt width="40%">
+    <!--<h1 class="display-5 fw-bold">Data Donation ATM</h1>-->
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">
+            Explore your digital data trail and learn what data is collected about you as you navigate the <b>physical</b> and <b>digital</b> world.
+        </p>
+    </div>
+    <div class="d-grip gap-2 d-sm-flex justify-content-center">
+        <a href="{% url "atm_transport" %}" class="btn btn-primary btn-lg" style="width: 125px">Start</a>
+    </div>
+</div>
+</section>
+{% endblock %}
+
+
+

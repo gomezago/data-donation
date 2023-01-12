@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'bucket',
     'bucket_view',
     'plot_test',
+    'atm',
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,36 @@
+{% extends "base_dataslip.html" %}
+{% load static %}
+
+{% block page_content %}
+<!-- Starting section-->
+<section style="padding-top: 25px; padding-bottom: 50px">
+ <div class="container-fluid" style="align-content: center; background-size: cover;">
+    <div class="mx-auto" style="width: 75%">
+        <h1>How do you mainly pay when you shop?</h1>
+         <form action="{% url "atm_body" %}", method="post", enctype="multipart/form-data">
+             {% csrf_token %}
+             <div class="row row-centered justify-content-sm-center row-cols-1 row-cols-sm-1 row-cols-md-1 row-cols-lg-2" style="margin-top: 20px">
+                <div class="col" style="margin-top: 10px">
+                    <div class="card text-center" style="max-width: 26rem; margin-right: auto; margin-left: auto;">
+                    <img src="{% static 'images/shopping_card.png' %}" class="card-img-top" alt="Illustration of a person shopping and paying with credit card">
+                        <div class="card-body">
+                            <button type="submit" value=1 name="card" class="btn btn-success" style="width: 75%">Debit or Credit Card</button>
+                        </div>
+                    </div>
+                </div>
+            <div class="col" style="margin-top: 10px">
+                    <div class="card text-center" style="max-width: 26rem; margin-right: auto; margin-left: auto;">
+                    <img src="{% static 'images/shopping_cash.png' %}" class="card-img-top" alt="Illustration of a person shopping and paying with cash">
+                        <div class="card-body">
+                             <button type="submit" value=0 name="card" class="btn btn-danger" style="width: 75%">Cash</button>
+                        </div>
+                    </div>
+            </div>
+            </div>
+         </form>
+    </div>
+</div>
+</section>
+{% endblock %}
+
+

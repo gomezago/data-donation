@@ -1,0 +1,82 @@
+:root {
+
+}
+
+p {
+}
+
+h1, h2, h3, h4, h5, h6 {
+}
+
+html{
+    position: relative;
+    min-height: 100%;
+}
+
+body{
+    margin-bottom: 10px; /* Margin bottom by footer height */
+    margin-top: 10px; /*NavBar */
+}
+
+.btn-primary{
+    background-color: #2F97C1; !important;
+    border-color: #2C8EB5;
+}
+
+.btn-primary:hover{
+    background-color:#2881A4;
+    border-color: #247494;
+}
+
+.btn-primary:active{
+    background-color:#2881A4;
+    border-color: #247494;
+}
+
+.btn-primary:active:focus{
+     box-shadow: 0 0 0 0.3rem rgba(163, 209, 227, 0.5);
+}
+
+.btn-success{
+    background-color: #74B994; !important;
+    border-color: #6AB48C;
+}
+
+.btn-success:hover{
+    background-color:#5CAD82;
+    border-color: #52A378;
+}
+
+.btn-success:active{
+    background-color:#5CAD82;
+    border-color: #52A378;
+}
+
+.btn-success:active:focus{
+     box-shadow: 0 0 0 0.3rem rgba(162, 208, 184, 0.5);
+}
+
+.btn-danger{
+    background-color: #A87CB7; !important;
+    border-color: #9f6eaf;
+}
+
+.btn-danger:hover{
+    background-color:#9f6eaf;
+    border-color: #8C579E;
+}
+
+.btn-danger:active{
+    background-color:#9f6eaf;
+    border-color: #8C579E;
+}
+
+.btn-danger:active:focus{
+     box-shadow: 0 0 0 0.3rem rgba(197, 168, 207, 0.5);
+}
+
+.form-check-input:checked{
+    background-color:#2F97C1;
+    border-color: #2C8EB5;
+    box-shadow: 0 0 0 0.3rem rgba(163, 209, 227, 0.5);
+}

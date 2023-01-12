@@ -1,0 +1,127 @@
+{% extends "base_dataslip.html" %}
+{% load static %}
+
+{% block page_content %}
+<!-- Starting section-->
+<section style="padding-top: 25px; padding-bottom: 50px">
+ <div class="container-fluid col-md-8 offset-md-2" style="align-content: center; background-size: cover;">
+    <div class="mx-auto" style="width: 100%">
+        <h1>Which of these apps do you use?</h1>
+        <p class="lead mb-4">You can choose multiple</p>
+         <form action="{% url "atm_donate" %}", method="post", enctype="multipart/form-data">
+             {% csrf_token %}
+             <div class="row row-centered justify-content-sm-center row-cols-3 row-cols-sm-1 row-cols-md-3 row-cols-lg-3" style="margin-top: 20px">
+                <div class="col">
+                        <div class="card text-right">
+                        <img src="{% static 'images/app_weather_ph.png' %}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h6 class="card-title">Weather</h6>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="weather" name="weather" aria-label="Weather">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="col">
+                        <div class="card text-right">
+                        <img src="{% static 'images/app_nagivation.png' %}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h6 class="card-title">Navigation</h6>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="navigation" name="navigation" aria-label="Navigation">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                 <div class="col">
+                        <div class="card text-right">
+                        <img src="{% static 'images/app_browser.png' %}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h6 class="card-title">Web Browser</h6>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="browser" name="browser" aria-label="Web Browser">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+          <div class="row row-centered justify-content-sm-center row-cols-3 row-cols-sm-1 row-cols-md-3 row-cols-lg-3" style="margin-top: 20px">
+                <div class="col">
+                        <div class="card text-right">
+                        <img src="{% static 'images/app_mail.png' %}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h6 class="card-title">Email</h6>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="email" name="email" aria-label="Email">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="col">
+                        <div class="card text-right">
+                        <img src="{% static 'images/app_whatsapp.png' %}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h6 class="card-title">Messaging</h6>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="whatsapp" name="whatsapp" aria-label="WhatsApp">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                 <div class="col">
+                        <div class="card text-right">
+                        <img src="{% static 'images/app_spotify_ph.png' %}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h6 class="card-title">Music</h6>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="spotify" name="spotify" aria-label="Spotify">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+          <div class="row row-centered justify-content-sm-center row-cols-3 row-cols-sm-1 row-cols-md-3 row-cols-lg-3" style="margin-top: 20px">
+                <div class="col">
+                        <div class="card text-right">
+                        <img src="{% static 'images/app_social.png' %}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h6 class="card-title">Social Media</h6>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="social" name="social" aria-label="Social Media">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="col">
+                        <div class="card text-right">
+                        <img src="{% static 'images/app_dating.png' %}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h6 class="card-title">Dating</h6>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="dating" name="dating" aria-label="Dating">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                 <div class="col">
+                        <div class="card text-right">
+                        <img src="{% static 'images/app_tracking_ph.png' %}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h6 class="card-title">Period Tracking</h6>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="tracking" name="tracking" aria-label="Menstrual Tracking">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+             <div class="row" style="margin-top: 20px">
+                 <div class="col-md-12 col-sm-12 col-xs-1" align="center">
+                    <button type="submit" class="btn btn-primary" style="width: 100px">Next</button>
+                </div>
+             </div>
+         </form>
+    </div>
+ </div>
+</section>
+{% endblock %}

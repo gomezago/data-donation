@@ -1,0 +1,25 @@
+{% extends "base_dataslip.html" %}
+{% load static %}
+
+{% block page_content %}
+<!-- Starting section-->
+<section style="padding-top: 100px; padding-bottom: 50px">
+<div class="px-4 py-5 text-center">
+    <h1>One last question!</h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">
+            Do you give us permission to <b><u>anonymously</u></b> store the choices you just made to monitor the data collected about <b>dataslip</b> users?
+        </p>
+    </div>
+    <div class="d-grip gap-2 d-sm-flex justify-content-center">
+        <form action="{% url "atm_print" %}", method="post", enctype="multipart/form-data">
+         {% csrf_token %}
+            <row>
+            <button type="submit" class="btn btn-success btn-lg" value="True" name="donate" style="width: 125px">Yes</button>
+            <button type="submit" class="btn btn-danger btn-lg" value="False" name="donate" style="width: 125px">No</button>
+            </row>
+        </form>
+    </div>
+</div>
+</section>
+{% endblock %}

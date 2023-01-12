@@ -29,6 +29,7 @@ urlpatterns = [
     #path("news/", include("about.urls")),
     path('', include('plot_test.urls')),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
+    path('', include('atm.urls')),
 ]
 
 # Error Handlers

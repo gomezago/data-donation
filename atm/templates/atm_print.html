@@ -1,0 +1,1965 @@
+{% load static %}
+<!doctype html>
+<head>
+    <!-- Title -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Data Donation ATM</title>
+    <!-- Icon -->
+     <link rel="icon" type="image/x-icon" href="/static/images/DDD.svg">
+     <!-- Boostrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/base_dataslip.css">
+   <link rel="stylesheet" href="/css/receipt.css">
+    <!-- Printing CSS -->
+    <style>
+        .printme {
+            display: none;
+        }
+        @media print {
+            .no-printme  {
+                display: none; !important;
+                visibility: hidden;
+            }
+            .printme {
+                display: block; !important;
+                visibility: visible;
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        }
+    </style>
+    <script>
+            function closePrint() {
+            document.body.removeChild(this.__container__);
+          }
+
+          function setPrint() {
+            this.contentWindow.__container__ = this;
+            this.contentWindow.onbeforeunload = closePrint;
+            this.contentWindow.onafterprint = closePrint;
+            this.contentWindow.focus(); // Required for IE
+            this.contentWindow.print();
+          }
+
+          function printPage(sURL) {
+            const hideFrame = document.createElement("iframe");
+            hideFrame.sandbox = "allow-modals allow-same-origin";
+            hideFrame.onload = setPrint;
+            hideFrame.style.position = "fixed";
+            hideFrame.style.right = "0";
+            hideFrame.style.bottom = "0";
+            hideFrame.style.width = "0";
+            hideFrame.style.height = "0";
+            hideFrame.style.border = "0";
+            hideFrame.src = sURL;
+            document.body.appendChild(hideFrame);
+          }
+          function closePrintView() {
+               console.log("Printing Completed");
+                document.location.href = ("{% url "atm" %}");
+            }
+          function preparePrint() {
+                console.log("Before Print")
+                window.focus();
+            }
+          function printMe() {
+              window.onbeforeprint = preparePrint()
+              fully.print();
+              window.onafterprint = setTimeout(closePrintView(), 5000);
+            }
+          function printDiv(){
+            var divContents = document.getElementById("receipt").innerHTML;
+            var a = window.open('');
+            a.document.write('<html>');
+            a.document.write('<head><link rel="stylesheet" href="/static/css/receipt.css"></head>');
+            a.document.write('<body >');
+            a.document.write('<div class=" receipt receipt_center">')
+            a.document.write(divContents);
+            a.document.write('</body></html>');
+            a.document.close();
+            a.print();
+            //let utf8Encode = new TextEncoder();
+            //fully.btSendByteData(utf8Encode.encode(a));
+            //a.fully.print();
+          }
+
+          function printBlue(){
+
+
+            const canvas = document.getElementById('my-canvas');
+
+            // Convert canvas to dataURL and log to console
+            const dataURL = canvas.toDataURL();
+            console.log(dataURL);
+            // Logs data:image/png;base64,wL2dvYWwgbW9yZ...
+
+            // Convert to Base64 string
+            const base64 = getBase64StringFromDataURL(dataURL);
+            console.log(base64);
+            // Logs wL2dvYWwgbW9yZ...
+
+
+              var divContents = document.getElementById("receipt")
+              let utf8Encode = new TextEncoder();
+              fully.btSendStringData(base64);
+              //fully.btSendStringData(divContents);
+          }
+
+          fully.bind('onBtConnectSuccess','alert(\'BT connected: $device\'');
+          fully.bind('onBtConnectFailure','alert(\'BT failed\');');
+          fully.btOpenByMac('57:4C:54:02:FA:D7');
+    </script>
+</head>
+<body>
+<nav class="navbar fixed-top navbar-light bg-light navbar-expand-md justify-content-center" style="padding-left: 20px; padding-right: 20px">
+            <a class="navbar-brand" href="{% url 'pages_index' %}"><img src="{% static 'images/DDDLogo.svg' %}" height="95px"/></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav w-100 justify-content-center" id="navigation">
+                <li class="nav-item {% if request.resolver_match.url_name == 'project_list' or request.resolver_match.url_name == 'project_view' %}active{% endif %}">
+                    <a class="nav-link" id="projects" href="{% url 'project_list' %}"><span class="small text-uppercase">Projects</span></a>
+                </li>
+                </li>
+                   <li class="nav-item {% if request.resolver_match.url_name == 'atm' %}active{% endif %}">
+                    <a class="nav-link" id="team" href="{% url 'atm' %}"><span class="small text-uppercase">Dataslip</span></a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'pages_about' %}active{% endif %}">
+                    <a class="nav-link" id="about" href="{% url 'pages_about' %}"><span class="small text-uppercase">About</span></a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'pages_questions' %}active{% endif %}">
+                    <a class="nav-link" id="team" href="{% url 'pages_questions' %}"><span class="small text-uppercase">People</span></a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'pages_privacy' %}active{% endif %}">
+                    <a class="nav-link" id="privacy" href="{% url 'pages_privacy' %}"><span class="small text-uppercase">Privacy</span></a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'pages_publications' %}active{% endif %}">
+                    <a class="nav-link" id="team" href="{% url 'pages_publications' %}"><span class="small text-uppercase">Publications</span></a>
+              </ul>
+
+
+            {% if user.is_authenticated %}
+                <ul class="navbar-nav ml-auto w-100 justify-content-end" id="navigation_login">
+                    <div class="dropdown">
+                        <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownUserButton" data-toggle="dropdown"><span class="small text-uppercase">{{ user.username }}</span></button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownUserButton">
+                            <a class="dropdown-item" href="/hello/"><span class="small text-uppercase">Dashboard</span></a>
+                            <a class="dropdown-item" href="/bucket/logout/"><span class="small text-uppercase">Log Out</span></a>
+                        </div>
+                    </div>
+                 </ul>
+            {% else %}
+                 <ul class="navbar-nav ml-auto w-100 justify-content-end">
+                    <a class="btn btn-dark navbar-btn" role="button"  href="/bucket/login/"><span class="small text-uppercase">Log in / Sign Up</span></a>
+                </ul>
+            {% endif %}
+            </div>
+        </nav>
+
+<section class="no-printme" style="padding-top: 200px; padding-bottom: 50px">
+    <div class="px-4 py-5 text-center">
+        <h1>Your personal data slip is ready</h1>
+        <div class="d-grip gap-2 d-sm-flex justify-content-center" style="margin-top: 20px">
+        <!--
+            <button type="button" onclick="alert(fully.btSendHexData('68656c6c6f0a'));">btSendHexData()</button>
+            <button type="button" onclick="alert(fully.btSendStringData('Hello\n'));">btSendStringData()</button>
+            <button type="button" onclick="alert(fully.btSendByteData(new Uint8Array([104, 101, 108, 108, 111, 10])));">btSendByteData()</button>
+            -->
+            <button class="btn btn-primary btn-lg" onClick="printDiv()" style="width: 125px">Print</button>
+             <a href="{% url "atm" %}" class="btn btn-secondary btn-lg" style="width: 125px">Next User</a>
+        </div>
+    </div>
+</section>
+<canvas width="300" height="150" id="my-canvas"></canvas>
+<div class="printme receipt" id="receipt">
+    <div class="receipt_center"><img src="/static/images/DDD.bmp" alt="Logo" width="50"></div>
+    <div class="receipt_center">
+        <p>PERSONAL DATA TRAIL<br>Designerly Data Donation<br></p>
+        <hr style="border-top: 2px dotted black"/>
+    </div>
+    <div class="receipt_center">
+        <p>GENERAL INFORMATION<br>PROFILE</p>
+        <table>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td>1x</td>
+                <td>_ _</td>
+            </tr>
+            <tr>
+                <td>Last Name</td>
+                <td>1x</td>
+                <td>_ _</td>
+            </tr>
+            <tr>
+                <td>Date of Birth</td>
+                <td>1x</td>
+                <td>_ _</td>
+            </tr>
+            <tr>
+                <td>ID Number</td>
+                <td>1x</td>
+                <td>_ _</td>
+            </tr>
+            <tr>
+                <td>Phone Number</td>
+                <td>1x</td>
+                <td>_ _</td>
+            </tr>
+            <tr>
+                <td>Email Address</td>
+                <td>1x</td>
+                <td>_ _</td>
+            </tr>
+           <tr>
+                <td>Address</td>
+                <td>1x</td>
+                <td>_ _</td>
+            </tr>
+           <tr>
+               <td>Username<sup>*</sup></td>
+                <td>1x</td>
+                <td>_ _</td>
+            </tr>
+           <tr>
+                <td>Picture<sup>*</sup></td>
+                <td>1x</td>
+                <td>_ _</td>
+            </tr>
+          <tr>
+                <td>Bio<sup>*</sup></td>
+                <td>1x</td>
+                <td>_ _</td>
+            </tr>
+          <tr>
+                <td>Linked Accounts<sup>*</sup></td>
+                <td>1x</td>
+                <td>_ _</td>
+            </tr>
+        </table>
+        <p><sup>*</sup>Only if Indicated</p>
+        <hr style="border-top: 2px dotted black"/>
+        <p>GENERAL INFORMATION<br>DEVICE</p>
+        <table>
+        <caption>Every Time an App is Opened</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Timestamp</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Date and Time</td>
+            </tr>
+            <tr>
+                <td>IP Address</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 123.55.0.23</td>
+            </tr>
+            <tr>
+                <td>Model</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. iPhone 14 Pro</td>
+            </tr>
+            <tr>
+                <td>Operating System</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. iOS 16.0.2</td>
+            </tr>
+            <tr>
+                <td>Network</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. WiFi</td>
+            </tr>
+            <tr>
+                <td>Carrier</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. KPN NL</td>
+            </tr>
+            <tr>
+                <td>Geolocation<sup>*</sup></td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Lat, Long</td>
+            </tr>
+        </table>
+        <p><sup>*</sup>Only if Indicated</p>
+    <hr style="border-top: 2px dotted black"/>
+    </div>
+    <div class="receipt_center">
+        {% if request.session.transport %}
+            <p>PUBLIC TRANSPORT CARD</p>
+            <table>
+            <caption>For Every Journey</caption>
+                <tr>
+                    <th>Data</th>
+                    <th>Qty</th>
+                    <th>Total</th>
+                </tr>
+                <tr>
+                    <th>PROFILE</th>
+                    <th>1x</th>
+                    <th>_ _</th>
+                </tr>
+                <tr>
+                    <td>Origin Station</td>
+                    <td rowspan="2" style="vertical-align: top">1x</td>
+                    <td rowspan="2" style="vertical-align: top">_ _</td>
+                </tr>
+                <tr>
+                    <td style="text-indent: 5px">ex. Delft</td>
+                </tr>
+                <tr>
+                    <td>Destination Station</td>
+                    <td rowspan="2" style="vertical-align: top">1x</td>
+                    <td rowspan="2" style="vertical-align: top">_ _</td>
+                </tr>
+                <tr>
+                    <td style="text-indent: 5px">ex. Den Haag HS</td>
+                </tr>
+                <tr>
+                    <td>Start and End Time</td>
+                    <td rowspan="2" style="vertical-align: top">1x</td>
+                    <td rowspan="2" style="vertical-align: top">_ _</td>
+                </tr>
+                <tr>
+                    <td style="text-indent: 5px">ex. 8:29 and 8:36</td>
+                </tr>
+                <tr>
+                    <td>Mode</td>
+                    <td rowspan="2" style="vertical-align: top">1x</td>
+                    <td rowspan="2" style="vertical-align: top">_ _</td>
+                </tr>
+                <tr>
+                    <td style="text-indent: 5px">ex. Train 2<sup>nd</sup> Class</td>
+                </tr>
+                <tr>
+                    <td>Price</td>
+                    <td rowspan="2" style="vertical-align: top">1x</td>
+                    <td rowspan="2" style="vertical-align: top">_ _</td>
+                </tr>
+                <tr>
+                    <td style="text-indent: 5px">ex. 2.50 euro</td>
+                </tr>
+            </table>
+             <hr style="border-top: 2px dotted black"/>
+        {% endif %}
+    </div>
+
+    <div class="receipt_center">
+        {% if request.session.supermarket %}
+        <p>SUPERMARKET LOYALTY CARD</p>
+        <table>
+        <caption>For Every Purchase</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <th>PROFILE</th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+            <tr>
+                <td>Date and Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. May 5 2022 18:05</td>
+            </tr>
+            <tr>
+                <td>Store</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Store, Address</td>
+            </tr>
+            <tr>
+                <td>City</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Delft</td>
+            </tr>
+            <tr>
+                <td>Items</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Tomatoes, Cheese</td>
+            </tr>
+            <tr>
+                <td>Total Price</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 55.25 euro</td>
+            </tr>
+        </table>
+        <br>
+        <table>
+        <caption>For Every Item</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Type</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Soy Milk</td>
+            </tr>
+            <tr>
+                <td>Brand</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Alpro</td>
+            </tr>
+            <tr>
+                <td>Quantity</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 1L</td>
+            </tr>
+            <tr>
+                <td>Category</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Vegan</td>
+            </tr>
+            <tr>
+                <td>Price</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 2.35 euro</td>
+            </tr>
+            <tr>
+                <td>Discount</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. No</td>
+            </tr>
+        </table>
+         <hr style="border-top: 2px dotted black"/>
+        {% endif %}
+    </div>
+    <div class="receipt_center">
+        {% if request.session.card %}
+            <p>CREDIT OR DEBIT CARD</p>
+        <table>
+        <caption>For Every Transaction</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <th>PROFILE</th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+            <tr>
+                <td>Account</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. IBAN Number</td>
+            </tr>
+            <tr>
+                <td>Recipient</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. HEMA (Store ID)</td>
+            </tr>
+            <tr>
+                <td>Date and Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. May 5 2022 18:05</td>
+            </tr>
+            <tr>
+                <td>City</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Delft</td>
+            </tr>
+            <tr>
+                <td>Mode</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Mobile Pay</td>
+            </tr>
+            <tr>
+                <td>Amount</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 5 euro</td>
+            </tr>
+        </table>
+         <hr style="border-top: 2px dotted black"/>
+        {% endif %}
+    </div>
+    <div class="receipt_center">
+     {% if request.session.smartwatch or request.session.ring %}
+         <p>WEARABLE DEVICES<br></p>
+         <table>
+        <caption>General Information</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <th>PROFILE<sup>*</sup></th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+            <tr>
+                <th>DEVICE</th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+            <tr>
+                <td>Weight</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 65 Kg</td>
+            </tr>
+            <tr>
+                <td>Height</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 175 cm</td>
+            </tr>
+        </table>
+        <br>
+        <table>
+        <caption>Daily Activity</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Movement</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Housework</td>
+            </tr>
+            <tr>
+                <td>Steps</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 10.000</td>
+            </tr>
+            <tr>
+                <td>Calories</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 1350</td>
+            </tr>
+            <tr>
+                <td>Heart Rate</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 60 BPM</td>
+            </tr>
+            <tr>
+                <td>Respiratory Rate</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 12 BPM</td>
+            </tr>
+            <tr>
+                <td>GPS Location</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Lat, Long</td>
+            </tr>
+        </table>
+        <br>
+        <table>
+        <caption>Physical Activity</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Type</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Running</td>
+            </tr>
+            <tr>
+                <td>Pace or Speed</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 5 min/Km</td>
+            </tr>
+            <tr>
+                <td>Distance</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 10 Km</td>
+            </tr>
+            <tr>
+                <td>Start and End Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 8:00 and 8:51</td>
+            </tr>
+            <tr>
+                <td>Route (GPS)</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Path on Map</td>
+            </tr>
+            <tr>
+                <td>Heart Rate</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 95 BPM</td>
+            </tr>
+            <tr>
+                <td>Calories</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 300</td>
+            </tr>
+        </table>
+        <br>
+        <table>
+        <caption>Sleep</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Start and End Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 22:00 and 7:00</td>
+            </tr>
+            <tr>
+                <td>Sleep Stage</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. REM</td>
+            </tr>
+            <tr>
+                <td>Heart Rate</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 40 BPM</td>
+            </tr>
+            <tr>
+                <td>Respiratory Rate</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 12 BPM</td>
+            </tr>
+            <tr>
+                <td>Skin Temperature</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 35 degrees</td>
+            </tr>
+            <tr>
+                <td>Movement</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. High</td>
+            </tr>
+        </table>
+     <hr style="border-top: 2px dotted black"/>
+    {% endif %}
+    </div>
+    <div class="receipt_center">
+     {% if request.session.weather %}
+         <p>WEATHER APP</p>
+        <table>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <th>PROFILE</th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+            <tr>
+                <th>DEVICE<sup>*</sup></th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+            <tr>
+                <td>Location</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. City, Lat, Long</td>
+            </tr>
+        </table>
+        <hr style="border-top: 2px dotted black"/>
+    {% endif %}
+    </div>
+    <div class="receipt_center">
+     {% if request.session.navigation %}
+         <p>NAVIGATION APP</p>
+        <table>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <th>PROFILE<sup>*</sup></th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+            <tr>
+                <th>DEVICE<sup>*</sup></th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+            <tr>
+                <td>Start Location</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Lat, Long</td>
+            </tr>
+            <tr>
+                <td>End Location</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Lat, Long</td>
+            </tr>
+            <tr>
+                <td>Start and End Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 8:29 and 8:36 </td>
+            </tr>
+        </table>
+         <br>
+        <table>
+        <caption>For Every Location Stored</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Location</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Lat, Long</td>
+            </tr>
+            <tr>
+                <td>Type</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Point</td>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Work</td>
+            </tr>
+            <tr>
+                <td>Address</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Landbergstraat 15</td>
+            </tr>
+        </table>
+        <hr style="border-top: 2px dotted black"/>
+    {% endif %}
+    </div>
+    <div class="receipt_center">
+     {% if request.session.browser %}
+         <p>WEB BROWSER APP</p>
+         <table>
+        <caption>For Every Page You Visit</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+              <tr>
+                <th>PROFILE</th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+              <tr>
+                <th>DEVICE<sup>*</sup></th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+            <tr>
+                <td>Title</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Google Docs</td>
+            </tr>
+            <tr>
+                <td>Url</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. docs.google.com</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. ID</td>
+            </tr>
+            <tr>
+                <td>Date and Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. May 5 2022 18:05</td>
+            </tr>
+            <tr>
+                <td>Transition to Page</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Link</td>
+            </tr>
+        </table>
+         <br>
+        <table>
+        <caption>For Every Search</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+             <tr>
+                <th>PROFILE</th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+             <tr>
+                <th>DEVICE<sup>*</sup></th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+            <tr>
+                <td>Search Terms</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. What is data?</td>
+            </tr>
+            <tr>
+                <td>Search Results URLs</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. wikipedia.org</td>
+            </tr>
+            <tr>
+                <td>Followed URLs</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. dictionary.org</td>
+            </tr>
+            <tr>
+                <td>Date and Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. May 5 2022 18:05</td>
+            </tr>
+        </table>
+     <hr style="border-top: 2px dotted black"/>
+    {% endif %}
+    </div>
+    <div class="receipt_center">
+     {% if request.session.email %}
+         <p>EMAIL APP</p>
+         <table>
+        <caption>For Every Email</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <th>PROFILE<sup>*</sup></th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+             <tr>
+                <th>DEVICE<sup>*</sup></th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+            <tr>
+                <td>Sender</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Amazon.nl</td>
+            </tr>
+            <tr>
+                <td>Sender Email</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+             <tr>
+                <td style="text-indent: 5px">ex. info@amazon.nl</td>
+            </tr>
+             <tr>
+                <td>Recipient(s)</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. List of Names</td>
+            </tr>
+            <tr>
+                <td>Recipient(s) Email</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. List of Emails</td>
+            </tr>
+            <tr>
+                <td>Subject</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Arriving Today</td>
+            </tr>
+             <tr>
+                <td>Message</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Your order...</td>
+            </tr>
+             <tr>
+                <td>Labels</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Spam</td>
+            </tr>
+            <tr>
+                <td>Status</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Opened</td>
+            </tr>
+            <tr>
+                <td>Date and Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. May 5 2022 18:05</td>
+            </tr>
+        </table>
+      <hr style="border-top: 2px dotted black"/>
+    {% endif %}
+    </div>
+    <div class="receipt_center">
+     {% if request.session.whatsapp %}
+         <p>MESSAGING APP</p>
+         <table>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+              <tr>
+                <th>PROFILE<sup>*</sup></th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+              <tr>
+                <th>DEVICE<sup>*</sup></th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+            <tr>
+                <td>Status</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Offline</td>
+            </tr>
+            <tr>
+                <td>Last Active Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Nov 5 2022 4:11</td>
+            </tr>
+            <tr>
+                <td>Online Since</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Nov 5 2022 4:11</td>
+            </tr>
+        </table>
+         <br>
+         <table>
+         <caption>For Every Contact</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+             <tr>
+                <td>First and Last Name</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Alejandra Gomez</td>
+            </tr>
+            <tr>
+                <td>Phone Number</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. +310651244092</td>
+            </tr>
+        </table>
+         <br>
+         <table>
+          <caption>For Every Group</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Familiy :)</td>
+            </tr>
+             <tr>
+                <td>Contact(s)</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Family members</td>
+            </tr>
+        </table>
+         <hr style="border-top: 2px dotted black"/>
+    {% endif %}
+    </div>
+    <div class="receipt_center">
+     {% if request.session.spotify %}
+         <p>MUSIC APP</p>
+         <table>
+         <caption>Every Time you Stream Content</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+              <tr>
+                <th>PROFILE<sup>*</sup></th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+              <tr>
+                <th>DEVICE<sup>*</sup></th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+            <tr>
+                <td>Type of Content</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Song</td>
+            </tr>
+            <tr>
+                <td>Artist</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Shakira</td>
+            </tr>
+            <tr>
+                <td>Transition to Content</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Previous Finished</td>
+            </tr>
+            <tr>
+                <td>Date and Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. May 5 2022 18:05</td>
+            </tr>
+             <tr>
+                <td>Milliseconds Played</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 500 ms</td>
+            </tr>
+             <tr>
+                <td>Content Skipped</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. True</td>
+            </tr>
+            <tr>
+                <td>Shuffle Mode</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. False</td>
+            </tr>
+        </table>
+         <br>
+          <table>
+         <caption>For Every Playlist</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Playlist Name</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Latin Karaoke</td>
+            </tr>
+            <tr>
+                <td>Song(s)</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Hips Don't Lie</td>
+            </tr>
+            <tr>
+                <td>Artist(s)</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Shakira</td>
+            </tr>
+            <tr>
+                <td>Last Modified</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. May 5 2022 18:05</td>
+            </tr>
+             <tr>
+                <td>Description</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. None</td>
+            </tr>
+             <tr>
+                <td>Followers</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 300</td>
+            </tr>
+        </table>
+         <br>
+         <table>
+         <caption>For Every Search</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Query</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Songs to Focus</td>
+            </tr>
+            <tr>
+                <td>Search Results</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. List of Results</td>
+            </tr>
+            <tr>
+                <td>Interactions</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Clicked Results</td>
+            </tr>
+        </table>
+         <br>
+          <table>
+         <caption>Your Library</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Liked Content(s)</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. RadioLab Podcast</td>
+            </tr>
+            <tr>
+                <td>Liked Artist(s)</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Shakira</td>
+            </tr>
+              <tr>
+                <td>People you Follow</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Shakira</td>
+            </tr>
+            <tr>
+                <td>Your Followers</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Mom</td>
+            </tr>
+        </table>
+      <hr style="border-top: 2px dotted black"/>
+    {% endif %}
+    </div>
+    <div class="receipt_center">
+     {% if request.session.social %}
+         <p>SOCIAL MEDIA</p>
+         <p>LinkedIn, Instagram,<br>Twitter, and TikTok</p>
+         <table>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <th>PROFILE<sup>*</sup></th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+              <tr>
+                <th>DEVICE<sup>*</sup></th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+            <tr>
+                <td>Inferred Interests</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Wedding Cake</td>
+            </tr>
+            <tr>
+                <td>Inferred Adds</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Footwear</td>
+            </tr>
+            <tr>
+                <td>Advertisers</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Shutterstock</td>
+            </tr>
+          <tr>
+                <td>People you Follow</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Boss</td>
+            </tr>
+            <tr>
+                <td>Your Followers</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Friend</td>
+            </tr>
+            <tr>
+                <td>People you Blocked</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Ex</td>
+            </tr>
+         </table>
+         <br>
+          <table>
+         <caption>For Every Contact</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+             <tr>
+                <td>First and Last Name</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Alejandra Gomez</td>
+            </tr>
+            <tr>
+                <td>Phone Number</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. +310651244092</td>
+            </tr>
+        </table>
+         <br>
+         <table>
+         <caption>Every Post you See</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Date and Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. May 5 2022 18:05</td>
+            </tr>
+            <tr>
+                <td>Username of Owner</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. tiktok_user</td>
+            </tr>
+            <tr>
+                <td>Post</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Video</td>
+            </tr>
+             <tr>
+                <td>Post URL</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. tiktok.com/id</td>
+            </tr>
+             <tr>
+                <td>Suggested</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. False</td>
+            </tr>
+        </table>
+         <br>
+         <table>
+         <caption>Every Comment/Like in a Post</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Date and Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. May 5 2022 18:05</td>
+            </tr>
+            <tr>
+                <td>Username of Owner</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. ig_user</td>
+            </tr>
+            <tr>
+                <td>Post</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Reel</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. So cool!</td>
+            </tr>
+            <tr>
+                <td>Like</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. True</td>
+            </tr>
+             <tr>
+                <td>Post URL</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. instagram.com/id</td>
+            </tr>
+        </table>
+         <br>
+         <table>
+         <caption>Every DM You Send/Receive</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Date and Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. May 5 2022 18:05</td>
+            </tr>
+            <tr>
+                <td>Recipient Username</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. twitter_user</td>
+            </tr>
+            <tr>
+                <td>Message</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Fun Tweet ;P</td>
+            </tr>
+        </table>
+         <br>
+         <table>
+         <caption>Every Search</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Date and Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. May 5 2022 18:05</td>
+            </tr>
+            <tr>
+                <td>Query</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Jobs near me</td>
+            </tr>
+        </table>
+         <br>
+         <table>
+         <caption>Every Add you See</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Date and Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. May 5 2022 18:05</td>
+            </tr>
+            <tr>
+                <td>Add Author</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Nike</td>
+            </tr>
+            <tr>
+                <td>Add Content</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Winter is Here</td>
+            </tr>
+        </table>
+         <hr style="border-top: 2px dotted black"/>
+    {% endif %}
+    </div>
+    <div class="receipt_center">
+     {% if request.session.dating %}
+         <p>DATING APP</p>
+         <p>Bumble and Tinder</p>
+         <table>
+         <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+              <tr>
+                <th>PROFILE<sup>*</sup></th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+              <tr>
+                <th>DEVICE<sup>*</sup></th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+            <tr>
+                <td>Sexual Preference</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Men and Women</td>
+            </tr>
+          <tr>
+                <td>Age Range</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 25 to 45</td>
+            </tr>
+            <tr>
+                <td>Interest</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Hot Yoga</td>
+            </tr>
+         </table>
+         <br>
+         <table>
+         <caption>Every Time you Open App</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Date and Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. May 5 2022 18:05</td>
+            </tr>
+            <tr>
+                <td>Swipes Left</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 7</td>
+            </tr>
+            <tr>
+                <td>Swipes Right</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 15</td>
+            </tr>
+             <tr>
+                <td>Super Likes</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 0</td>
+            </tr>
+            <tr>
+                <td>Matches</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 2</td>
+            </tr>
+        </table>
+         <br>
+         <table>
+         <caption>Every DM You Send/Receive</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Date and Time</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. May 5 2022 18:05</td>
+            </tr>
+            <tr>
+                <td>Match ID</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. match_6</td>
+            </tr>
+            <tr>
+                <td>Message</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Heyyy! <3</td>
+            </tr>
+        </table>
+         <hr style="border-top: 2px dotted black"/>
+    {% endif %}
+    </div>
+    <div class="receipt_center">
+     {% if request.session.tracking %}
+         <p>PERIOD TRACKING APP</p>
+         <table>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+              <tr>
+                <th>PROFILE</th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+              <tr>
+                <th>DEVICE</th>
+                <th>1x</th>
+                <th>_ _</th>
+            </tr>
+            <tr>
+                <td>Cycle Length</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 30 days</td>
+            </tr>
+            <tr>
+                <td>Period Length</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 3 days</td>
+            </tr>
+            <tr>
+                <td>PMS Lenght</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. 6 days</td>
+            </tr>
+             <tr>
+                <td>Birth Control Method</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Pill</td>
+            </tr>
+            <tr>
+                <td>Pregnant</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. False</td>
+            </tr>
+             <tr>
+                <td>Menopause</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. False</td>
+            </tr>
+        </table>
+         <br>
+        <table>
+        <caption>For Every Entry you Log</caption>
+            <tr>
+                <th>Data</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Entry</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Pain</td>
+            </tr>
+            <tr>
+                <td>Entry Type</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Cramps</td>
+            </tr>
+            <tr>
+                <td>Notes</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. Only left side</td>
+            </tr>
+             <tr>
+                <td>Date</td>
+                <td rowspan="2" style="vertical-align: top">1x</td>
+                <td rowspan="2" style="vertical-align: top">_ _</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 5px">ex. May 5 2022</td>
+            </tr>
+        </table>
+         <br>
+        <hr style="border-top: 2px dotted black"/>
+    {% endif %}
+    </div>
+    <div class="receipt_center">
+        <table>
+            <tr>
+                <th>TOTAL</th>
+                <th>_ _</th>
+            </tr>
+        </table>
+        <p>How much is your data worth?<br>It is invaluable for research</p>
+        <p>LET US KNOW!</p>
+        <div><img src="/static/images/DDD_QR.bmp" alt="Logo" width="100"></div>
+        <p>datadonation-ide@tudelft.nl</p>
+    </div>
+</div>
+
+</body>
+</html>

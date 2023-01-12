@@ -1,0 +1,59 @@
+{% extends "base_dataslip.html" %}
+{% load static %}
+
+{% block page_content %}
+<!-- Starting section-->
+<section style="padding-top: 25px; padding-bottom: 50px">
+ <div class="container-fluid" style="align-content: center; background-size: cover;">
+    <div class="mx-auto" style="width: 75%">
+        <h1>Do you use any wearable devices?</h1>
+         <p class="lead mb-4">You can choose multiple</p>
+         <form action="{% url "atm_phone" %}", method="post", enctype="multipart/form-data">
+             {% csrf_token %}
+             <div class="row row-centered justify-content-sm-center row-cols-1 row-cols-sm-1 row-cols-md-1 row-cols-lg-2" style="margin-top: 20px">
+                    <div class="col" style="margin-top: 10px">
+                        <div class="card text-right" style="max-width: 23rem; margin-right: auto; margin-left: auto;">
+                        <img src="{% static 'images/wearable_watch.png' %}" class="card-img-top img-fluid" alt="...";>
+                            <div class="card-body">
+                                <h5 class="card-title">Smart Watch</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="smartwatch" name="smartwatch" aria-label="Smartwatch">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <div class="col" style="margin-top: 10px">
+                        <div class="card text-right" style="max-width: 23rem; margin-right: auto; margin-left: auto;">
+                        <img src="{% static 'images/wearable_ring.png' %}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">Smart Ring</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="ring" name="ring" aria-label="Smart Ring">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                 <!--
+                 <div class="col" style="margin-top: 10px">
+                        <div class="card text-right" style="max-width: 14rem; margin-right: auto; margin-left: auto;">
+                        <img src="{% static 'images/wearable_none.png' %}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">Jewelry</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="jewelry" name="jewelry" aria-label="Jewelry">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                 -->
+                </div>
+             <div class="row" style="margin-top: 20px">
+                 <div class="col-md-12 col-sm-12 col-xs-1" align="center">
+                    <button type="submit" class="btn btn-primary" style="width: 100px">Next</button>
+                </div>
+             </div>
+         </form>
+    </div>
+</div>
+</section>
+{% endblock %}
