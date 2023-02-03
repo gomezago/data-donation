@@ -132,13 +132,7 @@ def receipt(request):
     return render(request, 'receipt.html')
 
 def feedback(request):
-    print(request.method)
     if request.method == 'POST':
-        print("EMOJI:")
-        print(request.POST.get("reaction_field"))
-        print("TEXT")
-        print(request.POST.get("action_field"))
-
         newFeedback = DataSlipFeedback(
             reaction = request.POST.get("reaction_field"),
             action = request.POST.get("action_field"),

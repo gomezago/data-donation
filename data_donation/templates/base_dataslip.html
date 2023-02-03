@@ -1,7 +1,7 @@
 {% load static %}
-<!doctype html>
+<!DOCTYPE html>
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <!-- Title -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>dataslip</title>
@@ -21,10 +21,20 @@
     <link rel="stylesheet" href="/static/css/base_dataslip.css">
         <!-- Plotly -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+var slider = document.getElementById("gut_range");
+var output = document.getElementById("demo");
+output.innerHTML = slider.value; // Display the default slider value
+
+// Update the current slider value (each time you drag the slider handle)
+slider.oninput = function() {
+  output.innerHTML = this.value;
+}
+</script>
 </head>
 <body>
 <nav class="navbar fixed-top navbar-light bg-light navbar-expand-md justify-content-center" style="padding-left: 20px; padding-right: 20px">
-            <a class="navbar-brand" href="{% url 'pages_index' %}"><img src="{% static 'images/DDDLogo.svg' %}" height="95px"/></a>
+            <a class="navbar-brand d-none d-md-block" href="{% url 'pages_index' %}"><img src="{% static 'images/DDDLogo.svg' %}" height="95px"/></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
