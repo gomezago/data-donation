@@ -11,5 +11,7 @@ urlpatterns = [
     path('atm_print/', views.atm_printing, name='atm_print'),
     path('atm_donate/', views.atm_donate, name='atm_donate'),
     path('receipt/', views.receipt, name='receipt'),
+    path('dataslip_feedback/', views.feedback, name='dataslip_feedback'),
+    path('feedback_view/', views.feedback_back, name='feedback_view'),
 
 ]

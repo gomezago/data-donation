@@ -2,8 +2,13 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.shortcuts import render
-from .models import DataSlipDonation
-from django.db.models import Sum
+from .models import DataSlipDonation, DataSlipFeedback
+from plotly.offline import plot
+import plotly.graph_objects as go
+import plotly.express as px
+import plotly.io as pio
+from django.db.models import Sum, Count
+import pandas as pd
 
 
 # Create your views here.
@@ -27,29 +32,29 @@ def atm(request):
     request.session['social'] = False
     request.session['dating'] = False
     request.session['tracking'] = False
-    print(request.session.values())
+    #print(request.session.values())
     return render(request, 'atm.html')
 
 def atm_transport(request):
-    print(request.session.values())
+    #print(request.session.values())
     return render(request, 'atm_transport.html')
 
 def atm_food(request):
     if request.POST.get("transport") == '1':
         request.session['transport'] = True
-    print(request.session.values())
+    #print(request.session.values())
     return render(request, "atm_food.html")
 
 def atm_pay(request):
     if request.POST.get("supermarket") == '1':
         request.session["supermarket"] = True
-    print(request.session.values())
+    #print(request.session.values())
     return render(request, "atm_pay.html")
 
 def atm_body(request):
     if request.POST.get("card") == '1':
         request.session["card"] = True
-    print(request.session.values())
+    #print(request.session.values())
     return render(request, "atm_body.html",)
 
 def atm_phone(request):
@@ -57,7 +62,7 @@ def atm_phone(request):
         request.session["smartwatch"] = True
     if request.POST.get("ring") == "on":
         request.session["ring"] = True
-    print(request.session.values())
+    #print(request.session.values())
     return render(request, "atm_phone.html",)
 
 def atm_donate(request):
@@ -97,7 +102,7 @@ def atm_donate(request):
         request.session["tracking"] = True
     else:
         request.session["tracking"] = False
-    print(request.session.values())
+    #print(request.session.values())
     return render(request, "atm_donate.html",)
 
 def atm_printing(request):
@@ -119,9 +124,40 @@ def atm_printing(request):
         )
         new_donation.save()
 
-    print(request.session.values())
+    #print(request.session.values())
     return render(request, 'atm_print.html')
 
 def receipt(request):
-    print(request.session.values())
+    #print(request.session.values())
     return render(request, 'receipt.html')
+
+def feedback(request):
+    print(request.method)
+    if request.method == 'POST':
+        print("EMOJI:")
+        print(request.POST.get("reaction_field"))
+        print("TEXT")
+        print(request.POST.get("action_field"))
+
+        newFeedback = DataSlipFeedback(
+            reaction = request.POST.get("reaction_field"),
+            action = request.POST.get("action_field"),
+        )
+        newFeedback.save()
+
+        dataslip = DataSlipFeedback.objects.all().values('reaction').annotate(rCount=Count('reaction')).order_by()
+        total = DataSlipFeedback.objects.all().values('reaction').count()
+        return render(request, 'feedback_bar.html', context = {'dataslip': dataslip, 'total': total, })
+
+    return render(request, 'atm_feedback.html')
+
+
+def feedback_back(request):
+    dataslip = DataSlipFeedback.objects.all().values('reaction').annotate(rCount=Count('reaction')).order_by()
+
+    total = DataSlipFeedback.objects.all().values('reaction').count()
+
+    context = {'dataslip' : dataslip, 'total' : total,}
+
+    return render(request, 'feedback_bar.html', context=context)
+

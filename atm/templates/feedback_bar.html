@@ -1,0 +1,121 @@
+{% extends "base_dataslip.html" %}
+{% load static %}
+
+{% block page_content %}
+{% load plotly_dash %}
+<!-- Starting section-->
+<section style="padding-top: 5px; padding-bottom: 50px">
+<div class="px-4 py-2 text-center">
+    <!--<img src="{% static 'images/DDD.svg' %}" alt width="85">-->
+    <img class="d-block mx-auto mb-4" src="{% static 'images/dataslip_illustration.svg' %}" alt width="25%">
+</div>
+<div class="col-5 justify-content-center mx-auto" style="text-align: center">
+        <h6>Reactions to the Personal Data Slip</h6>
+        <div class="container">
+        {% for x in dataslip %}
+            {% if x.reaction == 0 %}
+             <div class="row">
+                <div class="col-xs-3">&#129321;</div>
+                <div class="col-xs-8">
+                       <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width:{% widthratio x.rCount total 100%}%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                       </div>
+                </div>
+             </div>
+            {% elif x.reaction == 1 %}
+             <div class="row">
+                 <div class="col-xs-3">&#128512;</div>
+                 <div class="col-xs-8">
+                       <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width:{% widthratio x.rCount total 100%}%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1"></div>
+                       </div>
+                </div>
+             </div>
+             {% elif x.reaction == 2 %}
+             <div class="row">
+                 <div class="col-xs-3">&#128524;</div>
+                 <div class="col-xs-8">
+                       <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ x.rCount }}%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                       </div>
+                </div>
+             </div>
+            {% elif x.reaction == 3 %}
+             <div class="row">
+                 <div class="col-xs-3">&#129394;</div>
+                 <div class="col-xs-8">
+                       <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ x.rCount }}%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                       </div>
+                </div>
+             </div>
+             {% elif x.reaction == 4 %}
+             <div class="row">
+                 <div class="col-xs-3">&#129300;</div>
+                 <div class="col-xs-8">
+                       <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ x.rCount }}%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                       </div>
+                </div>
+             </div>
+            {% elif x.reaction == 5 %}
+             <div class="row">
+                 <div class="col-xs-3">&#128528;</div>
+                 <div class="col-xs-8">
+                       <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ x.rCount }}%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                       </div>
+                </div>
+             </div>
+            {% elif x.reaction == 6 %}
+             <div class="row">
+                 <div class="col-xs-3">&#129763;</div>
+                 <div class="col-xs-8">
+                       <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ x.rCount }}%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                       </div>
+                </div>
+             </div>
+            {% elif x.reaction == 7 %}
+             <div class="row">
+                 <div class="col-xs-3">&#128551;</div>
+                 <div class="col-xs-8">
+                       <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ x.rCount }}%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                       </div>
+                </div>
+             </div>
+            {% elif x.reaction == 8 %}
+             <div class="row">
+                 <div class="col-xs-3">&#129320;</div>
+                 <div class="col-xs-8">
+                       <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ x.rCount }}%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                       </div>
+                </div>
+             </div>
+            {% elif x.reaction == 9 %}
+             <div class="row">
+                 <div class="col-xs-3">&#128544;</div>
+                 <div class="col-xs-8">
+                       <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ x.rCount }}%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                       </div>
+                </div>
+             </div>
+            {% elif x.reaction == 10 %}
+             <div class="row">
+                 <div class="col-xs-3">&#129326;</div>
+                 <div class="col-xs-8">
+                       <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ x.rCount }}%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                       </div>
+                </div>
+             </div>
+           {% endif %}
+        {% endfor %}
+    </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

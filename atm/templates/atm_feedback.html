@@ -1,0 +1,42 @@
+{% extends "base_dataslip.html" %}
+{% load static %}
+
+{% block page_content %}
+<!-- Starting section-->
+<section style="padding-top: 5px; padding-bottom: 50px">
+<div class="px-4 py-2 text-center">
+    <!--<img src="{% static 'images/DDD.svg' %}" alt width="85">-->
+    <img class="d-block mx-auto mb-4" src="{% static 'images/dataslip_illustration.svg' %}" alt width="25%">
+</div>
+<div class="col-lg-6 mx-auto">
+<form action="{% url "dataslip_feedback" %}" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        {% csrf_token %}
+        <label for="gut_range" class="form-label">What is your gut reaction to your personal data slip?</label><br />
+        <input type="range"  class="form-range" id="gut_range" name="reaction_field" list="values" step="1" min="0" max="10" />
+
+        <datalist id="values">
+          <option value="0" label="&#129321;"></option>
+          <option value="1" label="&#128512;"></option>
+          <option value="2" label="&#128524;"></option>
+          <option value="3" label="&#129394;"></option>
+          <option value="4" label="&#129300;"></option>
+          <option value="5" label="&#128528;"></option>
+          <option value="6" label="&#129763;"></option>
+          <option value="7" label="&#128551;"></option>
+          <option value="8" label="&#129320;"></option>
+          <option value="9" label="&#128544;"></option>
+          <option value="10" label="&#129326;"></option>
+        </datalist>
+    </div>
+    <div class="form-group" style="margin-top: 25px">
+        <label for="exampleFormControlTextarea1">How would you take action?</label>
+        <textarea class="form-control" id="exampleFormControlTextarea1" name="action_field" rows="3"></textarea>
+    </div>
+    <div class="form-group text-center" style="margin-top: 25px">
+         <button type="submit" name="feedback" class="btn btn-primary mb-2">Submit</button>
+    </div>
+</form>
+</div>
+</section>
+{% endblock %}
