@@ -11,3 +11,5 @@ class DataSlipDonation(models.Model):
 class DataSlipFeedback(models.Model):
     reaction = models.IntegerField()
     action = models.TextField(blank=False, null=True)  # Large string frield to hold a piece of text
+    imagine = models.TextField(blank=False, null=True)  # Large string frield to hold a piece of text
+    feed = models.TextField(blank=False, null=True)  # Large string frield to hold a piece of text

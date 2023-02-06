@@ -136,6 +136,8 @@ def feedback(request):
         newFeedback = DataSlipFeedback(
             reaction = request.POST.get("reaction_field"),
             action = request.POST.get("action_field"),
+            imagine = request.POST.get("imaginaries"),
+            feed = request.POST.get("extra")
         )
         newFeedback.save()
 
