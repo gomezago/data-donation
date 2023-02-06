@@ -21,63 +21,78 @@
     <link rel="stylesheet" href="/static/css/base_dataslip.css">
         <!-- Plotly -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script>
-var slider = document.getElementById("gut_range");
-var output = document.getElementById("demo");
-output.innerHTML = slider.value; // Display the default slider value
-
-// Update the current slider value (each time you drag the slider handle)
-slider.oninput = function() {
-  output.innerHTML = this.value;
-}
-</script>
+    <!-- Font Awesome Icons -->
+        <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google Fonts-->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+        <!--<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">-->
+        <link href="https://fonts.googleapis.com/css?family=Lora|Roboto:400,700" rel="stylesheet">
+        <!-- Boostrap core JavaScript -->
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        <!-- Chart.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script>
+        <!-- d3.js -->
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script>
+        $(document).ready(function (){
+            {% block jquery %}{% endblock %}
+        })
+        </script>
+        <!-- Plotly -->
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
+<!-- Navigation Bar -->
 <nav class="navbar fixed-top navbar-light bg-light navbar-expand-md justify-content-center" style="padding-left: 20px; padding-right: 20px">
-            <a class="navbar-brand d-none d-md-block" href="{% url 'pages_index' %}"><img src="{% static 'images/DDDLogo.svg' %}" height="95px"/></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarCollapse">
-                <ul class="navbar-nav w-100 justify-content-center" id="navigation">
-                <li class="nav-item {% if request.resolver_match.url_name == 'project_list' or request.resolver_match.url_name == 'project_view' %}active{% endif %}">
-                    <a class="nav-link" id="projects" href="{% url 'project_list' %}"><span class="small text-uppercase">Projects</span></a>
-                </li>
-                </li>
-                   <li class="nav-item {% if request.resolver_match.url_name == 'atm' %}active{% endif %}">
-                    <a class="nav-link" id="team" href="{% url 'atm' %}"><span class="small text-uppercase">Dataslip</span></a>
-                </li>
-                <li class="nav-item {% if request.resolver_match.url_name == 'pages_about' %}active{% endif %}">
-                    <a class="nav-link" id="about" href="{% url 'pages_about' %}"><span class="small text-uppercase">About</span></a>
-                </li>
-                <li class="nav-item {% if request.resolver_match.url_name == 'pages_questions' %}active{% endif %}">
-                    <a class="nav-link" id="team" href="{% url 'pages_questions' %}"><span class="small text-uppercase">People</span></a>
-                </li>
-                <li class="nav-item {% if request.resolver_match.url_name == 'pages_privacy' %}active{% endif %}">
-                    <a class="nav-link" id="privacy" href="{% url 'pages_privacy' %}"><span class="small text-uppercase">Privacy</span></a>
-                </li>
-                <li class="nav-item {% if request.resolver_match.url_name == 'pages_publications' %}active{% endif %}">
-                    <a class="nav-link" id="team" href="{% url 'pages_publications' %}"><span class="small text-uppercase">Publications</span></a>
-              </ul>
+    <a class="navbar-brand d-none d-md-block" href="{% url 'pages_index' %}"><img src="{% static 'images/DDDLogo.svg' %}" height="95px"/></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav w-100 justify-content-center" id="navigation">
+        <li class="nav-item {% if request.resolver_match.url_name == 'project_list' or request.resolver_match.url_name == 'project_view' %}active{% endif %}">
+            <a class="nav-link" id="projects" href="{% url 'project_list' %}"><span class="small text-uppercase">Projects</span></a>
+        </li>
+        </li>
+           <li class="nav-item {% if request.resolver_match.url_name == 'atm' %}active{% endif %}">
+            <a class="nav-link" id="team" href="{% url 'atm' %}"><span class="small text-uppercase">Dataslip</span></a>
+        </li>
+        <li class="nav-item {% if request.resolver_match.url_name == 'pages_about' %}active{% endif %}">
+            <a class="nav-link" id="about" href="{% url 'pages_about' %}"><span class="small text-uppercase">About</span></a>
+        </li>
+        <li class="nav-item {% if request.resolver_match.url_name == 'pages_questions' %}active{% endif %}">
+            <a class="nav-link" id="team" href="{% url 'pages_questions' %}"><span class="small text-uppercase">People</span></a>
+        </li>
+        <li class="nav-item {% if request.resolver_match.url_name == 'pages_privacy' %}active{% endif %}">
+            <a class="nav-link" id="privacy" href="{% url 'pages_privacy' %}"><span class="small text-uppercase">Privacy</span></a>
+        </li>
+        <li class="nav-item {% if request.resolver_match.url_name == 'pages_publications' %}active{% endif %}">
+            <a class="nav-link" id="team" href="{% url 'pages_publications' %}"><span class="small text-uppercase">Publications</span></a>
+      </ul>
 
 
-            {% if user.is_authenticated %}
-                <ul class="navbar-nav ml-auto w-100 justify-content-end" id="navigation_login">
-                    <div class="dropdown">
-                        <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownUserButton" data-toggle="dropdown"><span class="small text-uppercase">{{ user.username }}</span></button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownUserButton">
-                            <a class="dropdown-item" href="/hello/"><span class="small text-uppercase">Dashboard</span></a>
-                            <a class="dropdown-item" href="/bucket/logout/"><span class="small text-uppercase">Log Out</span></a>
-                        </div>
-                    </div>
-                 </ul>
-            {% else %}
-                 <ul class="navbar-nav ml-auto w-100 justify-content-end">
-                    <a class="btn btn-dark navbar-btn" role="button"  href="/bucket/login/"><span class="small text-uppercase">Log in / Sign Up</span></a>
-                </ul>
-            {% endif %}
+    {% if user.is_authenticated %}
+        <ul class="navbar-nav ml-auto w-100 justify-content-end" id="navigation_login">
+            <div class="dropdown">
+                <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownUserButton" data-toggle="dropdown"><span class="small text-uppercase">{{ user.username }}</span></button>
+                <div class="dropdown-menu" aria-labelledby="dropdownUserButton">
+                    <a class="dropdown-item" href="/hello/"><span class="small text-uppercase">Dashboard</span></a>
+                    <a class="dropdown-item" href="/bucket/logout/"><span class="small text-uppercase">Log Out</span></a>
+                </div>
             </div>
-        </nav>
+         </ul>
+    {% else %}
+         <ul class="navbar-nav ml-auto w-100 justify-content-end">
+            <a class="btn btn-dark navbar-btn" role="button"  href="/bucket/login/"><span class="small text-uppercase">Log in / Sign Up</span></a>
+        </ul>
+    {% endif %}
+    </div>
+</nav>
 <main role="main" style="margin-top: 100px">
     {% block page_content %}
     {% endblock %}

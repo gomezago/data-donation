@@ -8,7 +8,7 @@
     <!--<img src="{% static 'images/DDD.svg' %}" alt width="85">-->
     <img class="d-block mx-auto mb-4" src="{% static 'images/dataslip_illustration.svg' %}" alt width="25%">
 </div>
-<div class="col-lg-6 mx-auto">
+<div class="col-sm-auto mx-5">
 <form action="{% url "dataslip_feedback" %}" method="post" enctype="multipart/form-data">
     <div class="form-group">
         {% csrf_token %}
