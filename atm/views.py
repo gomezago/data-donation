@@ -157,3 +157,7 @@ def feedback_back(request):
 
     return render(request, 'feedback_bar.html', context=context)
 
+def dataslip(request):
+
+    return render(request, 'dataslip_intro.html')
+

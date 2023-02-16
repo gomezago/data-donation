@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+<!-- Starting section-->
+<section style="padding-top: 50px; padding-bottom: 50px">
+<div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+    <h4>Dataslip</h4>
+    <hr>
+    <p>Dataslip is intended as a physical interaction. You can obtain a digital version of your personal data slip <a href="{% url 'atm' %}">here.</a><br></p>
+    <div class="flex-wrap justify-content-center" style="text-align: center;">
+        <video width="80%" margin-top="21.875%" controls autoplay muted>
+                <source src="{% static 'videos/dataslip.mp4' %}" type="video/mp4">
+        </video>
+    </div>
+    <div style="margin-top: 20px">
+     <h5>Description</h5>
+    <p>As we navigate the physical and digital world, we unknowingly leave behind an immense trail of data. We are informed about this via short statements (e.g., cookie popups) or lengthy documents (e.g., privacy policies). However, even when we know that data is collected, we remain largely unaware of its nature.<br> Dataslip is an interactive installation where the abstract notion of personal data is translated into a material and tangible representation in the form of a receipt. The receipt contains detailed information and illustrative examples of the data generated from our interactions with five different categories of products and services. Its length is proportional to the amount of data collected about us.<br>Dataslip seeks to elicit confrontation and invite you to critically reflect on the role personal data plays in our daily experiences.</p>
+    </div>
+    <div style="margin-top: 20px">
+         <h5>The Personal Data Slip or Receipt</h5>
+        <p>
+            The receipt contains detailed information and illustrative examples of the data generated from our interactions with five different categories of products and services:</p>
+            <ol id="steps">
+            <li>Personalized public transport cards (e.g., OV-chipkaart)</li>
+            <li>Supermarket loyalty cards</li>
+            <li>Credit and debit cards</li>
+            <li>Wearables, including smartwatches and smart rings</li>
+            <li>Mobile apps, including weather, navigation, web browser, email, instant messaging, music, social media, dating, and period tracking apps</li>
+            </ol>
+        <p>
+            We have designed the receipt to be intentionally long. Its length is proportional to the products and services you interact with, and to the amount and the different types of data they collect.<br>
+
+            To populate the receipt with accurate information and examples, Alejandra made 28 data portability requests and requested a copy of her own data<sup id="note1_back"><a href="#note1">1</a></sup>. The figure below illustrates an overview of the request made for each category of products and services. It includes the request mode (i.e., how the request was made), the response time (i.e., how long it took to receive a copy of the data), and the response format (i.e., how the data was delivered). <br></p>
+        <img class="img-fluid mb-3" src="{% static 'images/gdpr_request.png' %}">
+    </div>
+    <div style="margin-top: 20px">
+        <h5>The Team</h5>
+        <p>Dataslip is built and maintained by <a href="https://www.tudelft.nl/io/over-io/personen/gomez-ortega-a">Alejandra Gomez Ortega</a>, <a href="https://www.tudelft.nl/io/over-io/personen/milias-v">Vasileios Milias</a>, <a href="https://www.linkedin.com/in/carlo-van-der-valk-16703490/">Carlo van der Valk</a>, and <a href="https://www.tudelft.nl/io/over-io/personen/bourgeois-j">Jacky Bourgeois</a>. We are part of the <a href="https://delftdesignlabs.org/dcd-lab/">Data-Centric Design Lab</a>.</p>
+    </div>
+    <div style="margin-top: 20px">
+        <h6>Footnotes:</h6>
+        <p id="note1"><sup><a href="#note1_back">1</a></sup> The `right to data portability' was introduced in the European General Data Protection Regulation (GDPR). It allows individuals (i.e., data subjects) to request a copy of their personal data from a data controller (i.e., private companies and public services) and reuse it in a different context.</p>
+  </div>
+</div>
+</section>
+{% endblock %}

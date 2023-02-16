@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('dataslip', views.atm, name='atm'),
+    path('dataslip_pg', views.dataslip, name='dataslip_intro'),
     path('atm_transport/', views.atm_transport, name='atm_transport'),
     path('atm_food/', views.atm_food, name='atm_food'),
     path('atm_pay/', views.atm_pay, name='atm_pay'),
