@@ -19,6 +19,7 @@ from bucket_view.tasks import send_email_task
 from datetime import datetime, timedelta
 from django.template.loader import render_to_string, get_template
 from .google_functions import *
+from .sports_functions import *
 from plotly.offline import plot
 import plotly.graph_objects as go
 import plotly.express as px
@@ -198,6 +199,11 @@ def metadata_view(request, pk):
     }
     return render(request, 'metadata_view.html', context)
 
+
+@login_required()
+def explore_activity(request):
+
+    return render(request, 'activity_exploration.html')
 
 @login_required()
 def survey_view(request, pk):
@@ -502,6 +508,66 @@ def project_view(request, pk):
                         reminder_form = ReminderForm()
                         return render(request, 'project_view.html',
                                       {'project': project, 'form': form, 'reminder': reminder_form,})
+                elif pk == 'ddd_sports':
+
+                    #choices = {"SPEECH_RECORD": ["Speech Record", ""],
+                    #           "SPEAKER_METADATA": ["Speaker Metadata", "Speaker Metadata"]}
+
+                    # Initialize Thing and Properties in Bucket
+                    #thingId, initialized_property_dict = initialize_bucket(project, choices, request.session['token'])
+
+                    # Device Type
+                    device_type = form.cleaned_data['device']
+                    file = form.cleaned_data['data']
+
+                    donation = Donation(
+                        user=request.user,
+                        data=project.data,
+                        project=project,
+                        updates=form.cleaned_data['updates'],
+                        participate=form.cleaned_data['participate'],
+                        consent=True,
+                        # thingId=thingId,
+                        # propertyId=initialized_property_dict,
+                    )
+                    # donation.save()
+
+                    if device_type == '1':
+                        # Garmin
+                        zip_file_dict = extract_zip(file)
+                        file_names = zip_file_dict.keys()
+
+                        activity_df = get_activity_data(file_names=file_names, files=zip_file_dict)
+                        sleep_df = get_sleep_data(file_names=file_names, files=zip_file_dict)
+                        hr_df = get_hr_data(file_names=file_names, files=zip_file_dict)
+
+                        last_m_date = form.cleaned_data['date_m1']
+
+                        activity_plot = create_activity_plot(activity_df, hr_df, sleep_df, last_m_date)
+
+                        return render(request, "activity_exploration.html", {'plot': activity_plot, 'donation' : donation})
+
+                    elif device_type == '2':
+                        # Apple Watch
+                        record_df, workout_list = parse_zip(file)
+
+                        sleep_df = get_sleep_record(record_df)
+                        hr_data, hr_df = get_hr_record(record_df)
+                        activity_df = get_activity(workout_list, hr_data)
+
+
+                        last_m_date = form.cleaned_data['date_m1']
+                        activity_plot = create_activity_plot(activity_df, hr_df, sleep_df, last_m_date)
+
+                        return render(request, "activity_exploration.html", {'plot': activity_plot, 'donation': donation})
+
+                    else:
+                        messages.error(request, "Oops... Please select a device from the list!")
+                        reminder_form = ReminderForm()
+                        return render(request, 'project_view.html',
+                                      {'project': project, 'form': form, 'reminder': reminder_form, })
+
+                    return render(request, 'project_view.html', {'project': project, 'form': form, })
             else:
                 messages.error(request, "Oops... Something went wrong. Please try again!")
                 reminder_form = ReminderForm()
@@ -509,6 +575,7 @@ def project_view(request, pk):
         else:
             form = DonateForm(choices=data_tuple)
             reminder_form = ReminderForm()
+
             return render(request, 'project_view.html', {'project': project, 'form': form, 'reminder': reminder_form,})
 
 

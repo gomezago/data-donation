@@ -254,7 +254,7 @@ class DonateForm(forms.Form):
     )
 
     info = forms.CharField(
-        required=True,
+        required=False,
         label="Goal",
         max_length=200,
         widget=forms.Textarea(
@@ -268,7 +268,7 @@ class DonateForm(forms.Form):
 
 
     goal = forms.CharField(
-        required=True,
+        required=False,
         label="Goal",
         max_length=200,
         widget=forms.Textarea(
@@ -280,6 +280,67 @@ class DonateForm(forms.Form):
         )
     )
 
+    menstruation = forms.BooleanField(
+        initial=False,
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class': 'checkbox',
+                'role' : 'switch',
+            }
+        )
+    )
+
+    date_m1 = forms.DateField(
+        required = True,
+        widget = forms.SelectDateWidget(
+            years = range(2022, 2024),
+            attrs={
+            'data-date-format': 'dd/mm/yyy',
+            'class': 'form-control snps-inline-select menu-scroll',
+
+        })
+    )
+
+    usual = forms.CharField(
+        required=True,
+        max_length=300,
+        widget=forms.Textarea(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'For example, duration and symptoms',
+                'rows':2,
+            }
+        )
+    )
+
+    suffer = forms.CharField(
+        required=False,
+        max_length=300,
+        widget=forms.Textarea(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'For example, endometriosis or POC',
+                'rows': 2,
+            }
+        )
+    )
+
+
+    DEVICE_CHOICES = (
+        (0, "---"),
+        (1, "Garmin Smartwatch"),
+        (2, "Apple Watch"),
+    )
+
+    device = forms.ChoiceField(
+        required=False,
+        label = "What device do you use?: ",
+        choices=DEVICE_CHOICES,
+        widget=forms.Select(attrs={
+            'class' : 'form-control',
+        })
+    )
 
 
 class DemographicsForm(forms.Form):
@@ -337,7 +398,6 @@ class ReminderForm(forms.Form):
             'placeholder' : "Email*",
         })
     )
-
 
 
 class MotivationForm(forms.Form):

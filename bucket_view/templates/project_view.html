@@ -39,7 +39,7 @@
                                     <h6><span class="small text-muted text-uppercase">Donations Received</span> </h6>
                                 {% else %}
                                     <div class="progress">
-                                        <div class="progress-bar" role="progressbar" style="width:{% widthratio project.donation_set.count 1 3%}%" aria-valuenow="{{ project.donation_set.count }}" aria-valuemin="0" aria-valuemax="30"></div>
+                                        <div class="progress-bar" role="progressbar" style="width:{% widthratio project.donation_set.count 1 3%}%" aria-valuenow="{{ project.donation_set.count }}" aria-valuemin="0" aria-valuemax="20"></div>
                                     </div>
                                     <h6><span class="small text-muted text-uppercase">Donations Received</span> </h6>
                             {% endif %}
@@ -87,15 +87,24 @@
                 <p>You first must <a href="/bucket/login/">log in</a> or <a href="/bucket/login/">create a user</a> to upload your data.</p>
                 {% else %}
                     {% if project.id != 'ddd_demo' %}
-                        <p>This is the first step of the data donation process! Don't worry, you will be able to explore your data <b>before</b> making a decision to donate. You will also find a few questions that we ask to better support you and inform our research.</p>
+                        <p>This is the first step of the data donation process! Don't worry, you will be able to explore your data <b>before</b> making a decision to donate. It will be processed locally on your device.</p>
                          <form action="/project/{{ project.pk }}/", method="post", enctype="multipart/form-data">
                             {% csrf_token %}
                               <div class="form-group row required">
-                                <label class="col-sm-3 col-form-label col-form-label-sm control-label">Upload your Data</label>
-                                 <div class="col-sm-7">
-                                    {{ form.data }}
-                                     <small class="form-tex text-muted">Note that <b>{{ project.title }}</b> only accepts <b>{{ project.data_ext }}</b> files.</small>
-                                </div>
+                                <label class="col-sm-3 col-form-label col-form-label-sm control-label">Upload your data</label>
+                                 <div class="col-sm-8">
+                                     <div class="row">
+                                        <div class="form-group col-md-6">
+                                            {{ form.data }}<br>
+                                            <small class="form-tex text-muted">Note that <b>{{ project.title }}</b> only accepts <b>{{ project.data_ext }}</b> files</small>
+                                        </div>
+                                         <div class="form-group col-md-6">
+                                             <small class="form-text control-label">Select your device</small>
+                                            {{ form.device }}
+                                         </div>
+                                     </div>
+                                <hr>
+                                 </div>
                              </div>
                             {% if project.id == 'ddd_voxpop' %}
                             <div class="form-group row required">
@@ -121,7 +130,39 @@
                                 </div>
                             </div>
                             {% endif %}
-                            {% if project.id != 'ddd_voxpop' %}
+                         {% if project.id == 'ddd_sports' %}
+                            <div class="form-group row required">
+                                <label class="col-sm-3 col-form-label col-form-label-sm">Describe your menstrual cycle</label>
+                                 <div class="col-sm-8">
+                                    <div class="row">
+                                        <div class="form-group col-md-6">
+                                            <small class="form-text control-label">Have you experienced menstruation in the last three months?</small>
+                                            <br>
+                                            {{ form.menstruation }} Yes, I have
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <small class="form-text">What was the start date of your last cycle?</small>
+                                            <br>
+                                            {{ form.date_m1 }}
+                                        </div>
+                                    </div>
+                                     <div class="row">
+                                        <div class="form-group col-md-6">
+                                            <small class="form-text control-label">What is usual for your menstrual cycle?</small>
+                                            {{ form.usual }}
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <small class="form-text">Do you suffer from any menstrual disorders?</small>
+                                            {{ form.suffer }}
+                                        </div>
+                                    </div>
+                                    <hr>
+                                 </div>
+                             </div>
+
+                         {% endif %}
+                         <!--
+                            {% if project.id != 'ddd_voxpop' or project.id != 'ddd_sports'%}
                              <div class="form-group row required">
                                 <label class="col-sm-3 col-form-label col-form-label-sm control-label">Select the Data</label>
                                 <div class="col-sm-7">
@@ -133,22 +174,22 @@
                                     {% endif %}
                                 </div>
                              </div>
-                             {% endif %}
+                             {% endif %} -->
                             <div class="form-group row">
-                                <label class="col-sm-3 col-form-label col-form-label-sm">Indicate your Preferences</label>
-                                <div class="col-sm-7">
-                                    <label>{{ form.updates }} I wish to receive updates from <b>{{ project.title }}</b></label>
-                                    <label>{{ form.participate }} I wish to participate in an individual session to explore my <b>{{ project.title }}</b> data</label>
+                                <label class="col-sm-3 col-form-label col-form-label-sm">Indicate your preferences</label>
+                                <div class="col-sm-8">
+                                    <label>{{ form.participate }} I wish to participate in a session to interpret my <b>{{ project.title }}</b> data</label>
+                                    <label>{{ form.updates }} I wish to participate in shaping <b>{{ project.title }}'s</b> research objectives and direction</label>
+                                <hr>
                                 </div>
+
                             </div>
                             {% if project.id != 'ddd_voxpop' %}
                              <div class="form-group row required">
-                                <label class="col-sm-3 col-form-label col-form-label-sm control-label">Confirm your Agreement</label>
-                                <div class="col-sm-7">
+                                <label class="col-sm-3 col-form-label col-form-label-sm control-label">Confirm your agreement</label>
+                                <div class="col-sm-8">
                                     <label class="control-label">{{ form.consent }} I have read and understood this page</label>
-                                    <label class="control-label">{{ form.consent }} I confirm that I am <b>18 years old or older</b></label>
-                                    <label class="control-label">{{ form.consent }} I understand that I can <b>delete my data</b> any time</label>
-                                    <label class="control-label">{{ form.consent }} I consent voluntarily to <b>{{ project.title }}</b> researchers using my data as stated</label>
+                                    <label class="control-label">{{ form.consent }} I consent voluntarily to donate my data with <b>{{ project.title }}</b> researchers</label>
                                 </div>
                              </div>
                             {% endif %}

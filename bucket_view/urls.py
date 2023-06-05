@@ -13,4 +13,5 @@ urlpatterns = [
     path("metadata/<str:pk>/", views.metadata_view, name="metadata"),
     path("survey/<str:pk>/", views.survey_view, name="survey"),
     path("delete_survey/", views.delete_survey_view, name="delete_survey"),
+    path('explore_data/', views.explore_activity, name='exploration'),
 ]

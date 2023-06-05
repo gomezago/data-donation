@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+{% load plotly_dash %}
+    <section style="padding-top: 50px; padding-bottom: 50px">
+        <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
+            <h4>Explore and Curate your Data</h4>
+            <hr>
+        </div>
+    <div class="col-md-8 offset-md-2">
+        <p>This is the second step of the data donation process! We invite you to <b>explore</b> your data by hovering over the dots, each dot represents an interaction with your voice assistant.<br>
+            Below you can either <b>confirm your donation to {{ donation.project.title }}</b> or you can <b>remove your data from our platform</b>.
+            <div class="row">
+                <div id="chart">
+                     {{ plot | safe }}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
