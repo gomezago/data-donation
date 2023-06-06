@@ -256,7 +256,7 @@ def create_activity_plot(activity_df, hr_df, sleep_df, last_m_date):
     def create_plot():
         fig = make_subplots(rows=3, cols=1,
                             subplot_titles=("Physical Activity", "Sleep Duration", "Resting Heart Rate",),
-                            shared_xaxes=True, vertical_spacing=0.1)
+                            shared_xaxes=True, vertical_spacing=0.1, row_heights=[0.7, 0.25, 0.25])
 
         fig.append_trace(
             go.Scatter(x=list(hr_df.date), y=list(hr_df.restHR), hovertext=hr_df.text, mode='markers',
@@ -277,7 +277,7 @@ def create_activity_plot(activity_df, hr_df, sleep_df, last_m_date):
             go.Bar(x=list(sleep_df.date), y=sleep_df.duration, name='', showlegend=False, hovertext=sleep_df.text), row=2,
             col=1)
 
-        fig.update_layout(height=800, width=800, title_text="")
+        fig.update_layout(height=600, width=600, title_text="", margin=dict(l=5,r=5,t=5,b=5))
 
         fig.update_layout(
 
@@ -319,13 +319,23 @@ def create_activity_plot(activity_df, hr_df, sleep_df, last_m_date):
                           xaxis_rangeslider_visible=False,
                           xaxis2_rangeslider_visible=False,
                           xaxis3_rangeslider_visible=True,
-                          xaxis_type="date", )
+                          xaxis_type="date",)
+        fig.update_layout(legend=dict(
+            orientation = 'h',
+            yanchor = "top",
+            y = 0.99,#1.02,
+            xanchor = "left",
+            x = 0.01,#1
+            font=dict(
+                size=9,
+            ),
+        ))
 
         fig['layout']['yaxis']['title'] = 'Time of the Day'
-        fig['layout']['yaxis2']['title'] = 'Hours'
-        fig['layout']['yaxis3']['title'] = 'Beats per Minute'
+        fig['layout']['yaxis2']['title'] = 'Total Hours'
+        fig['layout']['yaxis3']['title'] = 'Beats per Min'
 
-        fig.update_xaxes(range=[hr_df.date.min(), hr_df.date.max()])
+        fig.update_xaxes(range=[hr_df.date.min(), hr_df.date.max()], rangeslider_thickness = 0.05)
 
         fig.add_vline(x=last_m_date, line_width=1, line_dash="dash", line_color="red")
 

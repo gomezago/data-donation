@@ -3,17 +3,30 @@
 
 {% block page_content %}
 {% load plotly_dash %}
-    <section style="padding-top: 50px; padding-bottom: 50px">
-        <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 20px">
-            <h4>Explore and Curate your Data</h4>
+    <section style="padding-top: 30px; padding-bottom: 50px">
+        <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 5px">
+            <h4>Step 2: Explore your Data</h4>
             <hr>
         </div>
-    <div class="col-md-8 offset-md-2">
-        <p>This is the second step of the data donation process! We invite you to <b>explore</b> your data by hovering over the dots, each dot represents an interaction with your voice assistant.<br>
-            Below you can either <b>confirm your donation to {{ donation.project.title }}</b> or you can <b>remove your data from our platform</b>.
-            <div class="row">
-                <div id="chart">
-                     {{ plot | safe }}
+        <div class="col-md-8 offset-md-2" style="align-content: center">
+            <div class="row justify-content-center">
+                <div class="col">
+                    <div id="chart">
+                             {{ plot | safe }}
+                    </div>
+                </div>
+                <div class="col">
+                    <p><b>Explore your data by hovering over the dots, bars, and lines!</b></p>
+                        <ul id="publications">
+                            <li>What information is there?</li>
+                            <li>Can you see any patterns?</li>
+                            <li>Do you recognize your activities in the data?</li>
+                        </ul>
+                    <p>Do you wish to <b>continue with your donation</b> and choose which data to donate to {{ donation.project.title }}?</p>
+                    <div class="form-group form-inline justify-content-center text-center" style="text-align: center">
+                        <button name="confirm" type="submit" class="btn btn-primary btn-xs">Yes, continue</button>
+                        <button name="delete" type="submit", class="btn btn-danger btn-xs">No, delete my data</button>
+                    </div>
                 </div>
             </div>
         </div>

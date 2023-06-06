@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
 {% block page_content %}
-<section style="padding-top: 50px; padding-bottom: 50px">
-    <div class="container" style="padding-top:20px">
+<section style="padding-top: 30px; padding-bottom: 50px">
+    <div class="container" style="padding-top:5px">
         <h4>{{ project.title }}</h4>
               <hr>
             {% include 'messages.html' %}
@@ -81,13 +81,13 @@
                 {% endif %}
                 -->
             <hr>
-            <h5>Upload Your Data</h5>
+            <h5>Step 1: Upload Your Data</h5>
             {% if project.active %}
                 {% if not user.is_authenticated %}
                 <p>You first must <a href="/bucket/login/">log in</a> or <a href="/bucket/login/">create a user</a> to upload your data.</p>
                 {% else %}
                     {% if project.id != 'ddd_demo' %}
-                        <p>This is the first step of the data donation process! Don't worry, you will be able to explore your data <b>before</b> making a decision to donate. It will be processed locally on your device.</p>
+                        <p>Don't worry, you will be able to explore your data <b>before</b> making a decision to donate. It will be processed locally on your device.</p>
                          <form action="/project/{{ project.pk }}/", method="post", enctype="multipart/form-data">
                             {% csrf_token %}
                               <div class="form-group row required">
@@ -136,7 +136,7 @@
                                  <div class="col-sm-8">
                                     <div class="row">
                                         <div class="form-group col-md-6">
-                                            <small class="form-text control-label">Have you experienced menstruation in the last three months?</small>
+                                            <small class="form-text">Have you experienced menstruation in the last three months?</small>
                                             <br>
                                             {{ form.menstruation }} Yes, I have
                                         </div>
