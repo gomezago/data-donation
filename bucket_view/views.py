@@ -10,14 +10,14 @@ from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm, Re
 from plot_test.forms import DeleteMotivationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Project, Donation, Motivation, Awareness, InitialAwareness, FinalAwareness, DeleteDonation, City
+from .models import Project, Donation, Motivation, Awareness, InitialAwareness, FinalAwareness, DeleteDonation, City, Curation, Menstruation
 from utils.bucket_functions import *
 from .clue_functions import read_clue_file, transform_clue_dict, send_clue_data
 from django.http import HttpResponseRedirect, JsonResponse
 from operator import itemgetter
 from django.core.mail import send_mail, EmailMessage
 from bucket_view.tasks import send_email_task
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from django.template.loader import render_to_string, get_template
 from .google_functions import *
 from .sports_functions import *
@@ -202,29 +202,95 @@ def metadata_view(request, pk):
 
 
 @login_required()
-def explore_activity(request):
+def explore_activity(request, pk):
+    donation = Donation.objects.get(pk=pk)
+
     activity_plot = request.session['plot']
     form = CurationForm()
 
     if request.method == 'POST' and 'confirm' in request.POST:
-        print("Confirm Donation")
-        return render(request, 'donation_curation.html', context={'plot': activity_plot, 'form' : form})
+
+        return render(request, 'donation_curation.html', context={'plot': activity_plot, 'form' : form, 'donation' : donation})
 
     elif request.method == 'POST' and 'delete' in request.POST:
-        print("Delete Donation")
-        #TODO: Remove data from session
+
+        Donation.objects.get(pk=pk).delete()
+
+        del request.session['plot']
+        del request.session['sleep']
+        del request.session['heart']
+        del request.session['activity']
+        request.session.modified = True
+
         return render(request, 'donation_confirmation.html', context={})
 
-    return render(request, 'activity_exploration.html', context={'plot': activity_plot})
+    return render(request, 'activity_exploration.html', context={'plot': activity_plot, 'donation' : donation})
 
 
-def curate(request):
+def curate(request, pk):
+    empty_form = CurationForm()
+    donation = Donation.objects.get(pk=pk)
     activity_plot = request.session['plot']
-    form = CurationForm()
-    return render(request, 'donation_curation.html', context={'plot': activity_plot, 'form' : form})
+
+    # Save choices
+    if request.method == "POST" and "donate" in request.POST:
+        form = CurationForm(request.POST)
+
+        token = request.session['token']
+        donation_thing = donation.thingId
+        donation_activity = donation.propertyId['PHYSICAL_ACTIVITY']
+        donation_hr = donation.propertyId['DAILY_HR']
+        donation_sleep = donation.propertyId['DAILY_SLEEP']
+
+        if form.is_valid():
+            curate_choices = Curation(
+                donation=donation,
+                activity=form.cleaned_data['activity'],
+                sleep=form.cleaned_data['sleep'],
+                hr = form.cleaned_data['hr'],
+                time = form.cleaned_data['temporality']
+            )
+            curate_choices.save()
+
+            # Send Data to Bucket
+            if int(form.cleaned_data['activity']) != 0:
+                activity_val = request.session['activity']
+                update_property(donation_thing, donation_activity, {'values': activity_val}, token)
+
+            if int(form.cleaned_data['sleep']) != 0:
+                sleep_val = request.session['sleep']
+                update_property(donation_thing, donation_sleep, {'values': sleep_val}, token)
+
+            if int(form.cleaned_data['hr']) != 0:
+                hr_val = request.session['heart']
+                update_property(donation_thing, donation_hr, {'values': hr_val}, token)
+
+            # Send Email
+            if donation.participate:
+                context_message = {'email_project': donation.project.title, 'email_username': request.user.username}
+                html_message = get_template('email_card_thanks.html').render(context_message)
+                subject = 'Helene: Thank you for your donation'
+
+                email_msg = EmailMessage(subject, html_message, 'noreply@datadonation.ide.tudelft.nl', [request.user.email, ],
+                                         bcc=['datadonation-ide@tudelft.nl', ])
+                email_msg.content_subtype = 'html'
+                email_msg.send()
+
+        # Return to View
+        moti_form = MotivationForm()
+        return render(request, 'donation_view.html', {'donation': donation, 'form': moti_form})
+    return render(request, 'donation_curation.html', context={'plot': activity_plot, 'form' : empty_form, 'donation' : donation})
 
 
-def delete_thanks(request):
+def delete_thanks(request, pk):
+    Donation.objects.get(pk=pk).delete()
+
+    del request.session['plot']
+    del request.session['sleep']
+    del request.session['heart']
+    del request.session['activity']
+    request.session.modified = True
+
     return render(request, 'delete_confirmation.html', context={})
 
 @login_required()
@@ -531,17 +597,16 @@ def project_view(request, pk):
                         return render(request, 'project_view.html',
                                       {'project': project, 'form': form, 'reminder': reminder_form,})
                 elif pk == 'ddd_sports':
-
-                    #choices = {"SPEECH_RECORD": ["Speech Record", ""],
-                    #           "SPEAKER_METADATA": ["Speaker Metadata", "Speaker Metadata"]}
+                    choices = {"DAILY_HR": ["Daily Heart Rate", ""],"PHYSICAL_ACTIVITY": ["Physical Activity", ""],"DAILY_SLEEP" : ["Sleep", ""],}
 
                     # Initialize Thing and Properties in Bucket
-                    #thingId, initialized_property_dict = initialize_bucket(project, choices, request.session['token'])
+                    thingId, initialized_property_dict = initialize_bucket(project, choices, request.session['token'])
 
                     # Device Type
                     device_type = form.cleaned_data['device']
                     file = form.cleaned_data['data']
 
+                    # Save Intention to Donate
                     donation = Donation(
                         user=request.user,
                         data=project.data,
@@ -549,10 +614,22 @@ def project_view(request, pk):
                         updates=form.cleaned_data['updates'],
                         participate=form.cleaned_data['participate'],
                         consent=True,
-                        # thingId=thingId,
-                        # propertyId=initialized_property_dict,
+                        thingId=thingId,
+                        propertyId=initialized_property_dict, # Empty Property Dict
                     )
-                    # donation.save()
+                    donation.save()
+
+                    # Save Menstruation
+                    menstruation = Menstruation(
+                        donation=donation,
+                        cycle=form.cleaned_data['menstruation'],
+                        last_date= form.cleaned_data['date_m1'],
+                        usual=form.cleaned_data['usual'],
+                        suffer=form.cleaned_data['suffer'],
+                    )
+                    menstruation.save()
+
+                    last_m_date = form.cleaned_data['date_m1']
 
                     if device_type == '1':
                         # Garmin
@@ -563,11 +640,12 @@ def project_view(request, pk):
                         sleep_df = get_sleep_data(file_names=file_names, files=zip_file_dict)
                         hr_df = get_hr_data(file_names=file_names, files=zip_file_dict)
 
-                        last_m_date = form.cleaned_data['date_m1']
-
                         activity_plot = create_activity_plot(activity_df, hr_df, sleep_df, last_m_date)
 
                         request.session['plot'] = activity_plot
+                        request.session['sleep'] = create_sleep_dict(sleep_df)
+                        request.session['heart'] = create_hr_dict(hr_df)
+                        request.session['activity'] = create_act_dict(activity_df)
 
                         return render(request, "activity_exploration.html", {'plot': activity_plot, 'donation' : donation})
 
@@ -579,12 +657,15 @@ def project_view(request, pk):
                         hr_data, hr_df = get_hr_record(record_df)
                         activity_df = get_activity(workout_list, hr_data)
 
-                        last_m_date = form.cleaned_data['date_m1']
+
 
 
                         activity_plot = create_activity_plot(activity_df, hr_df, sleep_df, last_m_date)
 
                         request.session['plot'] = activity_plot
+                        request.session['sleep'] = create_sleep_dict(sleep_df)
+                        request.session['heart'] = create_hr_dict(hr_df)
+                        request.session['activity'] = create_act_dict(activity_df)
 
                         return render(request, "activity_exploration.html", {'plot': activity_plot, 'donation': donation})
 
@@ -676,8 +757,8 @@ def initialize_bucket(project, choices, token):
             if property.ok:
                 propertyId = property.json()['id']
                 initialized_property_dict[key] = propertyId
-                #consent = new_consent([project.groupId], ['dcd:actions:read'])
-                #grant_consent(thingId, propertyId, consent, token)
+                consent = new_consent([project.groupId], ['dcd:actions:read'])
+                grant_consent(thingId, propertyId, consent, token)
             else:
                 logger.error("Initializing properties in donation to project {}".format(project.title))
     else:

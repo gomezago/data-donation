@@ -55,7 +55,7 @@ def get_activity_data(file_names, files):
                     a_data['date'] = datetime.datetime.fromtimestamp(item['beginTimestamp'] / 1000.0).strftime("%Y-%m-%d")
                     a_data['date_time'] = datetime.datetime.fromtimestamp(item['beginTimestamp'] / 1000.0)  # .strftime("%Y-%m-%d")
                     a_data['startTimeGMT'] = item['beginTimestamp']
-                    a_data['startTimeLocal'] = item['startTimeLocal']
+                    a_data['startTime'] = item['startTimeLocal']
                     a_data['startHour'] = int(datetime.datetime.fromtimestamp(item['startTimeLocal'] / 1000.0).strftime("%H"))
                     a_data['startHourMinuteLocal'] = datetime.datetime.fromtimestamp(item['startTimeLocal'] / 1000.0).strftime("%Y-%m-%d %H:%M")
                     a_data['duration'] = int(item['duration'] / 60000)
@@ -172,27 +172,25 @@ def get_sleep_record(record_data):
 
     sleep_data = record_data[(record_data['type'] == "SleepAnalysis") & (record_data['startDate'].dt.year > 2022)]
 
-    if sleep_data:
+    sleep_data['value'] = sleep_data['value'].str.replace('HKCategoryValueSleepAnalysis', '')
 
-        sleep_data['value'] = sleep_data['value'].str.replace('HKCategoryValueSleepAnalysis', '')
+    sleep_data.rename(columns={'startDate': 'start_time'}, inplace=True)
+    sleep_data.rename(columns={'endDate': 'end_time'}, inplace=True)
 
-        sleep_data.rename(columns={'startDate': 'start_time'}, inplace=True)
-        sleep_data.rename(columns={'endDate': 'end_time'}, inplace=True)
+    sleep_data['date'] = record_data['creationDate'].dt.strftime('%Y-%m-%d')
 
-        sleep_data['date'] = record_data['creationDate'].dt.strftime('%Y-%m-%d')
+    sleep_data['duration_lambda'] = sleep_data['end_time'] - sleep_data['start_time']
+    sleep_data['duration_hours'] = sleep_data['duration_lambda'].apply(delta_to_time)
+    sleep_data['duration'] = sleep_data['duration_lambda'].apply(delta_to_hour)
 
-        sleep_data['duration_lambda'] = sleep_data['end_time'] - sleep_data['start_time']
-        sleep_data['duration_hours'] = sleep_data['duration_lambda'].apply(delta_to_time)
-        sleep_data['duration'] = sleep_data['duration_lambda'].apply(delta_to_hour)
+    hover_text = []
 
-        hover_text = []
+    for index, row in sleep_data.iterrows():
+        hover_text.append(('Start Time : {start}<br>' + 'End Time : {end}<br>' + 'Duration : {duration}<br>')
+                          .format(start=row['start_time'].strftime('%H:%M'), end=row['end_time'].strftime('%H:%M'),
+                                  duration=row['duration_hours'], ))
 
-        for index, row in sleep_data.iterrows():
-            hover_text.append(('Start Time : {start}<br>' + 'End Time : {end}<br>' + 'Duration : {duration}<br>')
-                              .format(start=row['start_time'].strftime('%H:%M'), end=row['end_time'].strftime('%H:%M'),
-                                      duration=row['duration_hours'], ))
-
-        sleep_data['text'] = hover_text
+    sleep_data['text'] = hover_text
 
     return sleep_data
 
@@ -200,11 +198,10 @@ def get_hr_record(record_data):
 
     hr_data = record_data[(record_data['type'] == "HeartRate") & (record_data['startDate'].dt.year > 2022)]
 
-    if hr_data:
-        hr_data['value'] = hr_data['value'].astype(int)
+    hr_data['value'] = hr_data['value'].astype(int)
 
-        hr_agg_data = hr_data.groupby(hr_data['startDate'].dt.date).agg({'value': ['mean', 'min', 'max']}).reset_index()
-        hr_agg_data.columns = hr_agg_data.columns.droplevel(0)
+    hr_agg_data = hr_data.groupby(hr_data['startDate'].dt.date).agg({'value': ['mean', 'min', 'max']}).reset_index()
+    hr_agg_data.columns = hr_agg_data.columns.droplevel(0)
 
     hr_agg_data = hr_agg_data.rename(columns={'':'date', 'mean' : 'minHR', 'min' : 'restHR', 'max' : 'maxHR'})
 
@@ -255,6 +252,41 @@ def get_activity(workout_list, hr_data):
     activity_df = pd.DataFrame(activity_list)
 
     return activity_df
+
+def create_sleep_dict(sleep_df):
+
+    sleep_donation = sleep_df[['date', 'start_time', 'end_time', 'duration']]
+
+    # Date: String
+    sleep_donation['start_time'] = sleep_donation['start_time'].astype(str)
+    sleep_donation['end_time'] = sleep_donation['end_time'].astype(str)
+    sleep_donation['duration'] = sleep_donation['duration'].astype(float)
+
+    sleep_array = sleep_donation.to_numpy().tolist()
+    return sleep_array
+
+def create_hr_dict(hr_df):
+
+    hr_donation = hr_df[['date', 'minHR', 'maxHR', 'restHR']]
+
+    # Date: String
+    hr_donation['date'] = hr_donation['date'].astype(str)
+
+    hr_array = hr_donation.to_numpy().tolist()
+    return hr_array
+
+def create_act_dict(act_df):
+
+    act_donation = act_df[['date', 'startTime', 'duration', 'avgHR', 'maxHR', 'sport']]
+
+    # Date: String
+    act_donation['date'] = act_donation['date'].astype(str)
+    act_donation['startTime'] = act_donation['startTime'].astype(str)
+    act_donation['duration'] = act_donation['duration'].astype(float)
+
+    #act_dict = act_donation.to_dict('records')
+    act_array = act_donation.to_numpy().tolist()
+    return act_array
 
 def create_activity_plot(activity_df, hr_df, sleep_df, last_m_date):
     pio.templates.default = "plotly_white"

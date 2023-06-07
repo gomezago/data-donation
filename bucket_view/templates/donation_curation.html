@@ -10,8 +10,8 @@
         </div>
         <div class="col-md-8 offset-md-2" style="align-content: center">
             <div class="row">
-                <p>What types of data to donate? Since when? <b>It is up to you!</b><br> You can choose between: <b>not donating</b> your data; <b>donating an overview</b> of your data, for example, the type of activities you performed, or your average heart rate during the day; and
-                <b>donating a specific view</b> of your data, for example, all the metrics of each activity or all your heart rate measurements during the day.</p>
+                <p>What types of data to donate? Since when? <b>It is up to you!</b><br> You can choose between: <b>not donating your data</b>; <b>donating a summary of your data</b>, for example, the type of activities you performed, or your average heart rate during the day; and
+                <b>donating specific data</b>, for example, all the metrics of each activity or all your heart rate measurements during the day.</p>
             </div>
             <div class="row justify-content-center">
                 <div class="col">
@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="col">
-                     <form action="/curate_data/", method="post", enctype="multipart/form-data">
+                     <form action="/curate_data/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
                      {% csrf_token %}
                         <div class="form-group required">
                             <div class="form-row" style="margin-top: 10px">
@@ -40,7 +40,7 @@
                                     {{ form.temporality }}
                             </div>
                             <div class="form-row align-items-center text-center" style="margin-top: 10px">
-                                <button name="confirm" type="submit" class="btn btn-primary btn-xs", style="width: 100%">Donate my Data</button>
+                                <button name="donate" type="submit" class="btn btn-primary btn-xs", style="width: 100%">Donate my Data</button>
                             </div>
                         </div>
                      </form>

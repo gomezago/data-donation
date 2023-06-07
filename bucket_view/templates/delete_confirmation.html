@@ -2,14 +2,27 @@
 {% load static %}
 
 {% block page_content %}
-{% load plotly_dash %}
+    <!-- Starting section-->
     <section style="padding-top: 30px; padding-bottom: 50px">
-        <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 5px">
-            <h4>We have removed your data from our platform!</h4>
+     <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 5px">
+         <h4>We have removed your data from our platform!</h4>
             <hr>
+        <div class="row">
+            <div class="col-sm-8">
+                <p>Thank you for taking the time to contribute to our project and explore your data! It is safely back with you. You can now close your browser or visit some helpful links instead:</p>
+                <ul id="steps">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="{% url 'project_list' %}">Projects</a></li>
+                    <li><a href="{% url 'pages_privacy' %}">Privacy</a></li>
+                </ul>
+                <br>
+                <p>Questions? Contact us by sending an email to: <a href="mailto:datadonation-ide@tudelft.nl">datadonation-ide@tudelft.nl</a></p>
+            </div>
+            <div class="col-sm-4">
+                <img class="featurette-image img-fluid mx-auto" src="{% static 'images/login.png' %}" alt="Image laptop with white screen" width="100%">
+            </div>
+            </div>
         </div>
-        <div class="col-md-8 offset-md-2" style="align-content: center">
-                    <p>Thank you for your interest in our project. We have removed your data from our platform. You can close your browser :)</p>
-        </div>
+    </div>
     </section>
 {% endblock %}

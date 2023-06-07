@@ -27,13 +27,13 @@
 
                     <div class="row" style="text-align: center">
                             <div class="col-xs-6 text-left">
-                                <form action="/curate_data/", method="post", enctype="multipart/form-data">
+                                <form action="/curate_data/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <button name="confirm" type="submit" class="btn btn-primary btn-xs" style="width: 80%">Yes, continue</button>
                                 </form>
                             </div>
                             <div class="col-xs-6 text-right">
-                                <form action="/data_thanks/", method="post", enctype="multipart/form-data">
+                                <form action="/data_thanks/{{ donation.pk }}/", method="post", enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <button name="delete" type="submit", class="btn btn-danger btn-xs" style="width: 80%; margin-top: 10px">No, delete my data</button>
                             </form>

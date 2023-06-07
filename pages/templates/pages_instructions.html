@@ -35,6 +35,29 @@
                     <img src="{% static 'images/export_email.gif' %}" width="100%"></li>
 
                 </ol>
+              {% elif project.id == 'ddd_sports' %}
+                  <h5>Garmin Users</h5>
+                  <ol id="publications">
+                    <li>Go to <a href="https://www.garmin.com/account/datamanagement/">https://www.garmin.com/account/datamanagement/</a> and log in with your Garmin Connect Credentials.</li>
+                    <li>Click on <b>Export your Data</b></li>
+                    <li>Click on <b>Request Data Export</b></li>
+                    <li>You will receive an email when your data is ready. Download the <b>.zip</b> file and upload it in the <a href="/project/{{ project.pk }}/">{{ project.title }} page</a><br>
+                  </ol>
+                  <div style="justify-content: center; text-align: center">
+                  <img src="{% static 'images/garmin_instr.png' %}" width="70%">
+                  </div>
+                  <hr>
+                  <h5>Apple Watch Users</h5>
+                  <ol id="publications">
+                      <li>On your iPhone go to your <b>Apple Health App</b> and click on the <b>icon with your profile</b> in the upper right corner</li>
+                  <li>Scroll down and click on <b>Export All Health Data</b></li>
+                  <li>Confirm by clicking on <b>Export</b></li>
+                  <li>Upload the <b>.zip</b> file in the <a href="/project/{{ project.pk }}/">{{ project.title }} page</a></li>
+                  </ol>
+                  <div style="justify-content: center; text-align: center">
+                   <img src="{% static 'images/apple_instr.png' %}" width="70%">
+                  </div>
+
              {% else %}
                 <p>Project <b>{{ project.title }}</b> does not have detailed instructions. If you have any questions
                     regarding this project please send an email to <a href="mailto:datadonation-ide@tudelft.nl">datadonation-ide@tudelft.nl</a>.</p>

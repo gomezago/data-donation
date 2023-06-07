@@ -453,15 +453,14 @@ class MotivationForm(forms.Form):
 
 class CurationForm(forms.Form):
     TIME_CHOICES = (
-        (0, "Donate data from the past month"),
-        (1, "Donate data from the past three months"),
-        (2, "Donate data from the past six months"),
+        (0, "Donate data from the past three months"),
+        (1, "Donate data from the past six months"),
     )
 
     DATA_CHOICES = (
         (0, "Don't donate this data"),
-        (1, "Donate an overview of this data"),
-        (2, "Donate a detailed view of this data"),
+        (1, "Donate a summary of this data"),
+        (2, "Donate the specifics of this data"),
     )
 
     temporality = forms.ChoiceField(
