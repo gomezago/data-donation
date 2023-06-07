@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+{% load plotly_dash %}
+    <section style="padding-top: 30px; padding-bottom: 50px">
+        <div class="col-md-8 offset-md-2" style="align-content: center; background-size: cover; padding-top: 5px">
+            <h4>Step 3: Curate your Data</h4>
+            <hr>
+        </div>
+        <div class="col-md-8 offset-md-2" style="align-content: center">
+            <div class="row">
+                <p>What types of data to donate? Since when? <b>It is up to you!</b><br> You can choose between: <b>not donating</b> your data; <b>donating an overview</b> of your data, for example, the type of activities you performed, or your average heart rate during the day; and
+                <b>donating a specific view</b> of your data, for example, all the metrics of each activity or all your heart rate measurements during the day.</p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col">
+                    <div id="chart">
+                             {{ plot | safe }}
+                    </div>
+                </div>
+                <div class="col">
+                     <form action="/curate_data/", method="post", enctype="multipart/form-data">
+                     {% csrf_token %}
+                        <div class="form-group required">
+                            <div class="form-row" style="margin-top: 10px">
+                                    <small class="form-label control-label">How would you like to handle your <b>activity</b> data?</small>
+                                    {{ form.activity }}
+                            </div>
+                            <div class="form-row" style="margin-top: 10px">
+                                <small class="form-tex control-label">How would you like to handle your <b>sleep</b> data?</small>
+                                    {{ form.sleep }}
+                            </div>
+                            <div class="form-row" style="margin-top: 10px">
+                                    <small class="form-label control-label">How would you like to handle your <b>HR</b> data?</small>
+                                    {{ form.hr }}
+                            </div>
+                            <div class="form-row" style="margin-top: 10px">
+                                    <small class="form-label control-label">Since when would you like to donate data?</small>
+                                    {{ form.temporality }}
+                            </div>
+                            <div class="form-row align-items-center text-center" style="margin-top: 10px">
+                                <button name="confirm" type="submit" class="btn btn-primary btn-xs", style="width: 100%">Donate my Data</button>
+                            </div>
+                        </div>
+                     </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

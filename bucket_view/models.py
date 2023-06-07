@@ -93,3 +93,17 @@ class DeleteDonation(models.Model):
 class City(models.Model):
     donation        = models.ForeignKey(Donation, on_delete=models.CASCADE)
     city            = models.CharField(max_length=50, unique=False, default=None, null=True)
+
+class Curation(models.Model):
+    donation = models.ForeignKey(Donation, on_delete=models.CASCADE)
+    activity = models.CharField(max_length=1, unique=False, default=None, null=True)
+    sleep = models.CharField(max_length=1, unique=False, default=None, null=True)
+    hr = models.CharField(max_length=1, unique=False, default=None, null=True)
+    time = models.CharField(max_length=1, unique=False, default=None, null=True)
+
+class Menstruation(models.Model):
+    donation = models.ForeignKey(Donation, on_delete=models.CASCADE)
+    cycle = models.BooleanField(default=False)
+    last_date = models.DateField()
+    usual = models.CharField(max_length=200, unique=False, default=None, null=True)
+    suffer = models.CharField(max_length=200, unique=False, default=None, null=True)

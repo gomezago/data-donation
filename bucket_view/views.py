@@ -3,9 +3,10 @@ import logging
 import time
 
 import pandas as pd
+import requests
 from django.shortcuts import render
 from django.utils.html import format_html
-from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm, ReminderForm, MetadataForm, AwarenessSurveyForm, DeleteSurveyForm
+from .forms import ProjectForm, DonateForm, DemographicsForm, MotivationForm, ReminderForm, MetadataForm, AwarenessSurveyForm, DeleteSurveyForm, CurationForm
 from plot_test.forms import DeleteMotivationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -202,8 +203,29 @@ def metadata_view(request, pk):
 
 @login_required()
 def explore_activity(request):
+    activity_plot = request.session['plot']
+    form = CurationForm()
 
-    return render(request, 'activity_exploration.html')
+    if request.method == 'POST' and 'confirm' in request.POST:
+        print("Confirm Donation")
+        return render(request, 'donation_curation.html', context={'plot': activity_plot, 'form' : form})
+
+    elif request.method == 'POST' and 'delete' in request.POST:
+        print("Delete Donation")
+        #TODO: Remove data from session
+        return render(request, 'donation_confirmation.html', context={})
+
+    return render(request, 'activity_exploration.html', context={'plot': activity_plot})
+
+
+def curate(request):
+    activity_plot = request.session['plot']
+    form = CurationForm()
+    return render(request, 'donation_curation.html', context={'plot': activity_plot, 'form' : form})
+
+
+def delete_thanks(request):
+    return render(request, 'delete_confirmation.html', context={})
 
 @login_required()
 def survey_view(request, pk):
@@ -545,6 +567,8 @@ def project_view(request, pk):
 
                         activity_plot = create_activity_plot(activity_df, hr_df, sleep_df, last_m_date)
 
+                        request.session['plot'] = activity_plot
+
                         return render(request, "activity_exploration.html", {'plot': activity_plot, 'donation' : donation})
 
                     elif device_type == '2':
@@ -555,9 +579,12 @@ def project_view(request, pk):
                         hr_data, hr_df = get_hr_record(record_df)
                         activity_df = get_activity(workout_list, hr_data)
 
-
                         last_m_date = form.cleaned_data['date_m1']
+
+
                         activity_plot = create_activity_plot(activity_df, hr_df, sleep_df, last_m_date)
+
+                        request.session['plot'] = activity_plot
 
                         return render(request, "activity_exploration.html", {'plot': activity_plot, 'donation': donation})
 

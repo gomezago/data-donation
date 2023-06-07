@@ -171,34 +171,40 @@ def parse_zip(file):
 def get_sleep_record(record_data):
 
     sleep_data = record_data[(record_data['type'] == "SleepAnalysis") & (record_data['startDate'].dt.year > 2022)]
-    sleep_data['value'] = sleep_data['value'].str.replace('HKCategoryValueSleepAnalysis', '')
 
-    sleep_data.rename(columns={'startDate': 'start_time'}, inplace=True)
-    sleep_data.rename(columns={'endDate': 'end_time'}, inplace=True)
+    if sleep_data:
 
-    sleep_data['date'] = record_data['creationDate'].dt.strftime('%Y-%m-%d')
+        sleep_data['value'] = sleep_data['value'].str.replace('HKCategoryValueSleepAnalysis', '')
 
-    sleep_data['duration_lambda'] = sleep_data['end_time'] - sleep_data['start_time']
-    sleep_data['duration_hours'] = sleep_data['duration_lambda'].apply(delta_to_time)
-    sleep_data['duration'] = sleep_data['duration_lambda'].apply(delta_to_hour)
+        sleep_data.rename(columns={'startDate': 'start_time'}, inplace=True)
+        sleep_data.rename(columns={'endDate': 'end_time'}, inplace=True)
 
-    hover_text = []
+        sleep_data['date'] = record_data['creationDate'].dt.strftime('%Y-%m-%d')
 
-    for index, row in sleep_data.iterrows():
-        hover_text.append(('Start Time : {start}<br>' + 'End Time : {end}<br>' + 'Duration : {duration}<br>')
-                          .format(start=row['start_time'].strftime('%H:%M'), end=row['end_time'].strftime('%H:%M'),
-                                  duration=row['duration_hours'], ))
+        sleep_data['duration_lambda'] = sleep_data['end_time'] - sleep_data['start_time']
+        sleep_data['duration_hours'] = sleep_data['duration_lambda'].apply(delta_to_time)
+        sleep_data['duration'] = sleep_data['duration_lambda'].apply(delta_to_hour)
 
-    sleep_data['text'] = hover_text
+        hover_text = []
+
+        for index, row in sleep_data.iterrows():
+            hover_text.append(('Start Time : {start}<br>' + 'End Time : {end}<br>' + 'Duration : {duration}<br>')
+                              .format(start=row['start_time'].strftime('%H:%M'), end=row['end_time'].strftime('%H:%M'),
+                                      duration=row['duration_hours'], ))
+
+        sleep_data['text'] = hover_text
 
     return sleep_data
 
 def get_hr_record(record_data):
-    hr_data = record_data[(record_data['type'] == "HeartRate") & (record_data['startDate'].dt.year > 2022)]
-    hr_data['value'] = hr_data['value'].astype(int)
 
-    hr_agg_data = hr_data.groupby(hr_data['startDate'].dt.date).agg({'value': ['mean', 'min', 'max']}).reset_index()
-    hr_agg_data.columns = hr_agg_data.columns.droplevel(0)
+    hr_data = record_data[(record_data['type'] == "HeartRate") & (record_data['startDate'].dt.year > 2022)]
+
+    if hr_data:
+        hr_data['value'] = hr_data['value'].astype(int)
+
+        hr_agg_data = hr_data.groupby(hr_data['startDate'].dt.date).agg({'value': ['mean', 'min', 'max']}).reset_index()
+        hr_agg_data.columns = hr_agg_data.columns.droplevel(0)
 
     hr_agg_data = hr_agg_data.rename(columns={'':'date', 'mean' : 'minHR', 'min' : 'restHR', 'max' : 'maxHR'})
 
@@ -206,7 +212,7 @@ def get_hr_record(record_data):
 
     for index, row in hr_agg_data.iterrows():
         hover_text.append(('Date : {date}<br>' + 'Resting HR : {restHR}<br>' + 'Max HR : {maxHR}<br>')
-                          .format(date=row['date'], restHR=row['restHR'], maxHR=row['maxHR'], ))
+                   .format(date=row['date'], restHR=row['restHR'], maxHR=row['maxHR'], ))
     hr_agg_data['text'] = hover_text
 
     return hr_data, hr_agg_data

@@ -14,4 +14,6 @@ urlpatterns = [
     path("survey/<str:pk>/", views.survey_view, name="survey"),
     path("delete_survey/", views.delete_survey_view, name="delete_survey"),
     path('explore_data/', views.explore_activity, name='exploration'),
+    path('curate_data/', views.curate, name='curation'),
+    path('data_thanks/', views.delete_thanks, name='deletion'),
 ]

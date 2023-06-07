@@ -451,6 +451,55 @@ class MotivationForm(forms.Form):
     )
 
 
+class CurationForm(forms.Form):
+    TIME_CHOICES = (
+        (0, "Donate data from the past month"),
+        (1, "Donate data from the past three months"),
+        (2, "Donate data from the past six months"),
+    )
+
+    DATA_CHOICES = (
+        (0, "Don't donate this data"),
+        (1, "Donate an overview of this data"),
+        (2, "Donate a detailed view of this data"),
+    )
+
+    temporality = forms.ChoiceField(
+        required=False,
+        label="Since when do you want to donate your data?",
+        choices=TIME_CHOICES,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    sleep = forms.ChoiceField(
+        required=False,
+        label="How would you like to handle your sleep data?",
+        choices=DATA_CHOICES,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    activity = forms.ChoiceField(
+        required=False,
+        label="How would you like to handle your activity data?",
+        choices=DATA_CHOICES,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    hr = forms.ChoiceField(
+        required=False,
+        label="How would you like to handle your hr data?",
+        choices=DATA_CHOICES,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+
 
 class MetadataForm(forms.Form):
 

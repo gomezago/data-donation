@@ -19,14 +19,26 @@
                     <p><b>Explore your data by hovering over the dots, bars, and lines!</b></p>
                         <ul id="publications">
                             <li>What information is there?</li>
-                            <li>Can you see any patterns?</li>
+                            <li>Can you see any patterns or outliers?</li>
                             <li>Do you recognize your activities in the data?</li>
+                            <li>Does something surprise you?</li>
                         </ul>
                     <p>Do you wish to <b>continue with your donation</b> and choose which data to donate to {{ donation.project.title }}?</p>
-                    <div class="form-group form-inline justify-content-center text-center" style="text-align: center">
-                        <button name="confirm" type="submit" class="btn btn-primary btn-xs">Yes, continue</button>
-                        <button name="delete" type="submit", class="btn btn-danger btn-xs">No, delete my data</button>
-                    </div>
+
+                    <div class="row" style="text-align: center">
+                            <div class="col-xs-6 text-left">
+                                <form action="/curate_data/", method="post", enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <button name="confirm" type="submit" class="btn btn-primary btn-xs" style="width: 80%">Yes, continue</button>
+                                </form>
+                            </div>
+                            <div class="col-xs-6 text-right">
+                                <form action="/data_thanks/", method="post", enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <button name="delete" type="submit", class="btn btn-danger btn-xs" style="width: 80%; margin-top: 10px">No, delete my data</button>
+                            </form>
+                            </div>
+                        </div>
                 </div>
             </div>
         </div>
