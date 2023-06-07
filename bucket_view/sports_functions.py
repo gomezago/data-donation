@@ -74,7 +74,7 @@ def get_activity_data(file_names, files):
         activity_df = pd.DataFrame(activity_list)
 
     else:
-        activity_df = pd.DataFrame(columns=['date', 'date_time', 'startTimeGTM', 'startTimeLocal', 'startHour', 'startHourMinuteLocal', 'duration', 'duration_hours', 'avgHR', 'maxHR', 'type', 'sport', 'text'])
+        activity_df = pd.DataFrame(columns=['date', 'date_time', 'startTimeGTM', 'startTime', 'startHour', 'startHourMinuteLocal', 'duration', 'duration_hours', 'avgHR', 'maxHR', 'type', 'sport', 'text'])
     return activity_df
 
 def get_sleep_data(file_names, files):
@@ -121,23 +121,23 @@ def get_hr_data(file_names, files):
         hr_list = []
 
         for f in hr_path:
-
             d = json.loads(files[f])
-
             for item in d:
                 item_year = datetime.datetime.strptime(item['calendarDate']['date'], '%b %d, %Y %I:%M:%S %p').date().year
                 if item_year > 2022:
-                    hr_data = {}
-                    hr_data['date'] = datetime.datetime.strptime(item['restingHeartRateTimestamp'],
-                                                        '%b %d, %Y %I:%M:%S %p').strftime("%Y-%m-%d")
-                    hr_data['minHR'] = item['minHeartRate']
-                    hr_data['maxHR'] = item['maxHeartRate']
-                    hr_data['restHR'] = item['restingHeartRate']
-                    hr_data['text'] = (
-                        'Date: ' + hr_data['date'] + '<br>Resting HR: ' + str(hr_data['restHR']) + '<br>Max HR: ' + str(hr_data['maxHR']) + 'br'
-                    )
+                    if 'restingHeartRateTimestamp' in item:
+                        if 'minHeartRate' in item:
+                            hr_data = {}
+                            hr_data['date'] = datetime.datetime.strptime(item['restingHeartRateTimestamp'],
+                                                                '%b %d, %Y %I:%M:%S %p').strftime("%Y-%m-%d")
+                            hr_data['minHR'] = item['minHeartRate']
+                            hr_data['maxHR'] = item['maxHeartRate']
+                            hr_data['restHR'] = item['restingHeartRate']
+                            hr_data['text'] = (
+                                'Date: ' + hr_data['date'] + '<br>Resting HR: ' + str(hr_data['restHR']) + '<br>Max HR: ' + str(hr_data['maxHR']) + 'br'
+                            )
 
-                    hr_list.append(hr_data)
+                            hr_list.append(hr_data)
 
         hr_df = pd.DataFrame(hr_list)
     else:
@@ -151,7 +151,7 @@ def parse_zip(file):
     record_list = []
     workout_list = []
     for name in zip_file.namelist():
-        if 'cda' not in name:
+        if 'cda' not in name and 'route' not in name:
             f = zip_file.open(name)
             tree = ET.parse(f)
             root = tree.getroot()
@@ -161,7 +161,7 @@ def parse_zip(file):
     # To Date Time
     record_df = pd.DataFrame(record_list)
     for col in ['creationDate', 'startDate', 'endDate']:
-        record_df[col] = pd.to_datetime(record_df[col])
+        record_df[col] = pd.to_datetime(record_df[col], errors = 'coerce')
 
     # Shorter Observation Names
     record_df['type'] = record_df['type'].str.replace('HKQuantityTypeIdentifier', '')
@@ -172,47 +172,59 @@ def get_sleep_record(record_data):
 
     sleep_data = record_data[(record_data['type'] == "SleepAnalysis") & (record_data['startDate'].dt.year > 2022)]
 
-    sleep_data['value'] = sleep_data['value'].str.replace('HKCategoryValueSleepAnalysis', '')
+    if sleep_data.empty:
 
-    sleep_data.rename(columns={'startDate': 'start_time'}, inplace=True)
-    sleep_data.rename(columns={'endDate': 'end_time'}, inplace=True)
+        sleep_df = pd.DataFrame(
+            columns=['date', 'start_time', 'end_time', 'deep', 'light', 'awake', 'other', 'duration', 'duration_hours',
+                     'text'])
 
-    sleep_data['date'] = record_data['creationDate'].dt.strftime('%Y-%m-%d')
+    else:
 
-    sleep_data['duration_lambda'] = sleep_data['end_time'] - sleep_data['start_time']
-    sleep_data['duration_hours'] = sleep_data['duration_lambda'].apply(delta_to_time)
-    sleep_data['duration'] = sleep_data['duration_lambda'].apply(delta_to_hour)
+        sleep_data['value'] = sleep_data['value'].str.replace('HKCategoryValueSleepAnalysis', '')
 
-    hover_text = []
+        sleep_data.rename(columns={'startDate': 'start_time'}, inplace=True)
+        sleep_data.rename(columns={'endDate': 'end_time'}, inplace=True)
 
-    for index, row in sleep_data.iterrows():
-        hover_text.append(('Start Time : {start}<br>' + 'End Time : {end}<br>' + 'Duration : {duration}<br>')
-                          .format(start=row['start_time'].strftime('%H:%M'), end=row['end_time'].strftime('%H:%M'),
-                                  duration=row['duration_hours'], ))
+        sleep_data['date'] = record_data['creationDate'].dt.strftime('%Y-%m-%d')
 
-    sleep_data['text'] = hover_text
+        sleep_data['duration_lambda'] = sleep_data['end_time'] - sleep_data['start_time']
+        sleep_data['duration_hours'] = sleep_data['duration_lambda'].apply(delta_to_time)
+        sleep_data['duration'] = sleep_data['duration_lambda'].apply(delta_to_hour)
 
-    return sleep_data
+        hover_text = []
+
+        for index, row in sleep_data.iterrows():
+            hover_text.append(('Start Time : {start}<br>' + 'End Time : {end}<br>' + 'Duration : {duration}<br>')
+                              .format(start=row['start_time'].strftime('%H:%M'), end=row['end_time'].strftime('%H:%M'),
+                                      duration=row['duration_hours'], ))
+
+        sleep_data['text'] = hover_text
+        sleep_df = sleep_data
+
+    return sleep_df
 
 def get_hr_record(record_data):
 
     hr_data = record_data[(record_data['type'] == "HeartRate") & (record_data['startDate'].dt.year > 2022)]
+    if hr_data.empty:
+        hr_agg = pd.DataFrame(columns=['date', 'minHR', 'maxHR', 'restHR', 'text'])
+    else:
+        hr_data['value'] = hr_data['value'].astype(float).astype(int)
 
-    hr_data['value'] = hr_data['value'].astype(int)
+        hr_agg_data = hr_data.groupby(hr_data['startDate'].dt.date).agg({'value': ['mean', 'min', 'max']}).reset_index()
+        hr_agg_data.columns = hr_agg_data.columns.droplevel(0)
 
-    hr_agg_data = hr_data.groupby(hr_data['startDate'].dt.date).agg({'value': ['mean', 'min', 'max']}).reset_index()
-    hr_agg_data.columns = hr_agg_data.columns.droplevel(0)
+        hr_agg_data = hr_agg_data.rename(columns={'':'date', 'mean' : 'minHR', 'min' : 'restHR', 'max' : 'maxHR'})
 
-    hr_agg_data = hr_agg_data.rename(columns={'':'date', 'mean' : 'minHR', 'min' : 'restHR', 'max' : 'maxHR'})
+        hover_text = []
 
-    hover_text = []
+        for index, row in hr_agg_data.iterrows():
+            hover_text.append(('Date : {date}<br>' + 'Resting HR : {restHR}<br>' + 'Max HR : {maxHR}<br>')
+                       .format(date=row['date'], restHR=row['restHR'], maxHR=row['maxHR'], ))
+        hr_agg_data['text'] = hover_text
+        hr_agg = hr_agg_data
 
-    for index, row in hr_agg_data.iterrows():
-        hover_text.append(('Date : {date}<br>' + 'Resting HR : {restHR}<br>' + 'Max HR : {maxHR}<br>')
-                   .format(date=row['date'], restHR=row['restHR'], maxHR=row['maxHR'], ))
-    hr_agg_data['text'] = hover_text
-
-    return hr_data, hr_agg_data
+    return hr_data, hr_agg
 
 
 def get_hr(hr_data, start, end):
@@ -229,27 +241,34 @@ def get_activity(workout_list, hr_data):
 
     for item in workout_list:
         if pd.to_datetime(item['startDate']).year > 2022:
-            hr_mean, hr_min = get_hr(hr_data, item['startDate'], item['endDate'])
-            a_data = {}
-            a_data['date'] = pd.to_datetime(item['startDate']).strftime("%Y-%m-%d")
-            a_data['startTime'] = item['startDate']
-            a_data['startHour'] = int(pd.to_datetime(item['startDate']).hour)
-            a_data['endTime'] = item['endDate']
-            a_data['duration'] = int(float(item['duration']))
-            a_data['duration_hours'] = ms_to_hours(int(float(item['duration'])))
-            a_data['avgHR'] = hr_mean
-            a_data['maxHR'] = hr_min
-            a_data['sport'] = item['workoutActivityType'].replace('HKWorkoutActivityType', '')
+            if item:
+                hr_mean, hr_min = get_hr(hr_data, item['startDate'], item['endDate'])
+                a_data = {}
+                a_data['date'] = pd.to_datetime(item['startDate']).strftime("%Y-%m-%d")
+                a_data['startTime'] = item['startDate']
+                a_data['startHour'] = int(pd.to_datetime(item['startDate']).hour)
+                a_data['endTime'] = item['endDate']
+                a_data['duration'] = int(float(item['duration']))
+                a_data['duration_hours'] = ms_to_hours(int(float(item['duration'])))
+                a_data['avgHR'] = hr_mean
+                a_data['maxHR'] = hr_min
+                a_data['sport'] = item['workoutActivityType'].replace('HKWorkoutActivityType', '')
 
-            a_data['text'] = (
-                    'Activity: ' + a_data['sport'] + '<br>Duration: ' + str(
-                a_data['duration_hours']) + '<br>Average HR: ' +
-                    str(a_data['avgHR']) + '<br>Max HR:' + str(a_data['maxHR']) + '<br>'
-            )
+                a_data['text'] = (
+                        'Activity: ' + a_data['sport'] + '<br>Duration: ' + str(
+                    a_data['duration_hours']) + '<br>Average HR: ' +
+                        str(a_data['avgHR']) + '<br>Max HR:' + str(a_data['maxHR']) + '<br>'
+                )
 
-            activity_list.append(a_data)
+                activity_list.append(a_data)
 
-    activity_df = pd.DataFrame(activity_list)
+    if  not activity_list:
+        activity_df = pd.DataFrame(
+            columns=['date', 'date_time', 'startTime', 'startHour', 'startHourMinuteLocal',
+                     'duration', 'duration_hours', 'avgHR', 'maxHR', 'type', 'sport', 'text'])
+
+    else:
+        activity_df = pd.DataFrame(activity_list)
 
     return activity_df
 
@@ -304,7 +323,7 @@ def create_activity_plot(activity_df, hr_df, sleep_df, last_m_date):
         sport_types = activity_df['sport'].unique()
         sport_data = {sport: activity_df.query("sport == '%s'" % sport) for sport in sport_types}
 
-        sizeref = 2. * max(activity_df['duration']) / (40 ** 2)
+        sizeref = 2. * max(activity_df['duration'], default=5) / (40 ** 2)
 
         for sport_type, sport in sport_data.items():
             fig.append_trace(go.Scatter(x=sport['date'], y=sport['startHour'], name=sport_type, text=sport['text'],
