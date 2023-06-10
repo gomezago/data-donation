@@ -95,12 +95,17 @@ def get_sleep_data(file_names, files):
                     sleep_data['date'] = item['calendarDate']
                     sleep_data['start_time'] = pd.to_datetime(item['sleepStartTimestampGMT'])
                     sleep_data['end_time'] = pd.to_datetime(item['sleepEndTimestampGMT'])
-                    sleep_data['deep'] = item['deepSleepSeconds'] / 3600
-                    sleep_data['light'] = item['lightSleepSeconds'] / 3600
-                    sleep_data['awake'] = item['awakeSleepSeconds'] / 3600
-                    sleep_data['other'] = item['unmeasurableSeconds'] / 3600
-                    sleep_data['duration'] = (item['deepSleepSeconds'] + item['lightSleepSeconds'] + item['awakeSleepSeconds'] + item['unmeasurableSeconds']) / 3600
-                    sleep_data['duration_hours'] = s_to_hours(item['deepSleepSeconds'] + item['lightSleepSeconds'] + item['awakeSleepSeconds'] + item['unmeasurableSeconds'])
+                    if 'deepSleepSeconds' in item:
+                        sleep_data['deep'] = item['deepSleepSeconds'] / 3600
+                        sleep_data['light'] = item['lightSleepSeconds'] / 3600
+                        sleep_data['awake'] = item['awakeSleepSeconds'] / 3600
+                        sleep_data['other'] = item['unmeasurableSeconds'] / 3600
+                        sleep_data['duration'] = (item['deepSleepSeconds'] + item['lightSleepSeconds'] + item['awakeSleepSeconds'] + item['unmeasurableSeconds']) / 3600
+                        sleep_data['duration_hours'] = s_to_hours(item['deepSleepSeconds'] + item['lightSleepSeconds'] + item['awakeSleepSeconds'] + item['unmeasurableSeconds'])
+                    else:
+                        sleep_data['duration_lambda'] = sleep_data['end_time'] - sleep_data['start_time']
+                        sleep_data['duration_hours'] = delta_to_time(sleep_data['duration_lambda'])
+                        sleep_data['duration'] = delta_to_hour(sleep_data['duration_lambda'])
 
                     sleep_data['text'] = (
                                 'Start Time: ' + sleep_data['start_time'].strftime('%H:%M') + '<br>End Time: ' +
