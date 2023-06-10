@@ -49,28 +49,29 @@ def get_activity_data(file_names, files):
         activity_list = []
 
         for item in d[0]['summarizedActivitiesExport']:
-            if item['beginTimestamp'] > 1672488000000:
-                if "avgHr" in item:
-                    a_data = {}
-                    a_data['timestamp'] = item['beginTimestamp']
-                    a_data['date'] = datetime.datetime.fromtimestamp(item['beginTimestamp'] / 1000.0).strftime("%Y-%m-%d")
-                    a_data['date_time'] = datetime.datetime.fromtimestamp(item['beginTimestamp'] / 1000.0)  # .strftime("%Y-%m-%d")
-                    a_data['startTimeGMT'] = item['beginTimestamp']
-                    a_data['startTime'] = item['startTimeLocal']
-                    a_data['startHour'] = int(datetime.datetime.fromtimestamp(item['startTimeLocal'] / 1000.0).strftime("%H"))
-                    a_data['startHourMinuteLocal'] = datetime.datetime.fromtimestamp(item['startTimeLocal'] / 1000.0).strftime("%Y-%m-%d %H:%M")
-                    a_data['duration'] = int(item['duration'] / 60000)
-                    a_data['duration_hours'] = ms_to_hours(item['duration'])
-                    a_data['avgHR'] = item['avgHr']
-                    a_data['maxHR'] = item['maxHr']
-                    a_data['type'] = item['activityType']
-                    a_data['sport'] = item['sportType']
+            if 'beginTimestamp' in item:
+                if item['beginTimestamp'] > 1672488000000:
+                    if "avgHr" in item:
+                        a_data = {}
+                        a_data['timestamp'] = item['beginTimestamp']
+                        a_data['date'] = datetime.datetime.fromtimestamp(item['beginTimestamp'] / 1000.0).strftime("%Y-%m-%d")
+                        a_data['date_time'] = datetime.datetime.fromtimestamp(item['beginTimestamp'] / 1000.0)  # .strftime("%Y-%m-%d")
+                        a_data['startTimeGMT'] = item['beginTimestamp']
+                        a_data['startTime'] = item['startTimeLocal']
+                        a_data['startHour'] = int(datetime.datetime.fromtimestamp(item['startTimeLocal'] / 1000.0).strftime("%H"))
+                        a_data['startHourMinuteLocal'] = datetime.datetime.fromtimestamp(item['startTimeLocal'] / 1000.0).strftime("%Y-%m-%d %H:%M")
+                        a_data['duration'] = int(item['duration'] / 60000)
+                        a_data['duration_hours'] = ms_to_hours(item['duration'])
+                        a_data['avgHR'] = item['avgHr']
+                        a_data['maxHR'] = item['maxHr']
+                        a_data['type'] = item['activityType']
+                        a_data['sport'] = item['sportType']
 
-                    a_data['text'] = (
-                        'Activity: ' + a_data['sport'] + '<br>Duration: ' + str(a_data['duration_hours']) + '<br>Average HR: ' +
-                        str(a_data['avgHR']) + '<br>Max HR:' + str(a_data['maxHR']) + '<br>'
-                    )
-                    activity_list.append(a_data)
+                        a_data['text'] = (
+                            'Activity: ' + a_data['sport'] + '<br>Duration: ' + str(a_data['duration_hours']) + '<br>Average HR: ' +
+                            str(a_data['avgHR']) + '<br>Max HR:' + str(a_data['maxHR']) + '<br>'
+                        )
+                        activity_list.append(a_data)
 
         activity_df = pd.DataFrame(activity_list)
 
