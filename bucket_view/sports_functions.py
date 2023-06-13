@@ -164,8 +164,8 @@ def parse_zip(file):
             f = zip_file.open(name)
             tree = ET.parse(f)
             root = tree.getroot()
-            record_list = [x.attrib for x in root.iter('Record')]
-            workout_list = [x.attrib for x in root.iter('Workout')]
+            record_list = [x.attrib for x in root.iter('Record') if pd.to_datetime(x.attrib['startDate']).year > 2022]
+            workout_list = [x.attrib for x in root.iter('Workout') if pd.to_datetime(x.attrib['startDate']).year > 2022]
 
     # To Date Time
     record_df = pd.DataFrame(record_list)
@@ -179,7 +179,7 @@ def parse_zip(file):
 
 def get_sleep_record(record_data):
 
-    sleep_data = record_data[(record_data['type'] == "SleepAnalysis") & (record_data['startDate'].dt.year > 2022)]
+    sleep_data = record_data[(record_data['type'] == "SleepAnalysis")]
 
     if sleep_data.empty:
 
@@ -215,7 +215,7 @@ def get_sleep_record(record_data):
 
 def get_hr_record(record_data):
 
-    hr_data = record_data[(record_data['type'] == "HeartRate") & (record_data['startDate'].dt.year > 2022)]
+    hr_data = record_data[(record_data['type'] == "HeartRate")]
     if hr_data.empty:
         hr_agg = pd.DataFrame(columns=['timestamp','date', 'minHR', 'maxHR', 'restHR', 'text'])
     else:
@@ -251,30 +251,29 @@ def get_activity(workout_list, hr_data):
     activity_list = []
 
     for item in workout_list:
-        if pd.to_datetime(item['startDate']).year > 2022:
-            if item:
-                hr_mean, hr_min = get_hr(hr_data, item['startDate'], item['endDate'])
-                if not math.isnan(hr_mean) or not math.isnan(hr_min):
-                    a_data = {}
-                    a_data['timestamp'] = int(
-                        time.mktime(pd.to_datetime(item['startDate']).timetuple()) * 1000)
-                    a_data['date'] = pd.to_datetime(item['startDate']).strftime("%Y-%m-%d")
-                    a_data['startTime'] = int(
-                        time.mktime(pd.to_datetime(item['startDate']).timetuple()) * 1000)
-                    a_data['startHour'] = int(pd.to_datetime(item['startDate']).hour)
-                    a_data['endTime'] = item['endDate']
-                    a_data['duration'] = int(float(item['duration']))
-                    a_data['duration_hours'] = ms_to_hours(int(float(item['duration'])))
-                    a_data['avgHR'] = float(hr_mean)
-                    a_data['maxHR'] = float(hr_min)
-                    a_data['sport'] = item['workoutActivityType'].replace('HKWorkoutActivityType', '')
+        if item:
+            hr_mean, hr_min = get_hr(hr_data, item['startDate'], item['endDate'])
+            if not math.isnan(hr_mean) or not math.isnan(hr_min):
+                a_data = {}
+                a_data['timestamp'] = int(
+                    time.mktime(pd.to_datetime(item['startDate']).timetuple()) * 1000)
+                a_data['date'] = pd.to_datetime(item['startDate']).strftime("%Y-%m-%d")
+                a_data['startTime'] = int(
+                    time.mktime(pd.to_datetime(item['startDate']).timetuple()) * 1000)
+                a_data['startHour'] = int(pd.to_datetime(item['startDate']).hour)
+                a_data['endTime'] = item['endDate']
+                a_data['duration'] = int(float(item['duration']))
+                a_data['duration_hours'] = ms_to_hours(int(float(item['duration'])))
+                a_data['avgHR'] = float(hr_mean)
+                a_data['maxHR'] = float(hr_min)
+                a_data['sport'] = item['workoutActivityType'].replace('HKWorkoutActivityType', '')
 
-                    a_data['text'] = (
-                            'Activity: ' + a_data['sport'] + '<br>Duration: ' + str(
-                        a_data['duration_hours']) + '<br>Average HR: ' +
-                            str(a_data['avgHR']) + '<br>Max HR:' + str(a_data['maxHR']) + '<br>'
-                    )
-                    activity_list.append(a_data)
+                a_data['text'] = (
+                        'Activity: ' + a_data['sport'] + '<br>Duration: ' + str(
+                    a_data['duration_hours']) + '<br>Average HR: ' +
+                        str(a_data['avgHR']) + '<br>Max HR:' + str(a_data['maxHR']) + '<br>'
+                )
+                activity_list.append(a_data)
     if not activity_list:
         activity_df = pd.DataFrame(
             columns=['timestamp','date', 'date_time', 'startTime', 'startHour', 'startHourMinuteLocal',
