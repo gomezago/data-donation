@@ -252,11 +252,11 @@ def curate(request, pk):
             )
             curate_choices.save()
 
+            print(form.cleaned_data['activity'])
             # Send Data to Bucket
             if int(form.cleaned_data['activity']) != 0:
                 activity_val = request.session['activity']
                 update_property(donation_thing, donation_activity, {'values': activity_val}, token)
-
             if int(form.cleaned_data['sleep']) != 0:
                 sleep_val = request.session['sleep']
                 update_property(donation_thing, donation_sleep, {'values': sleep_val}, token)
@@ -656,9 +656,6 @@ def project_view(request, pk):
                         sleep_df = get_sleep_record(record_df)
                         hr_data, hr_df = get_hr_record(record_df)
                         activity_df = get_activity(workout_list, hr_data)
-
-
-
 
                         activity_plot = create_activity_plot(activity_df, hr_df, sleep_df, last_m_date)
 

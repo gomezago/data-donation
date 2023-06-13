@@ -1,3 +1,4 @@
+import math
 from zipfile import ZipFile
 from bs4 import BeautifulSoup as bs
 import pandas as pd
@@ -253,28 +254,28 @@ def get_activity(workout_list, hr_data):
         if pd.to_datetime(item['startDate']).year > 2022:
             if item:
                 hr_mean, hr_min = get_hr(hr_data, item['startDate'], item['endDate'])
-                a_data = {}
-                a_data['timestamp'] = int(
-                    time.mktime(pd.to_datetime(item['startDate']).timetuple()) * 1000)
-                a_data['date'] = pd.to_datetime(item['startDate']).strftime("%Y-%m-%d")
-                a_data['startTime'] = item['startDate']
-                a_data['startHour'] = int(pd.to_datetime(item['startDate']).hour)
-                a_data['endTime'] = item['endDate']
-                a_data['duration'] = int(float(item['duration']))
-                a_data['duration_hours'] = ms_to_hours(int(float(item['duration'])))
-                a_data['avgHR'] = hr_mean
-                a_data['maxHR'] = hr_min
-                a_data['sport'] = item['workoutActivityType'].replace('HKWorkoutActivityType', '')
+                if not math.isnan(hr_mean) or not math.isnan(hr_min):
+                    a_data = {}
+                    a_data['timestamp'] = int(
+                        time.mktime(pd.to_datetime(item['startDate']).timetuple()) * 1000)
+                    a_data['date'] = pd.to_datetime(item['startDate']).strftime("%Y-%m-%d")
+                    a_data['startTime'] = int(
+                        time.mktime(pd.to_datetime(item['startDate']).timetuple()) * 1000)
+                    a_data['startHour'] = int(pd.to_datetime(item['startDate']).hour)
+                    a_data['endTime'] = item['endDate']
+                    a_data['duration'] = int(float(item['duration']))
+                    a_data['duration_hours'] = ms_to_hours(int(float(item['duration'])))
+                    a_data['avgHR'] = float(hr_mean)
+                    a_data['maxHR'] = float(hr_min)
+                    a_data['sport'] = item['workoutActivityType'].replace('HKWorkoutActivityType', '')
 
-                a_data['text'] = (
-                        'Activity: ' + a_data['sport'] + '<br>Duration: ' + str(
-                    a_data['duration_hours']) + '<br>Average HR: ' +
-                        str(a_data['avgHR']) + '<br>Max HR:' + str(a_data['maxHR']) + '<br>'
-                )
-
-                activity_list.append(a_data)
-
-    if  not activity_list:
+                    a_data['text'] = (
+                            'Activity: ' + a_data['sport'] + '<br>Duration: ' + str(
+                        a_data['duration_hours']) + '<br>Average HR: ' +
+                            str(a_data['avgHR']) + '<br>Max HR:' + str(a_data['maxHR']) + '<br>'
+                    )
+                    activity_list.append(a_data)
+    if not activity_list:
         activity_df = pd.DataFrame(
             columns=['timestamp','date', 'date_time', 'startTime', 'startHour', 'startHourMinuteLocal',
                      'duration', 'duration_hours', 'avgHR', 'maxHR', 'type', 'sport', 'text'])
