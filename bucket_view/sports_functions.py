@@ -77,6 +77,7 @@ def get_activity_data(file_names, files):
 
     else:
         activity_df = pd.DataFrame(columns=['timestamp','date', 'date_time', 'startTimeGTM', 'startTime', 'startHour', 'startHourMinuteLocal', 'duration', 'duration_hours', 'avgHR', 'maxHR', 'type', 'sport', 'text'])
+    print(activity_df)
     return activity_df
 
 def get_sleep_data(file_names, files):
@@ -123,7 +124,7 @@ def get_sleep_data(file_names, files):
 
 
 def get_hr_data(file_names, files):
-    hr_path = [file for file in file_names if 'DI_CONNECT/DI-Connect-User/UDSFile' in file if '2023' in file]
+    hr_path = [file for file in file_names if 'DI_CONNECT/DI-Connect-Aggregator/UDSFile' in file if '2023' in file]
 
     if hr_path:
         hr_list = []
@@ -131,13 +132,13 @@ def get_hr_data(file_names, files):
         for f in hr_path:
             d = json.loads(files[f])
             for item in d:
-                item_year = datetime.datetime.strptime(item['calendarDate']['date'], '%b %d, %Y %I:%M:%S %p').date().year
+                item_year = datetime.datetime.strptime(item['calendarDate'], '%Y-%m-%d').date().year
                 if item_year > 2022:
                     if 'restingHeartRateTimestamp' in item:
                         if 'minHeartRate' in item:
                             hr_data = {}
                             hr_data['timestamp'] = int(time.mktime(pd.to_datetime(item['restingHeartRateTimestamp']).timetuple()) * 1000)
-                            hr_data['date'] = datetime.datetime.strptime(item['restingHeartRateTimestamp'],'%b %d, %Y %I:%M:%S %p').strftime("%Y-%m-%d")
+                            hr_data['date'] = datetime.datetime.strptime(item['calendarDate'],'%Y-%m-%d').strftime("%Y-%m-%d")
                             hr_data['minHR'] = item['minHeartRate']
                             hr_data['maxHR'] = item['maxHeartRate']
                             hr_data['restHR'] = item['restingHeartRate']
