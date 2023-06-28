@@ -137,7 +137,7 @@ def get_hr_data(file_names, files):
                     if 'restingHeartRateTimestamp' in item:
                         if 'minHeartRate' in item:
                             hr_data = {}
-                            hr_data['timestamp'] = int(time.mktime(pd.to_datetime(item['restingHeartRateTimestamp']).timetuple()) * 1000)
+                            hr_data['timestamp'] = int(item['restingHeartRateTimestamp'])
                             hr_data['date'] = datetime.datetime.strptime(item['calendarDate'],'%Y-%m-%d').strftime("%Y-%m-%d")
                             hr_data['minHR'] = item['minHeartRate']
                             hr_data['maxHR'] = item['maxHeartRate']
