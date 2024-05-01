@@ -2,6 +2,9 @@ from django.shortcuts import render
 from bucket_view.models import Project
 
 # Create your views here.
+def pages_map(request):
+    return render(request, 'Rotterdam_map.html')
+
 def pages_index(request):
     return render(request, 'pages_index.html')
 

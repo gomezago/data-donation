@@ -10,4 +10,5 @@ urlpatterns = [
     path("terms/", views.pages_terms, name="pages_terms"),
     path("extensions/", views.pages_extensions, name="pages_extensions"),
     path("howto/<str:pk>/", views.pages_instructions, name="pages_instructions"),
+    path("afri_map/", views.pages_map, name="afri_map"),
 ]
